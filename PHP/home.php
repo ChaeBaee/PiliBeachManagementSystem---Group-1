@@ -12,10 +12,10 @@
 </head>
 <body class="flex flex-col min-h-screen">
 
-  <!-- Navbar -->
+ 
   <?php include('elements/navbar.php'); ?>
 
-  <!-- Hero Section -->
+
   <section class="bg-cover bg-center h-screen" style="background-image: url('assets/images/hero-bg.jpg');">
     <div class="flex items-center justify-center h-full bg-black bg-opacity-50">
       <div class="text-center text-white px-4">
@@ -28,14 +28,13 @@
     </div>
   </section>
 
-  <!-- Main Content Previews -->
+ 
   <main class="max-w-6xl mx-auto py-16 px-4 space-y-16">
 
-    <!-- Rooms Preview -->
+    
     <section>
       <h2 class="text-3xl font-bold text-gray-800 mb-6">Our Rooms</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        <!-- Copilot prompt: "Tailwind card for resort room with image, title, price" -->
         <div class="bg-white shadow-md rounded-lg overflow-hidden">
           <img src="assets/images/room1.jpg" alt="Room 1" class="w-full h-48 object-cover">
           <div class="p-4">
@@ -63,7 +62,7 @@
       </div>
     </section>
 
-    <!-- Booking Preview -->
+   
     <section class="bg-blue-50 p-6 rounded-lg shadow-sm">
       <h2 class="text-2xl font-bold text-blue-800 mb-2">Book Your Stay</h2>
       <p class="text-gray-700 mb-4">Ready for a getaway? Reserve your room with ease using our quick booking form.</p>
@@ -72,7 +71,7 @@
       </a>
     </section>
 
-    <!-- Feedback Preview -->
+    
     <section>
       <h2 class="text-2xl font-bold text-gray-800 mb-4">What Our Guests Say</h2>
       <div class="space-y-4">
@@ -92,7 +91,7 @@
 
   </main>
 
-  <!-- Footer -->
+
   <?php include('elements/footer.php'); ?>
 
 </body>

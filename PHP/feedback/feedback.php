@@ -18,14 +18,14 @@
 </head>
 <body class="bg-[#f4ded2] min-h-screen flex flex-col text-[#333]">
 
-<!-- Navbar -->
+
 <?php include('../elements/navbar.php'); ?>
 
-<!-- Main Content -->
+
 <main class="flex-grow p-6">
     <div class="max-w-3xl mx-auto space-y-6">
 
-        <!-- Rating Summary -->
+        
         <section>
             <h2 class="text-2xl font-semibold mb-2">Reviews</h2>
             <div class="flex items-center gap-4">
@@ -38,9 +38,9 @@
                 </div>
             </div>
 
-            <!-- Rating distribution bars -->
+           
             <div class="mt-4 space-y-1">
-                <!-- Repeat for ratings 5 to 1 -->
+                
                 <div class="flex items-center"><span class="w-4 text-sm">5</span>
                     <div class="flex-grow mx-2 bg-gray-200 h-1 rounded">
                         <div class="bg-red-400 h-1 w-[95%] rounded"></div>
@@ -69,12 +69,12 @@
             </div>
         </section>
 
-        <!-- Feedback Form -->
+     
         <section class="bg-[#faebe1] p-6 rounded-xl shadow-md">
             <h3 class="text-lg font-semibold">Help Us Enhance Your Experience</h3>
             <p class="text-sm text-gray-700 mb-4">How was your experience at Pili Beach Resort? We’d love to hear what you liked and if there’s anything we can do better.</p>
 
-            <!-- Star Rating -->
+       
             <div class="flex gap-2 mb-4">
                 <button type="button" class="rating-star text-orange-400 text-2xl" onclick="setRating(1)">★</button>
                 <button type="button" class="rating-star text-orange-400 text-2xl" onclick="setRating(2)">★</button>
@@ -90,7 +90,7 @@
             </div>
         </section>
 
-        <!-- Review List -->
+    
         <section class="space-y-6">
             <div class="flex gap-4">
                 <div class="w-12 h-12 bg-gray-500 rounded-full"></div>
@@ -116,7 +116,7 @@
     </div>
 </main>
 
-<!-- Footer -->
+
 <?php include('../elements/footer.php'); ?>
 
 </body>

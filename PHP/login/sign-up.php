@@ -10,11 +10,11 @@
   <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
     <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Create Account</h2>
 
-    <form id="signupForm" action="#" method="POST" class="space-y-4">
+    <form id="signupForm" action='sign-up-back.php' method="POST" class="space-y-4">
 
       <div>
         <label class="block text-sm font-medium text-gray-700">Username</label>
-        <input type="text" name="username" required class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="john_doe" />
+        <input type="text" name="name" required class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="john_doe" />
       </div>
 
       <div>
@@ -24,7 +24,7 @@
 
       <div>
         <label class="block text-sm font-medium text-gray-700">Contact Number</label>
-        <input type="tel" name="contact" required pattern="^(09|\+639)\d{9}$" class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="09xxxxxxxxx or +639xxxxxxxxx" />
+        <input type="tel" name="phone" required pattern="^(09|\+639)\d{9}$" class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="09xxxxxxxxx or +639xxxxxxxxx" />
       </div>
 
       <div class="relative">
