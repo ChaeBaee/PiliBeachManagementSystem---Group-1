@@ -1,11 +1,11 @@
-<footer class="bg-gray-800 text-white py-6">
-    <div class="container mx-auto text-center">
+<footer class="bg-[#004D4D] text-white py-6">
+<div class="container mx-auto text-center">
         <h2 class="text-lg font-bold mb-4">Pili Beach Resort</h2>
         <div class="mb-4">
-            <a href="#" class="text-gray-400 hover:text-white mx-2">Home</a>
-            <a href="#" class="text-gray-400 hover:text-white mx-2">About Us</a>
-            <a href="#" class="text-gray-400 hover:text-white mx-2">Contact</a>
-            <a href="#" class="text-gray-400 hover:text-white mx-2">Services</a>
+            <a href="../home.php" class="text-gray-400 hover:text-white mx-2">Home</a>
+            <a href="../room/about.php" class="text-gray-400 hover:text-white mx-2">About Us</a>
+            <a href="../room/about.php" class="text-gray-400 hover:text-white mx-2">Contact</a>
+            <a href="../home.php" class="text-gray-400 hover:text-white mx-2">Services</a>
         </div>
         <div class="flex justify-center space-x-4">
             <a href="#" class="text-gray-400 hover:text-white">

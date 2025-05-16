@@ -16,12 +16,12 @@
   <?php include('elements/navbar.php'); ?>
 
 
-  <section class="bg-cover bg-center h-screen" style="background-image: url('assets/images/hero-bg.jpg');">
+  <section class="bg-cover bg-center h-screen" style="background-image: url('assets/home.jpg');">
     <div class="flex items-center justify-center h-full bg-black bg-opacity-50">
       <div class="text-center text-white px-4">
-        <h1 class="text-4xl md:text-6xl font-bold mb-4">Welcome to Paradise Resort</h1>
+        <h1 class="text-4xl md:text-6xl font-bold mb-4">Pili Beach Resort Agmanic</h1>
         <p class="text-lg md:text-2xl mb-8">Relax, Unwind, and Experience Luxury</p>
-        <a href="booking/booking.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg">
+        <a href="booking/booking.php" class="bg-[#7FFFD4]  hover:bg-gray-100 text-[#484848] font-bold py-3 px-6 rounded-lg text-lg">
           Book Now
         </a>
       </div>
