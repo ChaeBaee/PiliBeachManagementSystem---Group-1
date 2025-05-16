@@ -13,8 +13,7 @@
     <div class="container mx-auto py-16 px-4">
         <h1 class="text-3xl font-bold text-center mb-8">Our Rooms</h1>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Existing Room Cards -->
-            <!-- Room Card -->
+        
             <div class="bg-white shadow-md rounded-lg overflow-hidden">
                 <img src="room1.jpg" alt="Room 1" class="w-full h-48 object-cover">
                 <div class="p-4">
@@ -23,7 +22,7 @@
                     <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Book Now</button>
                 </div>
             </div>
-            <!-- Room Card -->
+            
             <div class="bg-white shadow-md rounded-lg overflow-hidden">
                 <img src="room2.jpg" alt="Room 2" class="w-full h-48 object-cover">
                 <div class="p-4">
@@ -32,7 +31,7 @@
                     <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Book Now</button>
                 </div>
             </div>
-            <!-- Room Card -->
+       
             <div class="bg-white shadow-md rounded-lg overflow-hidden">
                 <img src="room3.jpg" alt="Room 3" class="w-full h-48 object-cover">
                 <div class="p-4">
@@ -41,7 +40,7 @@
                     <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Book Now</button>
                 </div>
             </div>
-            <!-- New Room Card -->
+          
             <div class="bg-white shadow-md rounded-lg overflow-hidden">
                 <img src="room4.jpg" alt="Room 4" class="w-full h-48 object-cover">
                 <div class="p-4">
@@ -50,7 +49,7 @@
                     <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Book Now</button>
                 </div>
             </div>
-            <!-- New Room Card -->
+       
             <div class="bg-white shadow-md rounded-lg overflow-hidden">
                 <img src="room5.jpg" alt="Room 5" class="w-full h-48 object-cover">
                 <div class="p-4">
@@ -59,7 +58,7 @@
                     <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Book Now</button>
                 </div>
             </div>
-            <!-- New Room Card -->
+   
             <div class="bg-white shadow-md rounded-lg overflow-hidden">
                 <img src="room6.jpg" alt="Room 6" class="w-full h-48 object-cover">
                 <div class="p-4">
@@ -68,7 +67,7 @@
                     <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Book Now</button>
                 </div>
             </div>
-            <!-- Additional Room Cards -->
+         
             <div class="bg-white shadow-md rounded-lg overflow-hidden">
                 <img src="room7.jpg" alt="Room 7" class="w-full h-48 object-cover">
                 <div class="p-4">
