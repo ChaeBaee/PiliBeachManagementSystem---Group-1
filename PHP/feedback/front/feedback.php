@@ -78,7 +78,7 @@
                 </p>
             </div>
 
-            <form action="/pilibeachresort/PHP/feedback/back/feedback.php" method="POST">
+            <form action="/Proj/PHP/feedback/back/feedback.php" method="POST">
                 <div class="flex gap-2 mb-4 justify-center">
                     <button type="button" class="rating-star text-orange-400 text-2xl" onclick="setRating(1)">★</button>
                     <button type="button" class="rating-star text-orange-400 text-2xl" onclick="setRating(2)">★</button>

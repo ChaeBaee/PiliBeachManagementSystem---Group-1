@@ -10,10 +10,10 @@
   <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
     <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Create Account</h2>
 
-    <form id="signupForm" action='sign-up-back.php' method="POST" class="space-y-4">
+    <form id="signupForm" action='/Proj/PHP/login/back/sign-up-back.php' method="POST" class="space-y-4">
 
       <div>
-        <label class="block text-sm font-medium text-gray-700">Username</label>
+        <label class="block text-sm font-medium text-gray-700">Full name</label>
         <input type="text" name="name" required class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="john_doe" />
       </div>
 

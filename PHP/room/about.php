@@ -10,7 +10,7 @@
 <div class="h-16"></div>
 <?php include('../elements/navbar.php'); ?>
 
-<!-- About Us Section -->
+
 <div class="px-4 sm:px-8 lg:px-16 py-6">
     <h2 class="text-3xl font-bold text-[#004D4D]">About Us</h2>
     <p class="text-lg text-gray-700 mb-4">
@@ -19,10 +19,10 @@
     <p class="text-lg text-gray-700 mb-10">
         Pili Beach Resort, nestled on the serene shores of Tablas Island, Romblon, offers a tranquil escape for discerning travelers seeking refuge from the bustling crowds of Boracay. Embracing the essence of understated luxury, our resort beckons guests to unwind amidst pristine white sands and crystalline waters. Catering to both short and long-term rentals, our resort warmly welcomes both foreigners and locals alike, providing a haven of relaxation and rejuvenation for all guests. Whether you're seeking a brief getaway or planning an extended stay, every aspect of your experience is tailored to exceed expectations, with personalized service at the forefront.    </p>
 
-    <!-- Meet the Team Section -->
+    
     <h3 class="text-2xl font-semibold text-[#004D4D] mb-4">Meet the Team</h3>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-10">
-        <!-- Team Member Cards -->
+    
         <div class="text-center">
             <img src="../assets/james.jpg" alt="James" class="w-full h-72 object-cover rounded-lg mb-4">
             <h4 class="text-lg font-semibold text-gray-800">James Andrew Ocuaman</h4>
@@ -55,7 +55,7 @@
         </div>
     </div>
 
-    <!-- Location Section -->
+    
     <h3 class="text-2xl font-semibold text-[#004D4D] mb-2">Our Location</h3>
     <p class="text-gray-700 mb-4">We are located at Sitio Ilaya, Brgy. Agmanic, Santa Fe, Romblon, Philippines, 5508 — easily accessible and surrounded by breathtaking nature.</p>
     <div class="w-full h-64 rounded-xl overflow-hidden">
