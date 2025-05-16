@@ -85,7 +85,7 @@
         </blockquote>
       </div>
       <div class="mt-4 text-right">
-        <a href="feedback/feedback.php" class="text-blue-600 font-medium hover:underline">See more feedback →</a>
+        <a href="feedback/front/feedback.php" class="text-blue-600 font-medium hover:underline">See more feedback →</a>
       </div>
     </section>
 

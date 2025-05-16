@@ -1,6 +1,6 @@
 <footer class="bg-gray-800 text-white py-6">
     <div class="container mx-auto text-center">
-        <h2 class="text-lg font-bold mb-4">Resort Name</h2>
+        <h2 class="text-lg font-bold mb-4">Pili Beach Resort</h2>
         <div class="mb-4">
             <a href="#" class="text-gray-400 hover:text-white mx-2">Home</a>
             <a href="#" class="text-gray-400 hover:text-white mx-2">About Us</a>
@@ -21,6 +21,6 @@
                 <i class="fab fa-linkedin-in"></i>
             </a>
         </div>
-        <p class="text-gray-500 mt-4">&copy; <?php echo date('Y'); ?> Resort Name. All rights reserved.</p>
+        <p class="text-gray-500 mt-4">&copy; <?php echo date('Y'); ?> Pili Beach Resort. All rights reserved.</p>
     </div>
 </footer>
