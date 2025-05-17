@@ -61,10 +61,10 @@
       </div>
 
       <div class="mt-10 flex justify-between gap-4">
-        <a href="/Proj/PHP/booking/edit-booking.php" class="flex-1 bg-gray-200 text-gray-800 py-3 rounded-xl text-center font-medium hover:bg-gray-300 transition duration-200">
+        <a href="/Proj/PHP/booking/front/edit-booking.php" class="flex-1 bg-gray-200 text-gray-800 py-3 rounded-xl text-center font-medium hover:bg-gray-300 transition duration-200">
           Edit Details
         </a>
-        <a href="/Proj/PHP/payment/index.php" class="flex-1 bg-green-500 text-white py-3 rounded-xl text-center font-semibold hover:bg-green-600 transition duration-200">
+        <a href="/Proj/PHP/payment.php" class="flex-1 bg-green-500 text-white py-3 rounded-xl text-center font-semibold hover:bg-green-600 transition duration-200">
           Confirm & Pay
         </a>
       </div>
