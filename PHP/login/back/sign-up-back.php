@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         echo "<script>
                 alert('Signup successful!');
-                window.location.href = 'login.php';
+                window.location.href = '/Proj/PHP/login/front/login.php';
               </script>";
     } catch (PDOException $e) {
         echo "<script>alert('Signup failed: " . $e->getMessage() . "');</script>";

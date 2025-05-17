@@ -22,11 +22,11 @@
 <?php include('../../elements/navbar.php'); ?>
 
 
-#<?php if (isset($_GET['success'])): ?>
-#    <div class="bg-green-200 text-green-800 p-4 rounded mb-4">
-#        Thank you for your feedback!
-#    </div>
-#<?php endif; ?>
+<?php if (isset($_GET['success'])): ?>
+    <div class="bg-green-200 text-green-800 p-4 rounded mb-4">
+        Thank you for your feedback!
+    </div>
+<?php endif; ?>
 
 
 <main class="flex-grow p-6">
@@ -48,7 +48,7 @@
                 </div>
             </div>
 
-            <!-- Example: Rating bars using $ratingCounts -->
+          
             <div class="mt-4 space-y-1">
                 <?php
                 for ($star = 5; $star >= 1; $star--) {
