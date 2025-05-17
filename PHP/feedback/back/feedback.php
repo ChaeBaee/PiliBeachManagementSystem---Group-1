@@ -1,8 +1,14 @@
 <?php
-require_once '../../db.php';  // Your PDO connection is likely stored in $conn or $pdo
+session_start();
+require_once '../../db.php';
 
-$user_id = 2;  // Replace with session user ID if available
-$room_id = 2;  // Replace or get dynamically if you want
+if (!isset($_SESSION['user_id'])) {
+    header("Location: /Proj/PHP/login/front/login.php?error=not_logged_in");
+    exit();
+}
+
+$user_id = $_SESSION['user_id'];
+$room_id = 2;
 
 $rating = $_POST['feedback_rating'] ?? 0;
 $comment = $_POST['feedback_comments'] ?? '';
@@ -23,7 +29,7 @@ try {
     ]);
 
     header("Location: ../front/feedback.php?success=1");
-    exit;
+    exit();
 
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage();
