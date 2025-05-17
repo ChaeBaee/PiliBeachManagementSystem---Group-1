@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 include '../../db.php';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -8,7 +10,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
     try {
-       
         $checkSql = "SELECT * FROM users WHERE user_email = ?";
         $checkStmt = $conn->prepare($checkSql);
         $checkStmt->execute([$email]);
@@ -26,9 +27,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt = $conn->prepare($sql);
         $stmt->execute([$name, $email, $password, $phone]);
 
+        
+        $userId = $conn->lastInsertId();
+        $_SESSION['user_id'] = $userId;
+        $_SESSION['user_name'] = $name;
+
         echo "<script>
-                alert('Signup successful!');
-                window.location.href = '/Proj/PHP/login/front/login.php';
+                alert('Signup successful! Logged in as $name.');
+                window.location.href = '/Proj/PHP/home.php';
               </script>";
     } catch (PDOException $e) {
         echo "<script>alert('Signup failed: " . $e->getMessage() . "');</script>";
