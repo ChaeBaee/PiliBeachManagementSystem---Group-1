@@ -17,9 +17,24 @@
     }
   </script>
 </head>
-<body class="bg-peach min-h-screen flex flex-col">
+<?php include('../../elements/navbar.php'); ?>
 
-  <?php include('../../elements/navbar.php'); ?>
+<?php
+
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['booking'])) {
+    header("Location: /Proj/PHP/booking/front/2ndlogin.php");
+    echo "booking confirmation front end";
+    exit();
+}
+
+$user_name = $_SESSION['user_name'];
+$user_email = $_SESSION['user_email'];
+$booking = $_SESSION['booking'];
+?>
+
+
+
+<body class="bg-peach min-h-screen flex flex-col">
 
   <main class="flex-grow flex flex-col items-center justify-start px-4 pt-24 pb-12 relative overflow-hidden min-h-[800px]">
     
@@ -31,33 +46,29 @@
 
       <div class="space-y-5 text-gray-700 text-base">
         <div class="flex justify-between border-b pb-3">
-          <span class="font-semibold">Full Name:</span>
-          <span>Juan Dela Cruz</span>
+            <span class="font-semibold">Full Name:</span>
+            <span><?= htmlspecialchars($user_name ?? 'N/A') ?></span>
         </div>
         <div class="flex justify-between border-b pb-3">
-          <span class="font-semibold">Email:</span>
-          <span>juan@example.com</span>
+            <span class="font-semibold">Email:</span>
+            <span><?= htmlspecialchars($user_email ?? 'N/A') ?></span>
         </div>
-        <div class="flex justify-between border-b pb-3">
-          <span class="font-semibold">Room Type:</span>
-          <span>Deluxe Suite</span>
-        </div>
-        <div class="flex justify-between border-b pb-3">
-          <span class="font-semibold">Check-in:</span>
-          <span>May 20, 2025</span>
-        </div>
-        <div class="flex justify-between border-b pb-3">
-          <span class="font-semibold">Check-out:</span>
-          <span>May 23, 2025</span>
-        </div>
-        <div class="flex justify-between border-b pb-3">
-          <span class="font-semibold">Guests:</span>
-          <span>2 Adults</span>
-        </div>
-        <div class="flex justify-between text-lg font-bold mt-6">
-          <span>Total Amount:</span>
-          <span class="text-green-600">₱9,000.00</span>
-        </div>
+          <div class="flex justify-between border-b pb-3">
+              <span class="font-semibold">Room Type:</span>
+              <span><?= htmlspecialchars($booking['room_type'] ?? 'N/A') ?></span>
+          </div>
+          <div class="flex justify-between border-b pb-3">
+              <span class="font-semibold">Check-in:</span>
+              <span><?= htmlspecialchars($booking['checkin'] ?? 'N/A') ?></span>
+          </div>
+          <div class="flex justify-between border-b pb-3">
+              <span class="font-semibold">Check-out:</span>
+              <span><?= htmlspecialchars($booking['checkout'] ?? 'N/A') ?></span>
+          </div>
+          <div class="flex justify-between border-b pb-3">
+              <span class="font-semibold">Guests:</span>
+              <span><?= htmlspecialchars($booking['guests'] ?? 'N/A') ?> Guest(s)</span>
+          </div>
       </div>
 
       <div class="mt-10 flex justify-between gap-4">

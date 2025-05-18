@@ -10,6 +10,13 @@
 
 
   <?php include('elements/navbar.php'); ?>
+  <?php
+  if (!isset($_SESSION['user_id']) || !isset($_SESSION['booking'])) {
+      header("Location: /Proj/PHP/booking/front/2ndlogin.php");
+      exit();
+  }
+  $booking = $_SESSION['booking'];
+  ?>
 
   <main class="flex-grow flex items-center justify-center p-6">
     <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-2xl relative">
@@ -29,10 +36,10 @@
        
         <div class="bg-gray-100 p-4 rounded-xl shadow-sm">
           <h3 class="text-lg font-semibold mb-3">Booking Summary</h3>
-          <p class="text-sm text-gray-700">Room: <strong>Deluxe Room</strong></p>
-          <p class="text-sm text-gray-700">Guests: <strong>2 Adults</strong></p>
-          <p class="text-sm text-gray-700">Check-in: <strong>May 25, 2025</strong></p>
-          <p class="text-sm text-gray-700">Check-out: <strong>May 27, 2025</strong></p>
+            <p class="text-sm text-gray-700">Room: <strong><?= htmlspecialchars($booking['room_type']) ?></strong></p>
+            <p class="text-sm text-gray-700">Guests: <strong><?= htmlspecialchars($booking['guests']) ?></strong></p>
+            <p class="text-sm text-gray-700">Check-in: <strong><?= htmlspecialchars($booking['checkin']) ?></strong></p>
+            <p class="text-sm text-gray-700">Check-out: <strong><?= htmlspecialchars($booking['checkout']) ?></strong></p>
 
           <hr class="my-3">
 

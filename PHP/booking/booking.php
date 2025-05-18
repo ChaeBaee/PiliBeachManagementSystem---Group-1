@@ -19,7 +19,21 @@
   </style>
 </head>
 <body class="bg-gray-100">
+
   <?php include('../elements/navbar.php'); ?>
+
+  <?php
+  if ($_SERVER["REQUEST_METHOD"] == "POST")
+  {include('back/room-data/room-data.php');
+  }
+  ?>
+
+  <?php
+  if (!isset($_SESSION['user_id'])) {
+      header("Location: /Proj/PHP/front/1stlogin.php");
+      exit();
+  }
+  ?>
 
   <main>
     <section class="py-10 px-4">
@@ -72,19 +86,29 @@
           <div class="space-y-6">
             <h3 class="text-lg font-semibold text-gray-700">Available Rooms</h3>
 
-           
-            <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 flex flex-col md:flex-row gap-4">
-              <img src="https://via.placeholder.com/150" alt="Room" class="w-full md:w-48 h-32 object-cover rounded-lg">
-              <div class="flex-1">
-                <h4 class="text-md font-semibold text-gray-800">Deluxe Room</h4>
-                <p class="text-sm text-gray-600 mb-2">Spacious room with sea view, king-sized bed, free Wi-Fi, and complimentary breakfast.</p>
-                <p class="text-blue-600 font-semibold text-sm">$120 / night</p>
-              </div>
-              <div class="flex items-center justify-end md:flex-col md:justify-between gap-2">
-                <span class="text-sm text-green-600 font-medium">Available</span>
-                <button class="bg-blue-500 text-white text-sm px-4 py-2 rounded-full hover:bg-blue-600">Book Now</button>
-              </div>
-            </div>
+
+              <?php foreach ($available_rooms as $room): ?>
+                  <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 flex flex-col md:flex-row gap-4">
+                      <img src="<?= $room['image'] ?>" alt="Room" class="w-full md:w-48 h-32 object-cover rounded-lg">
+                      <div class="flex-1">
+                          <h4 class="text-md font-semibold text-gray-800"><?= $room['type'] ?></h4>
+                          <p class="text-sm text-gray-600 mb-2"><?= $room['description'] ?></p>
+                          <p class="text-blue-600 font-semibold text-sm">$<?= $room['price'] ?> / night</p>
+                      </div>
+                      <div class="flex items-center justify-end md:flex-col md:justify-between gap-2">
+                          <span class="text-sm text-green-600 font-medium"><?= $room['status'] ?></span>
+                          <form method="POST" action="back/booking-confirmation.php">
+                              <input type="hidden" name="room_type" value="<?= $room['type'] ?>">
+                              <input type="hidden" name="checkin" value="<?= $_POST['checkin'] ?? '' ?>">
+                              <input type="hidden" name="checkout" value="<?= $_POST['checkout'] ?? '' ?>">
+                              <input type="hidden" name="guests" value="<?= $_POST['guests'] ?? '' ?>">
+                              <button type="submit" class="bg-blue-500 text-white text-sm px-4 py-2 rounded-full hover:bg-blue-600">
+                                  Book Now
+                              </button>
+                          </form>
+                      </div>
+                  </div>
+              <?php endforeach; ?>
 
            
           </div>
