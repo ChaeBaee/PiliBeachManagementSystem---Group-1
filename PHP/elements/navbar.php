@@ -23,8 +23,8 @@ session_start();
       </ul>
       <div class="hidden md:flex items-center space-x-2">
         <?php if (isset($_SESSION['user_id'])): ?>
-          <!-- Profile Link with User Icon -->
-          <a href="/Proj/PHP/profile.php" class="flex items-center bg-[#7FFFD4] text-[#484848] px-3 py-2 rounded hover:bg-gray-100">
+     
+          <a href="/Proj/PHP/profile/profile.php" class="flex items-center bg-[#7FFFD4] text-[#484848] px-3 py-2 rounded hover:bg-gray-100">
          
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
