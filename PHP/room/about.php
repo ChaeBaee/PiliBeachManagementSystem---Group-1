@@ -24,27 +24,27 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-10">
     
         <div class="text-center">
-            <img src="../assets/james.jpg" alt="James" class="w-full h-72 object-cover rounded-lg mb-4">
+            <img src="../assets/5.png" alt="James" class="w-full h-72 object-cover rounded-lg mb-4">
             <h4 class="text-lg font-semibold text-gray-800">James Andrew Ocuaman</h4>
             <p class="text-sm text-gray-600">Developer</p>
         </div>
         <div class="text-center">
-            <img src="../assets/pogi.jpg" alt="Luis" class="w-full h-72 object-cover rounded-lg mb-4">
+            <img src="../assets/Mayor.png" alt="Luis" class="w-full h-72 object-cover rounded-lg mb-4">
             <h4 class="text-lg font-semibold text-gray-800">Luis Gabriel Ronatay</h4>
             <p class="text-sm text-gray-600">Developer</p>
         </div>
         <div class="text-center">
-            <img src="../assets/pol1.jpg" alt="Paul Vincent" class="w-full h-72 object-cover rounded-lg mb-4">
+            <img src="../assets/2.png" alt="Paul Vincent" class="w-full h-72 object-cover rounded-lg mb-4">
             <h4 class="text-lg font-semibold text-gray-800">Paul Vincent Lunaspe</h4>
             <p class="text-sm text-gray-600">Developer</p>
         </div>
         <div class="text-center">
-            <img src="../assets/castor.png" alt="Paul Castor" class="w-full h-72 object-cover rounded-lg mb-4">
+            <img src="../assets/3.png" alt="Paul Castor" class="w-full h-72 object-cover rounded-lg mb-4">
             <h4 class="text-lg font-semibold text-gray-800">Paul Castor Janobas</h4>
             <p class="text-sm text-gray-600">Developer</p>
         </div>
         <div class="text-center">
-            <img src="../assets/wes3.jpg" alt="John Wesly" class="w-full h-72 object-cover rounded-lg mb-4">
+            <img src="../assets/4.png" alt="John Wesly" class="w-full h-72 object-cover rounded-lg mb-4">
             <h4 class="text-lg font-semibold text-gray-800">John Wesly Caburog</h4>
             <p class="text-sm text-gray-600">Developer</p>
         </div>

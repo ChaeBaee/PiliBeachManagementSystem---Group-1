@@ -30,7 +30,7 @@
 
   <?php
   if (!isset($_SESSION['user_id'])) {
-      header("Location: /Proj/PHP/front/1stlogin.php");
+      header("Location: ../login/front/login.php");
       exit();
   }
   ?>
