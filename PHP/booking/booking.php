@@ -40,7 +40,7 @@
       <div class="max-w-5xl mx-auto">
         <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-6">Room Options</h2>
 
-        <!-- Search Form -->
+
         <form method="POST" class="bg-white rounded-full border border-gray-200 shadow-sm px-6 py-6 flex flex-col md:flex-row items-center gap-4 md:gap-6 mb-8">
           <div class="flex-1">
             <label class="text-sm text-gray-700 block mb-1">Room Type (Optional)</label>

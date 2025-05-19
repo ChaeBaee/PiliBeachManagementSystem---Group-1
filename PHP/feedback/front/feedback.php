@@ -22,14 +22,15 @@
 <?php include('../../elements/navbar.php'); ?>
 
 
-<?php if (isset($_GET['success'])): ?>
-    <div class="bg-green-200 text-green-800 p-4 rounded mb-4">
-        Thank you for your feedback!
-    </div>
-<?php endif; ?>
+<div style="min-height: 60px;" class="mb-4 px-6">
+    <?php if (isset($_GET['success'])): ?>
+        <div class="bg-green-200 text-green-800 p-4 rounded">
+            Thank you for your feedback!
+        </div>
+    <?php endif; ?>
+</div>
 
-
-<main class="flex-grow p-6">
+<main class="flex-grow p-6 mt-6">
     <div class="max-w-3xl mx-auto space-y-6">
 
         <section>
@@ -48,28 +49,25 @@
                 </div>
             </div>
 
-          
             <div class="mt-4 space-y-1">
                 <?php
                 for ($star = 5; $star >= 1; $star--) {
                     $count = $ratingCounts[$star] ?? 0;
                     $percent = $totalReviews > 0 ? ($count / $totalReviews) * 100 : 0;
                     echo '
-        <div class="flex items-center">
-            <span class="w-4 text-sm">' . $star . '</span>
-            <div class="flex-grow mx-2 bg-gray-200 h-1 rounded">
-                <div class="bg-red-400 h-1 rounded" style="width: ' . $percent . '%;"></div>
-            </div>
-            <span class="text-sm">' . $count . '</span>
-        </div>';
+                        <div class="flex items-center">
+                            <span class="w-4 text-sm">' . $star . '</span>
+                            <div class="flex-grow mx-2 bg-gray-200 h-1 rounded">
+                                <div class="bg-red-400 h-1 rounded" style="width: ' . $percent . '%;"></div>
+                            </div>
+                            <span class="text-sm">' . $count . '</span>
+                        </div>';
                 }
                 ?>
             </div>
         </section>
 
-
         <section class="bg-[#faebe1] p-6 rounded-xl shadow-md">
-            <!-- Added text block -->
             <div class="mb-6">
                 <h3 class="font-bold text-lg mb-1">Help Us Enhance Your Experience</h3>
                 <p class="pl-4 text-sm text-gray-700">
@@ -87,10 +85,8 @@
                     <button type="button" class="rating-star text-orange-400 text-2xl" onclick="setRating(5)">★</button>
                 </div>
 
-                <!-- Hidden input that gets updated -->
                 <input type="hidden" id="selectedRating" name="feedback_rating" value="5" />
 
-                <!-- Comment textarea with NAME attribute -->
                 <textarea name="feedback_comments" class="w-full h-32 p-3 border rounded-lg focus:ring focus:ring-orange-300" placeholder="Add feedback..."></textarea>
 
                 <div class="flex gap-2 mt-4">
@@ -106,7 +102,6 @@
 
     </div>
 </main>
-
 
 <?php include('../../elements/footer.php'); ?>
 

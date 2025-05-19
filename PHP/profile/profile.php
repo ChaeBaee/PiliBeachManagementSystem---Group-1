@@ -35,7 +35,7 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
     <?php endif; ?>
 
     <div class="grid md:grid-cols-2 gap-8">
-      <!-- Profile Section -->
+      
       <div class="bg-white rounded-lg shadow-lg p-6">
         <h2 class="text-2xl font-semibold text-gray-800 mb-4">Profile Information</h2>
         <form action="./back/update-profile.php" method="POST" class="space-y-4">
@@ -73,7 +73,7 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
         </form>
       </div>
 
-      <!-- Password Section -->
+ 
       <div class="bg-white rounded-lg shadow-lg p-6">
         <h2 class="text-2xl font-semibold text-gray-800 mb-4">Change Password</h2>
         <form action="./back/change-password.php" method="POST" class="space-y-4">

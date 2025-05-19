@@ -13,13 +13,13 @@ session_start();
 <body>
   <nav class="bg-[#004D4D] p-4 fixed top-0 w-full z-10">
     <div class="container mx-auto flex justify-between items-center">
-      <a href="../home.php" class="text-white text-lg font-bold">PILI</a>
+      <a href="Proj/PHP/home.php" class="text-white text-lg font-bold">PILI</a>
       <ul class="hidden md:flex space-x-4 text-white" id="menu">
-        <li><a href="../home.php"     class="hover:text-gray-300">Home</a></li>
-        <li><a href="../room/rooms.php"     class="hover:text-gray-300">Rooms</a></li>
-        <li><a href="../booking/booking.php" class="hover:text-gray-300">Booking</a></li>
-        <li><a href="../feedback/front/feedback.php" class="hover:text-gray-300">Feedbacks</a></li>
-        <li><a href="../room/about.php" class="hover:text-gray-300">About Us</a></li>
+        <li><a href="/Proj/PHP/home.php" class="hover:text-gray-300">Home</a></li>
+        <li><a href="/Proj/PHP/room/rooms.php" class="hover:text-gray-300">Rooms</a></li>
+        <li><a href="/Proj/PHP/booking/booking.php" class="hover:text-gray-300">Booking</a></li>
+        <li><a href="/Proj/PHP/feedback/front/feedback.php" class="hover:text-gray-300">Feedbacks</a></li>
+        <li><a href="/Proj/PHP/room/about.php" class="hover:text-gray-300">About Us</a></li>
       </ul>
       <div class="hidden md:flex items-center space-x-2">
         <?php if (isset($_SESSION['user_id'])): ?>
@@ -37,8 +37,8 @@ session_start();
             Logout
           </a>
         <?php else: ?>
-          <a href="../login/front/login.php" class="bg-[#7FFFD4] text-[#484848] px-4 py-2 rounded hover:bg-gray-100">Login</a>
-          <a href="../login/front/sign-up.php" class="bg-[#7FFFD4] text-[#484848] px-4 py-2 rounded hover:bg-gray-100">Sign Up</a>
+          <a href="/Proj/PHP/login/front/login.php" class="bg-[#7FFFD4] text-[#484848] px-4 py-2 rounded hover:bg-gray-100">Login</a>
+          <a href="/Proj/PHP/login/front/sign-up.php" class="bg-[#7FFFD4] text-[#484848] px-4 py-2 rounded hover:bg-gray-100">Sign Up</a>
         <?php endif; ?>
       </div>
     </div>

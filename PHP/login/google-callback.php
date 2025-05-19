@@ -18,6 +18,6 @@ if (isset($_GET['code'])) {
     $_SESSION['email'] = $userData->email;
     $_SESSION['name'] = $userData->name;
 
-    header("Location: dashboard.php");
+    header("Location: home.php");
     exit;
 }
