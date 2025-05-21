@@ -1,122 +1,158 @@
+<?php
+
+$checkIn = $checkOut = $guest = "";
+$checkInMsg = $checkOutMsg = $guestMsg = "";
+$today = date('Y-m-d'); // Get today's date
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $checkIn = $_POST["checkin"] ?? "";
+    $checkOut = $_POST["checkout"] ?? "";
+    $guest  = $_POST["guests"] ?? "";
+
+    $hasError = false;
+
+    if (empty($checkIn)) {
+        $checkInMsg = "Please enter check-in date. <br>";
+        $hasError = true;
+    } elseif ($checkIn < $today) {
+        $checkInMsg = "Check-in date cannot be in the past.<br>";
+        $hasError = true;
+    }
+
+    if (empty($checkOut)) {
+        $checkOutMsg = "Please enter check-out date <br>";
+        $hasError = true;
+    } elseif ($checkOut < $today) {
+        $checkOutMsg = "Check-out date cannot be in the past.<br>";
+        $hasError = true;
+    }
+
+    if (empty($guest) || intval($guest) < 1) {
+        $guestMsg = "Guests must be at least 1 <br>";
+        $hasError = true;
+    }
+
+    if (!$hasError) {
+        $_SESSION['checkIn'] = $checkIn;
+        $_SESSION['checkOut'] = $checkOut;
+        $_SESSION['guest'] = $guest;
+
+        include('back/room-data/room-data.php');
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Booking Page</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking Page</title>
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body {
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-    main {
-      flex: 1;
-      padding-top: 200px;
-    }
-  </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        main {
+            flex: 1;
+            padding-top: 200px;
+        }
+    </style>
 </head>
 <body class="bg-gray-100">
 
-  <?php include('../elements/navbar.php'); ?>
+<?php include('../elements/navbar.php'); ?>
 
-  <?php
-  if ($_SERVER["REQUEST_METHOD"] == "POST")
-  {include('back/room-data/room-data.php');
-  }
-  ?>
+<?php
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../login/front/login.php");
+    exit();
+}
+?>
 
-  <?php
-  if (!isset($_SESSION['user_id'])) {
-      header("Location: ../login/front/login.php");
-      exit();
-  }
-  ?>
-
-  <main>
+<main>
     <section class="py-10 px-4">
-      <div class="max-w-5xl mx-auto">
-        <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-6">Room Options</h2>
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-6">Room Options</h2>
 
+            <form method="POST" class="bg-white rounded-full border border-gray-200 shadow-sm px-6 py-6 flex flex-col md:flex-row items-center gap-4 md:gap-6 mb-8">
+                <div class="flex-1">
+                    <label class="text-sm text-gray-700 block mb-1">Room Type (Optional)</label>
+                    <select name="room_type" class="w-full bg-white border border-gray-300 rounded-full px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                        <option value="">Select a room type</option>
+                        <option value="single">Single Room</option>
+                        <option value="double">Double Room</option>
+                        <option value="suite">Suite</option>
+                        <option value="deluxe">Deluxe</option>
+                    </select>
+                </div>
 
-        <form method="POST" class="bg-white rounded-full border border-gray-200 shadow-sm px-6 py-6 flex flex-col md:flex-row items-center gap-4 md:gap-6 mb-8">
-          <div class="flex-1">
-            <label class="text-sm text-gray-700 block mb-1">Room Type (Optional)</label>
-            <select name="room_type" class="w-full bg-white border border-gray-300 rounded-full px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
-              <option value="">Select a room type</option>
-              <option value="single">Single Room</option>
-              <option value="double">Double Room</option>
-              <option value="suite">Suite</option>
-              <option value="deluxe">Deluxe</option>
-            </select>
-          </div>
+                <div class="hidden md:block h-10 w-px bg-gray-200"></div>
 
-          <div class="hidden md:block h-10 w-px bg-gray-200"></div>
+                <div class="flex-1">
+                    <label class="text-sm text-gray-700 block mb-1">Check In</label>
+                    <input type="date" name="checkin" min="<?= $today ?>" value="<?= htmlspecialchars($checkIn) ?>" class="w-full bg-white border border-gray-300 rounded-full px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+                    <span style="color: red"><?= $checkInMsg ?></span>
+                </div>
 
-          <div class="flex-1">
-            <label class="text-sm text-gray-700 block mb-1">Check In</label>
-            <input type="date" name="checkin" class="w-full bg-white border border-gray-300 rounded-full px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
-          </div>
+                <div class="hidden md:block h-10 w-px bg-gray-200"></div>
 
-          <div class="hidden md:block h-10 w-px bg-gray-200"></div>
+                <div class="flex-1">
+                    <label class="text-sm text-gray-700 block mb-1">Check Out</label>
+                    <input type="date" name="checkout" min="<?= $today ?>" value="<?= htmlspecialchars($checkOut) ?>" class="w-full bg-white border border-gray-300 rounded-full px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+                    <span style="color: red"><?= $checkOutMsg ?></span>
+                </div>
 
-          <div class="flex-1">
-            <label class="text-sm text-gray-700 block mb-1">Check Out</label>
-            <input type="date" name="checkout" class="w-full bg-white border border-gray-300 rounded-full px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
-          </div>
+                <div class="hidden md:block h-10 w-px bg-gray-200"></div>
 
-          <div class="hidden md:block h-10 w-px bg-gray-200"></div>
+                <div class="flex-1">
+                    <label class="text-sm text-gray-700 block mb-1">Guests</label>
+                    <input type="number" name="guests" min="1" value="<?= htmlspecialchars($guest) ?>" placeholder="Add Guests" class="w-full bg-white border border-gray-300 rounded-full px-3 py-2 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+                    <span style="color: red"><?= $guestMsg ?></span>
+                </div>
 
-          <div class="flex-1">
-            <label class="text-sm text-gray-700 block mb-1">Guests</label>
-            <input type="number" name="guests" min="1" placeholder="Add Guests" class="w-full bg-white border border-gray-300 rounded-full px-3 py-2 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-300" />
-          </div>
+                <button type="submit" class="w-12 h-12 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white rounded-full transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </button>
+            </form>
 
-          <button type="submit" class="w-12 h-12 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white rounded-full transition">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
-          </button>
-        </form>
+            <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && !$hasError && isset($available_rooms)): ?>
+                <div class="space-y-6">
+                    <h3 class="text-lg font-semibold text-gray-700">Available Rooms</h3>
 
-      
-        <?php if ($_SERVER["REQUEST_METHOD"] == "POST"): ?>
-          <div class="space-y-6">
-            <h3 class="text-lg font-semibold text-gray-700">Available Rooms</h3>
-
-
-              <?php foreach ($available_rooms as $room): ?>
-                  <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 flex flex-col md:flex-row gap-4">
-                      <img src="<?= $room['image'] ?>" alt="Room" class="w-full md:w-48 h-32 object-cover rounded-lg">
-                      <div class="flex-1">
-                          <h4 class="text-md font-semibold text-gray-800"><?= $room['type'] ?></h4>
-                          <p class="text-sm text-gray-600 mb-2"><?= $room['description'] ?></p>
-                          <p class="text-blue-600 font-semibold text-sm">$<?= $room['price'] ?> / night</p>
-                      </div>
-                      <div class="flex items-center justify-end md:flex-col md:justify-between gap-2">
-                          <span class="text-sm text-green-600 font-medium"><?= $room['status'] ?></span>
-                          <form method="POST" action="back/booking-confirmation.php">
-                              <input type="hidden" name="room_type" value="<?= $room['type'] ?>">
-                              <input type="hidden" name="checkin" value="<?= $_POST['checkin'] ?? '' ?>">
-                              <input type="hidden" name="checkout" value="<?= $_POST['checkout'] ?? '' ?>">
-                              <input type="hidden" name="guests" value="<?= $_POST['guests'] ?? '' ?>">
-                              <button type="submit" class="bg-blue-500 text-white text-sm px-4 py-2 rounded-full hover:bg-blue-600">
-                                  Book Now
-                              </button>
-                          </form>
-                      </div>
-                  </div>
-              <?php endforeach; ?>
-
-           
-          </div>
-        <?php endif; ?>
-      </div>
+                    <?php foreach ($available_rooms as $room): ?>
+                        <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 flex flex-col md:flex-row gap-4">
+                            <img src="<?= $room['image'] ?>" alt="Room" class="w-full md:w-48 h-32 object-cover rounded-lg">
+                            <div class="flex-1">
+                                <h4 class="text-md font-semibold text-gray-800"><?= $room['type'] ?></h4>
+                                <p class="text-sm text-gray-600 mb-2"><?= $room['description'] ?></p>
+                                <p class="text-blue-600 font-semibold text-sm">$<?= $room['price'] ?> / night</p>
+                            </div>
+                            <div class="flex items-center justify-end md:flex-col md:justify-between gap-2">
+                                <span class="text-sm text-green-600 font-medium"><?= $room['status'] ?></span>
+                                <form method="POST" action="back/booking-confirmation.php">
+                                    <input type="hidden" name="room_type" value="<?= $room['type'] ?>">
+                                    <input type="hidden" name="checkin" value="<?= htmlspecialchars($checkIn) ?>">
+                                    <input type="hidden" name="checkout" value="<?= htmlspecialchars($checkOut) ?>">
+                                    <input type="hidden" name="guests" value="<?= htmlspecialchars($guest) ?>">
+                                    <button type="submit" class="bg-blue-500 text-white text-sm px-4 py-2 rounded-full hover:bg-blue-600">
+                                        Book Now
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
     </section>
-  </main>
+</main>
 
-  <?php include('../elements/footer.php'); ?>
+<?php include('../elements/footer.php'); ?>
 </body>
 </html>

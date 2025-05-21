@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <div class="flex-grow h-px bg-gray-300"></div>
     </div>
 
-    <form method="POST" action="">
+    <form method="POST" action="../../login/back/login.php">
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700">Email</label>
         <input type="email" name="email" value="<?= htmlspecialchars($email) ?>"
