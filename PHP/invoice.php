@@ -11,7 +11,7 @@
 
   <?php include('elements/navbar.php'); ?>
 
-  <main class="flex-grow flex items-center justify-center py-8 px-4">
+  <main class="flex-grow flex items-center justify-center py-8 px-4 pt-24">
     <div class="bg-white shadow-xl rounded-2xl p-8 w-full max-w-2xl">
       
       <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">Booking Invoice</h1>
