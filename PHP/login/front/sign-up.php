@@ -1,3 +1,54 @@
+<?php
+session_start();
+
+$emailMsg = $passwordMsg = $fullNameMsg = $contactNoMsg = $termsMsg = "";
+$email = $password = $fullName = $contactNo = $confirmPassword = "";
+$termsAccepted = false;
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = $_POST["email"] ?? "";
+    $password = $_POST["password"] ?? "";
+    $confirmPassword = $_POST["confirm_password"] ?? "";
+    $fullName = $_POST["fullName"] ?? "";
+    $contactNo = $_POST["contactNo"] ?? "";
+    $termsAccepted = isset($_POST["terms"]);
+
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $emailMsg = "Please enter a valid email.<br>";
+    }
+
+    if (empty($password)) {
+        $passwordMsg = "Password cannot be empty.<br>";
+    } elseif (strlen($password) < 8) {
+        $passwordMsg = "Password must be at least 8 characters.<br>";
+    } elseif ($password !== $confirmPassword) {
+        $passwordMsg = "Passwords do not match.<br>";
+    }
+
+    if (empty($fullName)) {
+        $fullNameMsg = "Full name cannot be empty.<br>";
+    }
+
+    if (empty($contactNo)) {
+        $contactNoMsg = "Contact number cannot be empty.<br>";
+    }
+
+    if (!$termsAccepted) {
+        $termsMsg = "You must agree to the terms and conditions.";
+    }
+
+    if ($emailMsg === "" && $passwordMsg === "" && $fullNameMsg === "" && $contactNoMsg === "" && $termsMsg === "") {
+        $_SESSION['email'] = $email;
+        $_SESSION['password'] = $password;
+        $_SESSION['fullName'] = $fullName;
+        $_SESSION['contactNo'] = $contactNo;
+        $_SESSION['terms'] = $termsAccepted;
+        header('Location: ../home.php');
+        exit();
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,48 +61,53 @@
   <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
     <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Create Account</h2>
 
-    <form id="signupForm" action='/Proj/PHP/login/back/sign-up-back.php' method="POST" class="space-y-4">
+    <form id="signupForm" method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="space-y-4">
 
       <div>
         <label class="block text-sm font-medium text-gray-700">Full name</label>
-        <input type="text" name="name" required class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="john_doe" />
+        <input type="text" name="fullName" value="<?php echo htmlspecialchars($fullName); ?>" class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="john_doe" />
+        <span class="text-red-600 text-sm"><?php echo $fullNameMsg; ?></span>
       </div>
 
       <div>
         <label class="block text-sm font-medium text-gray-700">Email</label>
-        <input type="email" name="email" required class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="you@example.com" />
+        <input type="email" name="email" value="<?php echo htmlspecialchars($email); ?>" class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="you@example.com" />
+        <span class="text-red-600 text-sm"><?php echo $emailMsg; ?></span>
       </div>
 
       <div>
         <label class="block text-sm font-medium text-gray-700">Contact Number</label>
-        <input type="tel" name="phone" required pattern="^(09|\+639)\d{9}$" class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="09xxxxxxxxx or +639xxxxxxxxx" />
+        <input type="tel" name="contactNo" value="<?php echo htmlspecialchars($contactNo); ?>" pattern="^(09|\+639)\d{9}$" class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="09xxxxxxxxx or +639xxxxxxxxx" />
+        <span class="text-red-600 text-sm"><?php echo $contactNoMsg; ?></span>
       </div>
 
       <div class="relative">
         <label class="block text-sm font-medium text-gray-700">Password</label>
-        <input type="password" id="password" name="password" required minlength="8" class="w-full mt-1 px-3 py-2 border rounded-lg pr-10" placeholder="Enter your password" />
+        <input type="password" id="password" name="password" minlength="8" class="w-full mt-1 px-3 py-2 border rounded-lg pr-10" placeholder="Enter your password" />
         <span onclick="togglePassword('password')" class="absolute right-3 top-9 cursor-pointer text-sm text-blue-500">Show</span>
+        <span class="text-red-600 text-sm block mt-1"><?php echo $passwordMsg; ?></span>
       </div>
 
       <div class="relative">
         <label class="block text-sm font-medium text-gray-700">Confirm Password</label>
-        <input type="password" id="confirm_password" required class="w-full mt-1 px-3 py-2 border rounded-lg pr-10" placeholder="Re-enter your password" />
+        <input type="password" id="confirm_password" name="confirm_password" class="w-full mt-1 px-3 py-2 border rounded-lg pr-10" placeholder="Re-enter your password" />
         <span onclick="togglePassword('confirm_password')" class="absolute right-3 top-9 cursor-pointer text-sm text-blue-500">Show</span>
-        <p id="passwordError" class="text-red-600 text-sm mt-1 hidden">Passwords do not match</p>
       </div>
 
       <div class="flex items-center">
-        <input id="terms" type="checkbox" required class="mr-2" />
+        <input id="terms" name="terms" type="checkbox" class="mr-2" <?php echo $termsAccepted ? "checked" : ""; ?> />
         <label for="terms" class="text-sm text-gray-600">I agree to the terms and conditions</label>
       </div>
+      <span class="text-red-600 text-sm block"><?php echo $termsMsg; ?></span>
 
-    <button type="submit" class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition">
-      Sign Up
-    </button>
-    <p class="text-center text-sm text-gray-600 mt-4">
-      Already have an account?
-      <a href="login.php" class="text-blue-500 hover:underline">Log in</a>
-    </p>
+      <button type="submit" class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition">
+        Sign Up
+      </button>
+
+      <p class="text-center text-sm text-gray-600 mt-4">
+        Already have an account?
+        <a href="login.php" class="text-blue-500 hover:underline">Log in</a>
+      </p>
     </form>
   </div>
 
@@ -60,26 +116,6 @@
       const input = document.getElementById(id);
       input.type = input.type === "password" ? "text" : "password";
     }
-
-    document.getElementById('signupForm').addEventListener('submit', function(e) {
-      const pw = document.getElementById('password').value;
-      const cpw = document.getElementById('confirm_password').value;
-      const error = document.getElementById('passwordError');
-
-      if (pw.length < 8) {
-        e.preventDefault();
-        error.textContent = "Password must be at least 8 characters.";
-        error.classList.remove('hidden');
-        return;
-      }
-
-      if (pw !== cpw) {
-        e.preventDefault();
-        error.classList.remove('hidden');
-      } else {
-        error.classList.add('hidden');
-      }
-    });
   </script>
 </body>
 </html>

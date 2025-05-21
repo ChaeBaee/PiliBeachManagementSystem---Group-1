@@ -1,3 +1,33 @@
+<?php
+session_start();
+$emailMsg = $passwordMsg = "";
+$email = $password = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = $_POST["email"] ?? "";
+    $password = $_POST["password"] ?? "";
+
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $emailMsg = "Please enter a valid email <br>";
+    }
+
+    if (empty($password)) {
+        $passwordMsg = "Please enter your password <br>";
+    }
+
+    if (!empty($password) && $password !== "") {
+        $passwordMsg = "Invalid password <br>";
+    }
+
+    if ($emailMsg === "" && $passwordMsg === "") {
+        $_SESSION['email'] = $email;
+        $_SESSION['password'] = $password;
+        header('Location: ../home.php');
+        exit();
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,7 +40,6 @@
 
   <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
     <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Welcome to Resort Booking</h2>
-
 
     <a href="../google-login.php" class="block w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 mb-4 flex items-center justify-center gap-2">
       <svg class="w-5 h-5" viewBox="0 0 48 48">
@@ -25,17 +54,21 @@
       <div class="flex-grow h-px bg-gray-300"></div>
     </div>
 
-
-    <form method="POST" action="/Proj/PHP/login/back/login.php">
+    <form method="POST" action="">
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700">Email</label>
-        <input type="email" name="email" required class="w-full mt-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-200" placeholder="you@example.com">
+        <input type="email" name="email" value="<?= htmlspecialchars($email) ?>"
+          class="w-full mt-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-200" 
+          placeholder="you@example.com">
+        <span style="color: red"><?= $emailMsg ?></span>
       </div>
 
-      
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700">Password</label>
-        <input type="password" name="password" required class="w-full mt-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-200" placeholder="********">
+        <input type="password" name="password"
+          class="w-full mt-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-200" 
+          placeholder="********">
+        <span style="color: red"><?= $passwordMsg ?></span>
       </div>
 
       <button type="submit" class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition">Login</button>
