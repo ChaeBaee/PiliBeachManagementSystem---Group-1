@@ -10,25 +10,29 @@ $currentPage = basename($_SERVER['PHP_SELF']); // gets the current file name, li
     </div>
     <nav class="mt-6 px-4 space-y-2">
         <a href="index.php" class="block px-3 py-2 rounded-lg hover:bg-blue-50 font-medium
-   <?= $currentPage == 'index.php' ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-700' ?>">
+        <?= $currentPage == 'index.php' ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-700' ?>">
             Dashboard
         </a>
 
         <a href="bookings.php" class="block px-3 py-2 rounded-lg hover:bg-blue-50 font-medium
-   <?= $currentPage == 'bookings.php' ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-700' ?>">
+        <?= $currentPage == 'bookings.php' ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-700' ?>">
             Bookings
         </a>
 
         <a href="rooms.php" class="block px-3 py-2 rounded-lg hover:bg-blue-50 font-medium
-   <?= $currentPage == 'rooms.php' ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-700' ?>">
+        <?= $currentPage == 'rooms.php' ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-700' ?>">
             Rooms
         </a>
 
         <a href="users.php" class="block px-3 py-2 rounded-lg hover:bg-blue-50 font-medium
-   <?= $currentPage == 'users.php' ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-700' ?>">
+        <?= $currentPage == 'users.php' ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-700' ?>">
             Users
         </a>
 
+        <a href="access-logs.php" class="block px-3 py-2 rounded-lg hover:bg-blue-50 font-medium
+        <?= $currentPage == 'access-logs.php' ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-700' ?>">
+            Access Logs
+        </a>
     </nav>
 </aside>
 

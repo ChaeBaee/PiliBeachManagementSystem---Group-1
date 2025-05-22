@@ -20,13 +20,13 @@
             <div id="account-menu" class="hidden absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg z-50">
                 <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">Profile</a>
                 <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">Settings</a>
-                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">Logout</a>
+                <a href="/Proj/Admin/actions/logout.php" class="block px-4 py-2 text-sm hover:bg-gray-100">Logout</a>
             </div>
         </div>
     </div>
 </nav>
 
-<!-- JS for navbar only -->
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const accountBtn = document.getElementById('account-btn');
