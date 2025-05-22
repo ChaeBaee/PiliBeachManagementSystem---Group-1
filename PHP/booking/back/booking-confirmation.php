@@ -3,7 +3,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: /Proj/PHP/booking/front/3login.php");
+    header("Location: /Proj/PHP/login/front/login.php");
     exit();
 }
 

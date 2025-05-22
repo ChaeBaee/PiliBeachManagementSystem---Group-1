@@ -22,7 +22,7 @@
 <?php
 
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['booking'])) {
-    header("Location: /Proj/PHP/booking/front/2ndlogin.php");
+    header("Location: /Proj/PHP/login/front/login.php");
     echo "booking confirmation front end";
     exit();
 }
