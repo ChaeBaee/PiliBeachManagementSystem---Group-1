@@ -82,11 +82,11 @@ if (!isset($_SESSION['user_id'])) {
                 <div class="flex-1">
                     <label class="text-sm text-gray-700 block mb-1">Room Type (Optional)</label>
                     <select name="room_type" class="w-full bg-white border border-gray-300 rounded-full px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                        <option value="">Select a room type</option>
-                        <option value="single">Single Room</option>
-                        <option value="double">Double Room</option>
-                        <option value="suite">Suite</option>
-                        <option value="deluxe">Deluxe</option>
+                        <option value="">All Room Types</option>
+                        <option value="Single Room">Single Room</option>
+                        <option value="Standard Room">Standard Room</option>
+                        <option value="Double Room">Double Room</option>
+                        <option value="Deluxe Room">Deluxe Room</option>
                     </select>
                 </div>
 
