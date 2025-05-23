@@ -13,7 +13,6 @@
         <h1 class="text-3xl font-extrabold text-gray-900 mb-8 text-center">Add New Booking</h1>
         <form id="addBookingForm" class="space-y-6">
 
-            <!-- User Selection -->
             <div>
                 <label for="user_id" class="block text-sm font-medium text-gray-700 mb-2">User</label>
                 <select id="user_id" name="user_id" required
@@ -25,7 +24,6 @@
                 </select>
             </div>
 
-            <!-- Room Selection -->
             <div>
                 <label for="room_id" class="block text-sm font-medium text-gray-700 mb-2">Room</label>
                 <select id="room_id" name="room_id" required
@@ -36,14 +34,12 @@
                 </select>
             </div>
 
-            <!-- Check-in Date -->
             <div>
                 <label for="booking_check_in" class="block text-sm font-medium text-gray-700 mb-2">Check-in Date</label>
                 <input type="date" id="booking_check_in" name="booking_check_in" required
                     class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
             </div>
 
-            <!-- Check-out Date -->
             <div>
                 <label for="booking_check_out" class="block text-sm font-medium text-gray-700 mb-2">Check-out
                     Date</label>
@@ -51,7 +47,6 @@
                     class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
             </div>
 
-            <!-- Booking Status -->
             <div>
                 <label for="booking_status" class="block text-sm font-medium text-gray-700 mb-2">Booking Status</label>
                 <select id="booking_status" name="booking_status" required
@@ -63,7 +58,6 @@
                 </select>
             </div>
 
-            <!-- Submit Button -->
             <div class="pt-4">
                 <button type="submit"
                     class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md py-3 transition shadow-md">

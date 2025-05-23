@@ -1,13 +1,15 @@
 <?php
 session_start();
+require_once '../PHP/db.php'; // Add database connection
 
-$email = $password = "";
-$emailMsg = $passwordMsg = "";
-
-if (isset($_SESSION['user_id'])) {
+// Redirect if already logged in as admin
+if (isset($_SESSION['user_id']) && isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
     header("Location: index.php");
     exit;
 }
+
+$email = $password = "";
+$emailMsg = $passwordMsg = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST["user_email"] ?? "");
@@ -22,16 +24,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $passwordMsg = "Password is required";
     }
 
-    // If no errors, proceed
+    // If no validation errors, proceed with database check
     if ($emailMsg === "" && $passwordMsg === "") {
-        // Here you should check email/password with database for real login
-        // For demo, just save to session and redirect
+        try {
+            // Check if user exists and is an admin
+            $stmt = $conn->prepare("SELECT * FROM users WHERE user_email = :email AND user_role = 'Admin' LIMIT 1");
+            $stmt->bindParam(':email', $email);
+            $stmt->execute();
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $_SESSION["email"] = $email;
-        $_SESSION["password"] = $password;
+            // Verify password and set session if valid
+            if ($user && password_verify($password, $user['user_password'])) {
+                $_SESSION['user_id'] = $user['user_id'];
+                $_SESSION['user_name'] = $user['user_name'];
+                $_SESSION['user_role'] = $user['user_role'];
 
-        header("Location: index.php");
-        exit;
+                header("Location: index.php");
+                exit;
+            } else {
+                $emailMsg = "Invalid email or password";
+            }
+        } catch (PDOException $e) {
+            $emailMsg = "An error occurred. Please try again later.";
+            // For debugging: error_log($e->getMessage());
+        }
     }
 }
 ?>
@@ -61,53 +77,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body class="bg-gray-100 min-h-screen flex items-center justify-center px-4">
 
-<div class="bg-white p-8 rounded-2xl shadow-lg max-w-md w-full">
-    <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Welcome Back</h2>
+    <div class="bg-white p-8 rounded-2xl shadow-lg max-w-md w-full">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Welcome Back</h2>
 
-    <form action="" method="POST" class="space-y-5">
+        <form action="" method="POST" class="space-y-5">
 
-        <div>
-            <label for="user_email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input type="email" id="user_email" name="user_email" value="<?= htmlspecialchars($email) ?>"
-                   class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-primary focus:border-primary transition" />
-            <span class="text-red-600 text-sm"><?= $emailMsg ?></span>
-        </div>
-
-        <div>
-            <label for="user_password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <div class="relative">
-                <input type="password" id="user_password" name="user_password"
-                       class="w-full px-4 py-3 pr-10 border border-gray-300 rounded-md focus:ring-primary focus:border-primary transition" />
-                <button type="button" onclick="togglePassword('user_password', this)"
-                        class="absolute right-3 top-3 text-gray-500 hover:text-primary">
-                    👁️
-                </button>
-                <span class="text-red-600 text-sm"><?= $passwordMsg ?></span>
+            <div>
+                <label for="user_email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input type="email" id="user_email" name="user_email" value="<?= htmlspecialchars($email) ?>"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-primary focus:border-primary transition" />
+                <span class="text-red-600 text-sm"><?= $emailMsg ?></span>
             </div>
-        </div>
 
-        <div>
-            <button type="submit"
+            <div>
+                <label for="user_password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <div class="relative">
+                    <input type="password" id="user_password" name="user_password"
+                        class="w-full px-4 py-3 pr-10 border border-gray-300 rounded-md focus:ring-primary focus:border-primary transition" />
+                    <button type="button" onclick="togglePassword('user_password', this)"
+                        class="absolute right-3 top-3 text-gray-500 hover:text-primary">
+                        👁️
+                    </button>
+                    <span class="text-red-600 text-sm"><?= $passwordMsg ?></span>
+                </div>
+            </div>
+
+            <div>
+                <button type="submit"
                     class="w-full bg-primary hover:bg-blue-700 text-white font-semibold rounded-md py-3 transition shadow">
-                Log In
-            </button>
-        </div>
+                    Log In
+                </button>
+            </div>
 
-        <p class="text-center text-sm text-gray-600 mt-4">
-            Don't have an account?
-            <a href="sign-up.php" class="text-primary hover:underline font-medium">Sign up here</a>
-        </p>
-    </form>
-</div>
+            <p class="text-center text-sm text-gray-600 mt-4">
+                Don't have an account?
+                <a href="sign-up.php" class="text-primary hover:underline font-medium">Sign up here</a>
+            </p>
+        </form>
+    </div>
 
-<script>
-    function togglePassword(id, button) {
-        const passwordInput = document.getElementById(id);
-        const isPassword = passwordInput.type === "password";
-        passwordInput.type = isPassword ? "text" : "password";
-        button.textContent = isPassword ? '🙈' : '👁️';
-    }
-</script>
+    <script>
+        function togglePassword(id, button) {
+            const passwordInput = document.getElementById(id);
+            const isPassword = passwordInput.type === "password";
+            passwordInput.type = isPassword ? "text" : "password";
+            button.textContent = isPassword ? '🙈' : '👁️';
+        }
+    </script>
 
 </body>
 

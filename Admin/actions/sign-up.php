@@ -10,55 +10,68 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $confirm_password = $_POST['confirm_password'] ?? '';
     $user_phone = trim($_POST['user_phone'] ?? '');
 
-
+    // Validation checks
     if (!$user_name || !$user_email || !$user_password || !$confirm_password || !$user_phone) {
-        die("All fields are required.");
+        $_SESSION['signup_error'] = "All fields are required.";
+        header("Location: /Proj/Admin/sign-up.php");
+        exit;
     }
-
 
     if ($user_password !== $confirm_password) {
-        die("Passwords do not match.");
+        $_SESSION['signup_error'] = "Passwords do not match.";
+        header("Location: /Proj/Admin/sign-up.php");
+        exit;
     }
-
 
     if (!preg_match('/^(09|639)\d{9}$/', $user_phone)) {
-        die("Phone number must start with 09 or 639 and be 11 digits long.");
+        $_SESSION['signup_error'] = "Phone number must start with 09 or 639 and be 11 digits long.";
+        header("Location: /Proj/Admin/sign-up.php");
+        exit;
     }
-
 
     if (!filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
-        die("Invalid email format.");
+        $_SESSION['signup_error'] = "Invalid email format.";
+        header("Location: /Proj/Admin/sign-up.php");
+        exit;
     }
 
+    try {
+        // Check if email exists
+        $stmt = $conn->prepare("SELECT user_email FROM users WHERE user_email = ?");
+        $stmt->execute([$user_email]);
+        if ($stmt->rowCount() > 0) {
+            $_SESSION['signup_error'] = "Email is already registered.";
+            header("Location: /Proj/Admin/sign-up.php");
+            exit;
+        }
 
-    $stmt = $conn->prepare("SELECT user_email FROM users WHERE user_email = ?");
-    $stmt->execute([$user_email]);
-    if ($stmt->rowCount() > 0) {
-        die("Email is already registered.");
-    }
+        // Hash password and create admin user
+        $hashed_password = password_hash($user_password, PASSWORD_DEFAULT);
+        $user_role = 'Admin';
 
+        $stmt = $conn->prepare("INSERT INTO users (user_name, user_email, user_password, user_role, user_phone) VALUES (?, ?, ?, ?, ?)");
+        $success = $stmt->execute([$user_name, $user_email, $hashed_password, $user_role, $user_phone]);
 
-    $hashed_password = password_hash($user_password, PASSWORD_DEFAULT);
+        if ($success) {
+            $user_id = $conn->lastInsertId();
 
+            // Set session variables
+            $_SESSION['user_id'] = $user_id;
+            $_SESSION['user_name'] = $user_name;
+            $_SESSION['user_role'] = $user_role;
 
-    $user_role = 'Admin';
-
-
-    $stmt = $conn->prepare("INSERT INTO users (user_name, user_email, user_password, user_role, user_phone) VALUES (?, ?, ?, ?, ?)");
-    $success = $stmt->execute([$user_name, $user_email, $hashed_password, $user_role, $user_phone]);
-
-    if ($success) {
-        $user_id = $conn->lastInsertId();
-
-        $_SESSION['user_id'] = $user_id;
-        $_SESSION['user_name'] = $user_name;
-        $_SESSION['user_email'] = $user_email;
-        $_SESSION['user_role'] = $user_role;
-
-        header("Location: /Proj/Admin/index.php");
+            header("Location: /Proj/Admin/index.php");
+            exit();
+        } else {
+            $_SESSION['signup_error'] = "Failed to register user. Please try again.";
+            header("Location: /Proj/Admin/sign-up.php");
+            exit();
+        }
+    } catch (PDOException $e) {
+        $_SESSION['signup_error'] = "An error occurred. Please try again later.";
+        // For debugging: error_log($e->getMessage());
+        header("Location: /Proj/Admin/sign-up.php");
         exit();
-    } else {
-        die("Failed to register user.");
     }
 }
 ?>
