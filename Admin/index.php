@@ -1,9 +1,7 @@
 <?php
 session_start();
 
-// Check if user is not logged in or is not an admin
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'Admin') {
-  // Redirect to login page
   header("Location: login.php");
   exit;
 }
@@ -20,14 +18,13 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role']) || $_SESSION[
 
 <body class="bg-gray-100 font-sans">
 
-  <!-- Navbar -->
+
   <?php include 'navbar.php'; ?>
 
   <div class="flex flex-col md:flex-row">
-    <!-- Sidebar -->
+
     <?php include 'sidebar.php'; ?>
 
-    <!-- Main Content -->
     <div class="flex-1 p-4 md:p-6 pt-28 md:pt-24 md:ml-64 transition-all duration-300">
       <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Cards -->
@@ -44,7 +41,6 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role']) || $_SESSION[
           <p class="text-3xl mt-2 text-purple-600 font-bold">89</p>
         </div>
 
-        <!-- Table -->
         <div class="col-span-1 md:col-span-2 lg:col-span-3">
           <div class="bg-white rounded-xl shadow p-5 overflow-auto">
             <h3 class="text-lg font-semibold text-gray-700 mb-4">Recent Bookings</h3>

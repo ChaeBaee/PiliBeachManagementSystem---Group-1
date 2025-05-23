@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (isset($_FILES['room_image']) && $_FILES['room_image']['error'] === UPLOAD_ERR_OK) {
-            // Validate file type
+
             $allowed_types = ['image/jpeg', 'image/png', 'image/webp'];
             if (!in_array($_FILES['room_image']['type'], $allowed_types)) {
                 throw new Exception('Only JPG, PNG, and WEBP images are allowed.');

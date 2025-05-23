@@ -1,8 +1,7 @@
 <?php
 session_start();
-require_once '../PHP/db.php'; // Add database connection
+require_once '../PHP/db.php';
 
-// Redirect if already logged in as admin
 if (isset($_SESSION['user_id']) && isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
     header("Location: index.php");
     exit;
@@ -15,25 +14,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST["user_email"] ?? "");
     $password = trim($_POST["user_password"] ?? "");
 
-    // Manual validations
-    if ($email === "") {
-        $emailMsg = "Email is required";
+
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $emailMsg = "Please enter a valid email.";
     }
 
     if ($password === "") {
         $passwordMsg = "Password is required";
     }
 
-    // If no validation errors, proceed with database check
+
     if ($emailMsg === "" && $passwordMsg === "") {
         try {
-            // Check if user exists and is an admin
+
             $stmt = $conn->prepare("SELECT * FROM users WHERE user_email = :email AND user_role = 'Admin' LIMIT 1");
             $stmt->bindParam(':email', $email);
             $stmt->execute();
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // Verify password and set session if valid
+
             if ($user && password_verify($password, $user['user_password'])) {
                 $_SESSION['user_id'] = $user['user_id'];
                 $_SESSION['user_name'] = $user['user_name'];
@@ -46,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         } catch (PDOException $e) {
             $emailMsg = "An error occurred. Please try again later.";
-            // For debugging: error_log($e->getMessage());
+
         }
     }
 }

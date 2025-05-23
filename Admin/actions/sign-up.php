@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $confirm_password = $_POST['confirm_password'] ?? '';
     $user_phone = trim($_POST['user_phone'] ?? '');
 
-    // Validation checks
+
     if (!$user_name || !$user_email || !$user_password || !$confirm_password || !$user_phone) {
         $_SESSION['signup_error'] = "All fields are required.";
         header("Location: /Proj/Admin/sign-up.php");
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        // Check if email exists
+
         $stmt = $conn->prepare("SELECT user_email FROM users WHERE user_email = ?");
         $stmt->execute([$user_email]);
         if ($stmt->rowCount() > 0) {
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        // Hash password and create admin user
+
         $hashed_password = password_hash($user_password, PASSWORD_DEFAULT);
         $user_role = 'Admin';
 
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($success) {
             $user_id = $conn->lastInsertId();
 
-            // Set session variables
+
             $_SESSION['user_id'] = $user_id;
             $_SESSION['user_name'] = $user_name;
             $_SESSION['user_role'] = $user_role;
@@ -69,7 +69,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } catch (PDOException $e) {
         $_SESSION['signup_error'] = "An error occurred. Please try again later.";
-        // For debugging: error_log($e->getMessage());
         header("Location: /Proj/Admin/sign-up.php");
         exit();
     }

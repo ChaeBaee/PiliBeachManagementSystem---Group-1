@@ -1,31 +1,31 @@
 <?php
 session_start();
-require_once '../PHP/db.php'; // Add database connection
+require_once '../PHP/db.php';
 
-// Redirect if already logged in as admin
+
 if (isset($_SESSION['user_id']) && isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
     header("Location: index.php");
     exit;
 }
 
-// Initialize messages and input variables
+
 $emailMsg = $passwordMsg = $fullNameMsg = $contactNoMsg = $confirmPassword = "";
 $email = $password = $fullName = $contactNo = $confirmPasswordMsg = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Use the input names matching your form inputs
+
     $email = trim($_POST["user_email"] ?? "");
     $password = $_POST["user_password"] ?? "";
     $confirmPassword = $_POST["confirm_password"] ?? "";
     $fullName = trim($_POST["user_name"] ?? "");
     $contactNo = trim($_POST["user_phone"] ?? "");
 
-    // Validate email
+
     if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $emailMsg = "Please enter a valid email.";
     }
 
-    // Validate password and confirm password
+
     if (empty($password)) {
         $passwordMsg = "Password cannot be empty.";
     } else if (strlen($password) < 8) {
@@ -36,28 +36,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $confirmPasswordMsg = "Password do not match.";
     }
 
-    // Validate full name
+
     if (empty($fullName)) {
         $fullNameMsg = "Full name cannot be empty.";
     }
 
-    // Validate contact number with regex (same as client-side)
+
     if (empty($contactNo)) {
         $contactNoMsg = "Contact number cannot be empty.";
     } elseif (!preg_match("/^(09\d{9}|639\d{9})$/", $contactNo)) {
         $contactNoMsg = "Contact number must start with 09 or 639 and be 11 digits.";
     }
 
-    // If no errors, proceed with registration
+
     if ($emailMsg === "" && $passwordMsg === "" && $fullNameMsg === "" && $contactNoMsg === "" && $confirmPasswordMsg === "") {
         try {
-            // Check if email already exists
+
             $stmt = $conn->prepare("SELECT user_email FROM users WHERE user_email = ?");
             $stmt->execute([$email]);
             if ($stmt->rowCount() > 0) {
                 $emailMsg = "Email is already registered.";
             } else {
-                // Hash password and create admin user
+
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
                 $user_role = 'Admin';
 
@@ -67,7 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 if ($success) {
                     $user_id = $conn->lastInsertId();
 
-                    // Set session variables
+
                     $_SESSION['user_id'] = $user_id;
                     $_SESSION['user_name'] = $fullName;
                     $_SESSION['user_role'] = $user_role;
@@ -80,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         } catch (PDOException $e) {
             $emailMsg = "An error occurred. Please try again later.";
-            // For debugging: error_log($e->getMessage());
+
         }
     }
 }
