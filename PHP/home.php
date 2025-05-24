@@ -56,7 +56,7 @@ session_start();
         </div>
     </div>
     <div class="mt-6 text-center" data-aos="fade-up" data-aos-delay="400">
-        <a href="room/rooms.php" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow transition">
+        <a href="room/front/rooms.php" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow transition">
             View All Rooms
         </a>
     </div>

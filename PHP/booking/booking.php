@@ -1,75 +1,4 @@
-<?php
-session_start();
-require_once '../db.php'; // Your PDO connection
-
-$checkIn = $checkOut = $guest = $roomType = "";
-$checkInMsg = $checkOutMsg = $guestMsg = "";
-$today = date('Y-m-d');
-
-$available_rooms = [];
-$hasError = false;
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $checkIn = $_POST["checkin"] ?? "";
-    $checkOut = $_POST["checkout"] ?? "";
-    $guest  = $_POST["guests"] ?? "";
-    $roomType = $_POST["room_type"] ?? "";
-
-    // Validate input
-    if (empty($checkIn)) {
-        $checkInMsg = "Please enter check-in date.<br>";
-        $hasError = true;
-    } elseif ($checkIn < $today) {
-        $checkInMsg = "Check-in date cannot be in the past.<br>";
-        $hasError = true;
-    }
-
-    if (empty($checkOut)) {
-        $checkOutMsg = "Please enter check-out date.<br>";
-        $hasError = true;
-    } elseif ($checkOut < $today) {
-        $checkOutMsg = "Check-out date cannot be in the past.<br>";
-        $hasError = true;
-    }
-
-    if (empty($guest) || intval($guest) < 1) {
-        $guestMsg = "Guests must be at least 1.<br>";
-        $hasError = true;
-    }
-
-    if (!$hasError) {
-        // Save to session for later steps (e.g. booking confirmation)
-        $_SESSION['checkIn'] = $checkIn;
-        $_SESSION['checkOut'] = $checkOut;
-        $_SESSION['guest'] = $guest;
-
-        // Fetch available rooms from DB based on filters
-        try {
-            // Basic query with room_status available
-            $sql = "SELECT * FROM rooms WHERE room_status = 'available'";
-            $params = [];
-
-            // Filter by room_type if selected
-            if (!empty($roomType)) {
-                $sql .= " AND room_type = :room_type";
-                $params[':room_type'] = $roomType;
-            }
-
-            // Example: You can add guest capacity filtering if you have a guests column
-            // $sql .= " AND max_guests >= :guest";
-            // $params[':guest'] = intval($guest);
-
-            $stmt = $conn->prepare($sql);
-            $stmt->execute($params);
-            $available_rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        } catch (PDOException $e) {
-            echo "Database error: " . $e->getMessage();
-            exit();
-        }
-    }
-}
-?>
+<?php include 'back/room-data/room-data.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -163,7 +92,7 @@ if (!isset($_SESSION['user_id'])) {
                             </div>
                             <div class="flex items-center justify-end md:flex-col md:justify-between gap-2">
                                 <span class="text-sm text-green-600 font-medium"><?= htmlspecialchars($room['room_status']) ?></span>
-                                <form method="POST" action="../booking/bookRoom.php">
+                                <form method="POST" action="bookroom/front/bookRoom.php">
                                     <input type="hidden" name="room_id" value="<?= $room['room_id'] ?>">
                                     <input type="hidden" name="checkin" value="<?= htmlspecialchars($checkIn) ?>">
                                     <input type="hidden" name="checkout" value="<?= htmlspecialchars($checkOut) ?>">

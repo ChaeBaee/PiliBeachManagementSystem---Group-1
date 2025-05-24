@@ -1,33 +1,5 @@
 <?php
-session_start();
-
-// Redirect if booking data is missing
-if (!isset($_SESSION['booking']) || !isset($_SESSION['user_name']) || !isset($_SESSION['user_email'])) {
-    header("Location: /Proj/PHP/home.php");
-    exit();
-}
-
-$booking = $_SESSION['booking'];
-$user_name = $_SESSION['user_name'];
-$user_email = $_SESSION['user_email'];
-
-// Prepare variables safely with fallbacks
-$room_type = htmlspecialchars($booking['room_type'] ?? 'N/A');
-$guests = htmlspecialchars($booking['guests'] ?? 'N/A');
-$checkin = htmlspecialchars($booking['checkin'] ?? 'N/A');
-$checkout = htmlspecialchars($booking['checkout'] ?? 'N/A');
-$payment_method = htmlspecialchars($booking['payment_method'] ?? 'N/A');
-$total_amount = number_format(floatval($booking['total_amount'] ?? 0), 2);
-
-// Calculate number of nights (optional, for display)
-$checkin_date = new DateTime($checkin);
-$checkout_date = new DateTime($checkout);
-$interval = $checkin_date->diff($checkout_date);
-$nights = $interval->days > 0 ? $interval->days : 1; // At least 1 night
-
-// Invoice No & Date - you may want to generate these dynamically
-$invoice_no = "INV-" . date("YmdHis");
-$invoice_date = date("F j, Y");
+include '../Back/invoice.php';
 ?>
 
 <!DOCTYPE html>
@@ -40,7 +12,7 @@ $invoice_date = date("F j, Y");
 </head>
 <body class="bg-[#faebe1] min-h-screen flex flex-col">
 
-<?php include('elements/navbar.php'); ?>
+<?php include('../../elements/navbar.php'); ?>
 
 <main class="flex-grow flex items-center justify-center py-8 px-4 pt-24">
     <div class="bg-white shadow-xl rounded-2xl p-8 w-full max-w-2xl">
@@ -102,7 +74,7 @@ $invoice_date = date("F j, Y");
     </div>
 </main>
 
-<?php include('elements/footer.php'); ?>
+<?php include('../../elements/footer.php'); ?>
 
 </body>
 </html>
