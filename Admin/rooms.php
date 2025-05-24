@@ -151,7 +151,7 @@ $hasErrors = !empty($room_numberMsg) || !empty($room_typeMsg) || !empty($room_pr
         class="<?= $hasErrors ? '' : 'hidden' ?> fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
         <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
             <h3 id="modalTitle" class="text-xl font-bold mb-4"><?= $isEdit ? "Edit Room" : "Add Room" ?></h3>
-            <form id="roomForm" enctype="multipart/form-data" method="POST" action="">
+            <form id="roomForm" enctype="multipart/form-data" method="POST" action="actions/update_room.php">
                 <input type="hidden" id="room_id" name="room_id" value="<?= htmlspecialchars($room_id) ?>">
 
                 <div class="mb-4">
@@ -203,7 +203,7 @@ $hasErrors = !empty($room_numberMsg) || !empty($room_typeMsg) || !empty($room_pr
                 <div class="flex justify-end gap-3 mt-6">
                     <button type="button" onclick="closeModal()"
                         class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
-                    <button type="submit"
+                    <button type="submit" id="saveButton"
                         class="px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700">Save</button>
                 </div>
             </form>
@@ -215,6 +215,7 @@ $hasErrors = !empty($room_numberMsg) || !empty($room_typeMsg) || !empty($room_pr
         const title = document.getElementById("modalTitle");
         const form = document.getElementById("roomForm");
         const currentImage = document.getElementById("currentImage");
+        const saveButton = document.getElementById("saveButton");
 
         function openAddModal() {
             title.textContent = "Add Room";
@@ -260,6 +261,30 @@ $hasErrors = !empty($room_numberMsg) || !empty($room_typeMsg) || !empty($room_pr
                 window.location.href = `actions/delete_room.php?id=${roomId}`;
             }
         }
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            fetch('actions/update_room.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        window.location.reload();
+                    } else {
+                        alert(data.message || 'An error occurred');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while saving the room');
+                });
+        });
     </script>
 
 </body>

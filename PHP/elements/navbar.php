@@ -15,18 +15,22 @@
 <body>
   <nav class="bg-white p-4 fixed top-0 w-full z-10">
     <div class="container mx-auto flex justify-between items-center">
-      <a href="Proj/PHP/home.php" class="text-black text-lg font-bold">PILI</a>
+      <a href="/Proj/PiliBeachManagementSystem---Group-1/PHP/home.php" class="text-black text-lg font-bold">PILI</a>
       <ul class="hidden md:flex space-x-4 text-black" id="menu">
-        <li><a href="/Proj/PHP/home.php" class="hover:text-gray-300">Home</a></li>
-        <li><a href="/Proj/PHP/room/rooms.php" class="hover:text-gray-300">Rooms</a></li>
-        <li><a href="/Proj/PHP/booking/booking.php" class="hover:text-gray-300">Booking</a></li>
-        <li><a href="/Proj/PHP/feedback/front/feedback.php" class="hover:text-gray-300">Feedbacks</a></li>
-        <li><a href="/Proj/PHP/room/about.php" class="hover:text-gray-300">About Us</a></li>
+        <li><a href="/Proj/PiliBeachManagementSystem---Group-1/PHP/home.php" class="hover:text-gray-300">Home</a></li>
+        <li><a href="/Proj/PiliBeachManagementSystem---Group-1/PHP/room/rooms.php" class="hover:text-gray-300">Rooms</a>
+        </li>
+        <li><a href="/Proj/PiliBeachManagementSystem---Group-1/PHP/booking/booking.php"
+            class="hover:text-gray-300">Booking</a></li>
+        <li><a href="/Proj/PiliBeachManagementSystem---Group-1/PHP/feedback/front/feedback.php"
+            class="hover:text-gray-300">Feedbacks</a></li>
+        <li><a href="/Proj/PiliBeachManagementSystem---Group-1/PHP/room/about.php" class="hover:text-gray-300">About
+            Us</a></li>
       </ul>
       <div class="hidden md:flex items-center space-x-2">
         <?php if (isset($_SESSION['user_id'])): ?>
 
-          <a href="/Proj/PHP/profile/profile.php"
+          <a href="/Proj/PiliBeachManagementSystem---Group-1/PHP/profile/profile.php"
             class="flex items-center bg-[#7FFFD4] text-[#484848] px-3 py-2 rounded hover:bg-gray-100">
 
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
@@ -37,13 +41,14 @@
             Profile
           </a>
 
-          <a href="/Proj/PHP/logout.php" class="bg-[#ff7f7f] text-white px-3 py-2 rounded hover:bg-red-600">
+          <a href="/Proj/PiliBeachManagementSystem---Group-1/PHP/logout.php"
+            class="bg-[#ff7f7f] text-white px-3 py-2 rounded hover:bg-red-600">
             Logout
           </a>
         <?php else: ?>
-          <a href="/Proj/PHP/login/front/login.php"
+          <a href="/Proj/PiliBeachManagementSystem---Group-1/PHP/login/front/login.php"
             class="bg-[#7FFFD4] text-[#484848] px-4 py-2 rounded hover:bg-gray-100">Login</a>
-          <a href="/Proj/PHP/login/front/sign-up.php"
+          <a href="/Proj/PiliBeachManagementSystem---Group-1/PHP/login/front/sign-up.php"
             class="bg-[#7FFFD4] text-[#484848] px-4 py-2 rounded hover:bg-gray-100">Sign Up</a>
         <?php endif; ?>
       </div>

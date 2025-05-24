@@ -1,8 +1,8 @@
 <?php
-session_start();        
-session_unset();        
-session_destroy();       
+session_start();
+session_unset();
+session_destroy();
 
 
-header("Location: /Proj/PHP/home.php");
+header("Location: /Proj/PiliBeachManagementSystem---Group-1/PHP/home.php");
 exit();
