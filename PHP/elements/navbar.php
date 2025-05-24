@@ -1,5 +1,5 @@
 <?php
-session_start();
+//session_start();
 ?>
 
 <!DOCTYPE html>
@@ -13,10 +13,10 @@ session_start();
 </head>
 
 <body>
-  <nav class="bg-[#004D4D] p-4 fixed top-0 w-full z-10">
+  <nav class="bg-white p-4 fixed top-0 w-full z-10">
     <div class="container mx-auto flex justify-between items-center">
-      <a href="Proj/PHP/home.php" class="text-white text-lg font-bold">PILI</a>
-      <ul class="hidden md:flex space-x-4 text-white" id="menu">
+      <a href="Proj/PHP/home.php" class="text-black text-lg font-bold">PILI</a>
+      <ul class="hidden md:flex space-x-4 text-black" id="menu">
         <li><a href="/Proj/PHP/home.php" class="hover:text-gray-300">Home</a></li>
         <li><a href="/Proj/PHP/room/rooms.php" class="hover:text-gray-300">Rooms</a></li>
         <li><a href="/Proj/PHP/booking/booking.php" class="hover:text-gray-300">Booking</a></li>

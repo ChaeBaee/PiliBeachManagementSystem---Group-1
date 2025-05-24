@@ -1,18 +1,23 @@
 <?php
+session_start();
+require_once '../db.php'; // Your PDO connection
 
-$checkIn = $checkOut = $guest = "";
+$checkIn = $checkOut = $guest = $roomType = "";
 $checkInMsg = $checkOutMsg = $guestMsg = "";
-$today = date('Y-m-d'); // Get today's date
+$today = date('Y-m-d');
+
+$available_rooms = [];
+$hasError = false;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $checkIn = $_POST["checkin"] ?? "";
     $checkOut = $_POST["checkout"] ?? "";
     $guest  = $_POST["guests"] ?? "";
+    $roomType = $_POST["room_type"] ?? "";
 
-    $hasError = false;
-
+    // Validate input
     if (empty($checkIn)) {
-        $checkInMsg = "Please enter check-in date. <br>";
+        $checkInMsg = "Please enter check-in date.<br>";
         $hasError = true;
     } elseif ($checkIn < $today) {
         $checkInMsg = "Check-in date cannot be in the past.<br>";
@@ -20,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($checkOut)) {
-        $checkOutMsg = "Please enter check-out date <br>";
+        $checkOutMsg = "Please enter check-out date.<br>";
         $hasError = true;
     } elseif ($checkOut < $today) {
         $checkOutMsg = "Check-out date cannot be in the past.<br>";
@@ -28,16 +33,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($guest) || intval($guest) < 1) {
-        $guestMsg = "Guests must be at least 1 <br>";
+        $guestMsg = "Guests must be at least 1.<br>";
         $hasError = true;
     }
 
     if (!$hasError) {
+        // Save to session for later steps (e.g. booking confirmation)
         $_SESSION['checkIn'] = $checkIn;
         $_SESSION['checkOut'] = $checkOut;
         $_SESSION['guest'] = $guest;
 
-        include('back/room-data/room-data.php');
+        // Fetch available rooms from DB based on filters
+        try {
+            // Basic query with room_status available
+            $sql = "SELECT * FROM rooms WHERE room_status = 'available'";
+            $params = [];
+
+            // Filter by room_type if selected
+            if (!empty($roomType)) {
+                $sql .= " AND room_type = :room_type";
+                $params[':room_type'] = $roomType;
+            }
+
+            // Example: You can add guest capacity filtering if you have a guests column
+            // $sql .= " AND max_guests >= :guest";
+            // $params[':guest'] = intval($guest);
+
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($params);
+            $available_rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (PDOException $e) {
+            echo "Database error: " . $e->getMessage();
+            exit();
+        }
     }
 }
 ?>
@@ -46,9 +75,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Booking Page</title>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -82,11 +110,11 @@ if (!isset($_SESSION['user_id'])) {
                 <div class="flex-1">
                     <label class="text-sm text-gray-700 block mb-1">Room Type (Optional)</label>
                     <select name="room_type" class="w-full bg-white border border-gray-300 rounded-full px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                        <option value="">All Room Types</option>
-                        <option value="Single Room">Single Room</option>
-                        <option value="Standard Room">Standard Room</option>
-                        <option value="Double Room">Double Room</option>
-                        <option value="Deluxe Room">Deluxe Room</option>
+                        <option value="" <?= $roomType == "" ? "selected" : "" ?>>All Room Types</option>
+                        <option value="Single Room" <?= $roomType == "Single Room" ? "selected" : "" ?>>Single Room</option>
+                        <option value="Standard Room" <?= $roomType == "Standard Room" ? "selected" : "" ?>>Standard Room</option>
+                        <option value="Double Room" <?= $roomType == "Double Room" ? "selected" : "" ?>>Double Room</option>
+                        <option value="Deluxe Room" <?= $roomType == "Deluxe Room" ? "selected" : "" ?>>Deluxe Room</option>
                     </select>
                 </div>
 
@@ -121,22 +149,22 @@ if (!isset($_SESSION['user_id'])) {
                 </button>
             </form>
 
-            <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && !$hasError && isset($available_rooms)): ?>
+            <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && !$hasError && !empty($available_rooms)): ?>
                 <div class="space-y-6">
                     <h3 class="text-lg font-semibold text-gray-700">Available Rooms</h3>
 
                     <?php foreach ($available_rooms as $room): ?>
                         <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 flex flex-col md:flex-row gap-4">
-                            <img src="<?= $room['image'] ?>" alt="Room" class="w-full md:w-48 h-32 object-cover rounded-lg">
+                            <img src="<?= htmlspecialchars($room['room_image']) ?>" alt="Room" class="w-full md:w-48 h-32 object-cover rounded-lg">
                             <div class="flex-1">
-                                <h4 class="text-md font-semibold text-gray-800"><?= $room['type'] ?></h4>
-                                <p class="text-sm text-gray-600 mb-2"><?= $room['description'] ?></p>
-                                <p class="text-blue-600 font-semibold text-sm">$<?= $room['price'] ?> / night</p>
+                                <h4 class="text-md font-semibold text-gray-800"><?= htmlspecialchars($room['room_type']) ?></h4>
+                                <p class="text-sm text-gray-600 mb-2"><?= htmlspecialchars($room['room_description']) ?></p>
+                                <p class="text-blue-600 font-semibold text-sm">$<?= htmlspecialchars($room['room_price']) ?> / night</p>
                             </div>
                             <div class="flex items-center justify-end md:flex-col md:justify-between gap-2">
-                                <span class="text-sm text-green-600 font-medium"><?= $room['status'] ?></span>
-                                <form method="POST" action="back/booking-confirmation.php">
-                                    <input type="hidden" name="room_type" value="<?= $room['type'] ?>">
+                                <span class="text-sm text-green-600 font-medium"><?= htmlspecialchars($room['room_status']) ?></span>
+                                <form method="POST" action="../booking/bookRoom.php">
+                                    <input type="hidden" name="room_id" value="<?= $room['room_id'] ?>">
                                     <input type="hidden" name="checkin" value="<?= htmlspecialchars($checkIn) ?>">
                                     <input type="hidden" name="checkout" value="<?= htmlspecialchars($checkOut) ?>">
                                     <input type="hidden" name="guests" value="<?= htmlspecialchars($guest) ?>">
@@ -148,6 +176,8 @@ if (!isset($_SESSION['user_id'])) {
                         </div>
                     <?php endforeach; ?>
                 </div>
+            <?php elseif ($_SERVER["REQUEST_METHOD"] == "POST" && !$hasError): ?>
+                <p class="text-center text-gray-500">No rooms available matching your criteria.</p>
             <?php endif; ?>
         </div>
     </section>

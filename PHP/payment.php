@@ -1,9 +1,19 @@
 <?php
+session_start();
 include_once 'elements/navbar.php';
 
 $payment_method = $card_number = $expiry = $cvv = "";
 $card_numberMsg = $expiryMsg = $cvvMsg = $paymentMethodMsg = $gcashProofMsg = "";
 
+// Redirect if no user or booking info
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['booking'])) {
+    header("Location: /Proj/PHP/booking/front/2ndlogin.php");
+    exit();
+}
+
+$booking = $_SESSION['booking'];
+
+// Validate and process form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $payment_method = $_POST["payment_method"] ?? "";
 
@@ -25,26 +35,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $cvvMsg = "Please input CVV.";
             }
         } elseif ($payment_method === "gcash") {
-            // Validate image upload
             if (!isset($_FILES['gcash_proof']) || $_FILES['gcash_proof']['error'] === UPLOAD_ERR_NO_FILE) {
                 $gcashProofMsg = "Please upload proof of payment.";
             } else {
-                $allowedTypes = ['jpg','jpeg','png'];
+                $allowedTypes = ['jpg', 'jpeg', 'png'];
                 $fileName = $_FILES['gcash_proof']['name'];
                 $fileTmp = $_FILES['gcash_proof']['tmp_name'];
                 $fileSize = $_FILES['gcash_proof']['size'];
                 $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
                 if (!in_array($fileExt, $allowedTypes)) {
-                    $gcashProofMsg = "Only JPG, JPEG, PNG, GIF files allowed.";
-                } elseif ($fileSize > 5*1024*1024) {
+                    $gcashProofMsg = "Only JPG, JPEG, PNG files allowed.";
+                } elseif ($fileSize > 5 * 1024 * 1024) {
                     $gcashProofMsg = "File size must be less than 5MB.";
                 }
             }
         }
     }
 
-    // If no errors, process payment
+    // If no errors, process
     if (
         $paymentMethodMsg === "" &&
         $card_numberMsg === "" &&
@@ -53,7 +62,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $gcashProofMsg === ""
     ) {
         if ($payment_method === "gcash") {
-            // Save the uploaded image
             $uploadDir = "uploads/";
             if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
 
@@ -63,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (move_uploaded_file($_FILES['gcash_proof']['tmp_name'], $targetFile)) {
                 $_SESSION['booking']['gcash_proof'] = $targetFile;
             } else {
-                $gcashProofMsg = "Failed to upload image. Please try again.";
+                $gcashProofMsg = "Failed to upload image.";
             }
         }
 
@@ -71,19 +79,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['booking']['payment_method'] = $payment_method;
             $_SESSION['booking']['card_number'] = $card_number;
 
-            // Redirect to invoice or confirmation page
             header('Location: invoice.php');
             exit();
         }
     }
 }
 
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['booking'])) {
-    header("Location: /Proj/PHP/booking/front/2ndlogin.php");
-    exit();
-}
-
-$booking = $_SESSION['booking'];
+// Default to 0 if not set
+$total = $_SESSION['booking']['total_amount'] ?? 0.00;
 ?>
 
 <!DOCTYPE html>
@@ -117,9 +120,7 @@ $booking = $_SESSION['booking'];
                 <p class="text-sm text-gray-700">Check-in: <strong><?= htmlspecialchars($booking['checkin']) ?></strong></p>
                 <p class="text-sm text-gray-700">Check-out: <strong><?= htmlspecialchars($booking['checkout']) ?></strong></p>
                 <hr class="my-3">
-                <p class="text-sm">Subtotal: <span class="float-right">₱3,000</span></p>
-                <p class="text-sm">Service Fee: <span class="float-right">₱200</span></p>
-                <p class="text-sm font-bold">Total: <span class="float-right">₱3,200</span></p>
+                <p class="text-sm font-bold">Total: <span class="float-right">₱<?= number_format($total, 2) ?></span></p>
                 <p class="text-xs text-gray-500 mt-4">Need help? <a href="/contact.php" class="text-blue-600 underline">Contact support</a></p>
             </div>
 
@@ -178,7 +179,7 @@ $booking = $_SESSION['booking'];
                 </p>
 
                 <button type="submit" class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition">
-                    Pay ₱3,200
+                    Pay ₱<?= number_format($total, 2) ?>
                 </button>
             </form>
         </div>
@@ -205,7 +206,7 @@ $booking = $_SESSION['booking'];
         }
 
         methodSelect.addEventListener('change', toggleFields);
-        toggleFields(); // initial call
+        toggleFields();
     });
 </script>
 

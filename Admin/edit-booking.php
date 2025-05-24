@@ -27,7 +27,7 @@
     <div class="bg-white shadow-lg rounded-lg max-w-lg w-full p-8">
         <h1 class="text-3xl font-extrabold text-gray-900 mb-8 text-center">Edit Booking #0012</h1>
 
-        <form class="space-y-6" action="#" method="POST">
+        <form class="space-y-6" action="bookings.php" method="POST">
             <!-- User -->
             <div>
                 <label for="user_id" class="block text-sm font-medium text-gray-700 mb-2">User</label>
