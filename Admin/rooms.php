@@ -92,7 +92,8 @@ $hasErrors = !empty($room_numberMsg) || !empty($room_typeMsg) || !empty($room_pr
                 <table class="min-w-full text-sm text-left">
                     <thead class="text-gray-600 border-b bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3">Room Name</th>
+                            <th class="px-6 py-3">Room ID</th>
+                            <th class="px-6 py-3">Room Number</th>
                             <th class="px-6 py-3">Room Type</th>
                             <th class="px-6 py-3">Price</th>
                             <th class="px-6 py-3">Status</th>
@@ -124,6 +125,7 @@ $hasErrors = !empty($room_numberMsg) || !empty($room_typeMsg) || !empty($room_pr
                             }
 
                             echo "<tr class='border-b hover:bg-gray-50'>";
+                            echo "<td class='px-6 py-4'>{$room['room_id']}</td>";
                             echo "<td class='px-6 py-4'>{$room['room_number']}</td>";
                             echo "<td class='px-6 py-4'>{$room['room_type']}</td>";
                             echo "<td class='px-6 py-4'>₱" . number_format($room['room_price'], 2) . "</td>";
@@ -163,8 +165,18 @@ $hasErrors = !empty($room_numberMsg) || !empty($room_typeMsg) || !empty($room_pr
 
                 <div class="mb-4">
                     <label class="block mb-1 font-medium text-sm">Room Type</label>
-                    <input type="text" id="room_type" name="room_type" value="<?= htmlspecialchars($room_type) ?>"
+                    <select id="room_type" name="room_type"
                         class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-500">
+                        <option value="" disabled <?= empty($room_type) ? 'selected' : '' ?>>Select room type</option>
+                        <option value="Deluxe Room" <?= $room_type === 'Deluxe Room' ? 'selected' : '' ?>>Deluxe Room
+                        </option>
+                        <option value="Standard Room" <?= $room_type === 'Standard Room' ? 'selected' : '' ?>>Standard Room
+                        </option>
+                        <option value="Single Room" <?= $room_type === 'Single Room' ? 'selected' : '' ?>>Single Room
+                        </option>
+                        <option value="Double Room" <?= $room_type === 'Double Room' ? 'selected' : '' ?>>Double Room
+                        </option>
+                    </select>
                     <span class="text-red-600 text-sm"><?= $room_typeMsg ?></span>
                 </div>
 

@@ -1,10 +1,11 @@
 <?php
+session_start();
 require_once '../db.php';
 include('../elements/navbar.php');
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../login.php");
-    exit();
+  header("Location: ../login.php");
+  exit();
 }
 
 $user_id = $_SESSION['user_id'];
@@ -15,6 +16,7 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -23,6 +25,7 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 </head>
+
 <body class="bg-gray-100 pt-20 min-h-screen">
 
   <div class="max-w-5xl mx-auto py-12 px-6">
@@ -30,12 +33,13 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     <?php if (isset($_SESSION['message'])): ?>
       <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6 shadow">
-        <?= $_SESSION['message']; unset($_SESSION['message']); ?>
+        <?= $_SESSION['message'];
+        unset($_SESSION['message']); ?>
       </div>
     <?php endif; ?>
 
     <div class="grid md:grid-cols-2 gap-8">
-      
+
       <div class="bg-white rounded-lg shadow-lg p-6">
         <h2 class="text-2xl font-semibold text-gray-800 mb-4">Profile Information</h2>
         <form action="./back/update-profile.php" method="POST" class="space-y-4">
@@ -43,37 +47,43 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
           <div>
             <label class="block text-sm font-medium text-gray-700">Full Name</label>
-            <input type="text" name="user_name" value="<?= htmlspecialchars($user['user_name']); ?>" required class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500">
+            <input type="text" name="user_name" value="<?= htmlspecialchars($user['user_name']); ?>" required
+              class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500">
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700">Email</label>
-            <input type="email" name="user_email" value="<?= htmlspecialchars($user['user_email']); ?>" required class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500">
+            <input type="email" name="user_email" value="<?= htmlspecialchars($user['user_email']); ?>" required
+              class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500">
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700">Phone Number</label>
-            <input type="text" name="user_phone" value="<?= htmlspecialchars($user['user_phone']); ?>" required class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500">
+            <input type="text" name="user_phone" value="<?= htmlspecialchars($user['user_phone']); ?>" required
+              class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500">
           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-sm font-medium text-gray-700">Role</label>
-              <input type="text" value="<?= $user['user_role']; ?>" disabled class="w-full p-2 bg-gray-100 border border-gray-200 rounded-md text-gray-600">
+              <input type="text" value="<?= $user['user_role']; ?>" disabled
+                class="w-full p-2 bg-gray-100 border border-gray-200 rounded-md text-gray-600">
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700">Joined</label>
-              <input type="text" value="<?= $user['user_date_created']; ?>" disabled class="w-full p-2 bg-gray-100 border border-gray-200 rounded-md text-gray-600">
+              <input type="text" value="<?= $user['user_date_created']; ?>" disabled
+                class="w-full p-2 bg-gray-100 border border-gray-200 rounded-md text-gray-600">
             </div>
           </div>
 
-          <button type="submit" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition-all">
+          <button type="submit"
+            class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition-all">
             Save Changes
           </button>
         </form>
       </div>
 
- 
+
       <div class="bg-white rounded-lg shadow-lg p-6">
         <h2 class="text-2xl font-semibold text-gray-800 mb-4">Change Password</h2>
         <form action="./back/change-password.php" method="POST" class="space-y-4">
@@ -81,20 +91,24 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
           <div>
             <label class="block text-sm font-medium text-gray-700">Current Password</label>
-            <input type="password" name="current_password" required class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500">
+            <input type="password" name="current_password" required
+              class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500">
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700">New Password</label>
-            <input type="password" name="new_password" required class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500">
+            <input type="password" name="new_password" required
+              class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500">
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700">Confirm Password</label>
-            <input type="password" name="confirm_password" required class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500">
+            <input type="password" name="confirm_password" required
+              class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500">
           </div>
 
-          <button type="submit" class="w-full mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded transition-all">
+          <button type="submit"
+            class="w-full mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded transition-all">
             Update Password
           </button>
         </form>
@@ -104,4 +118,5 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
   <?php include('../elements/footer.php'); ?>
 </body>
+
 </html>

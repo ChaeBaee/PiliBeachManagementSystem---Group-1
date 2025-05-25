@@ -1,7 +1,11 @@
 <?php
+session_start();
 require_once '../PHP/db.php';
 
+$currentUserId = isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : 0;
+$conn->exec("SET @current_user_id = $currentUserId");
 header('Content-Type: application/json');
+
 
 function isAdminLimitReached($conn)
 {

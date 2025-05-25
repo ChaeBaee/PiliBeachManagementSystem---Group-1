@@ -27,14 +27,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt = $conn->prepare($sql);
         $stmt->execute([$name, $email, $password, $phone]);
 
-        
+
         $userId = $conn->lastInsertId();
         $_SESSION['user_id'] = $userId;
         $_SESSION['user_name'] = $name;
 
         echo "<script>
                 alert('Signup successful! Logged in as $name.');
-                window.location.href = '/Proj/PHP/home.php';
+                window.location.href = '/Proj/PiliBeachManagementSystem---Group-1/PHP/home.php';
               </script>";
     } catch (PDOException $e) {
         echo "<script>alert('Signup failed: " . $e->getMessage() . "');</script>";

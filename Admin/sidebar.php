@@ -24,14 +24,19 @@ $currentPage = basename($_SERVER['PHP_SELF']); // gets the current file name, li
             Rooms
         </a>
 
+        <a href="payments.php" class="block px-3 py-2 rounded-lg hover:bg-blue-50 font-medium
+        <?= $currentPage == 'payments.php' ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-700' ?>">
+            Payments
+        </a>
+
         <a href="users.php" class="block px-3 py-2 rounded-lg hover:bg-blue-50 font-medium
         <?= $currentPage == 'users.php' ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-700' ?>">
             Users
         </a>
 
-        <a href="access-logs.php" class="block px-3 py-2 rounded-lg hover:bg-blue-50 font-medium
-        <?= $currentPage == 'access-logs.php' ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-700' ?>">
-            Access Logs
+        <a href="activity-logs.php" class="block px-3 py-2 rounded-lg hover:bg-blue-50 font-medium
+        <?= $currentPage == 'activity-logs.php' ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-700' ?>">
+            Activity Logs
         </a>
     </nav>
 </aside>

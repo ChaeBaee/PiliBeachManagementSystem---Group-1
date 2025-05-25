@@ -14,5 +14,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['message'] = $result ? "Profile updated successfully." : "Failed to update profile.";
 }
 
-header("Location: profile/profile.php");
+header("Location: ../../profile/profile.php");
 exit();

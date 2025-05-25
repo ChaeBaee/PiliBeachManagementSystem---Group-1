@@ -1,6 +1,9 @@
 <?php
+session_start();
 require_once '../PHP/db.php';
 
+$currentUserId = isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : 0;
+$conn->exec("SET @current_user_id = $currentUserId");
 class BookingManager
 {
     private $conn;
@@ -42,20 +45,27 @@ class BookingManager
     }
 
 
-    public function getAvailableRooms($checkIn, $checkOut)
+    public function getAvailableRooms($checkIn, $checkOut, $currentBookingId = null)
     {
         try {
             $query = "SELECT r.* FROM rooms r 
                      WHERE r.room_status = 'available' 
-                     AND r.room_id NOT IN (
+                     AND (r.room_id NOT IN (
                          SELECT room_id FROM bookings 
                          WHERE (booking_check_in <= :check_out AND booking_check_out >= :check_in)
-                         AND booking_status != 'canceled'
+                         AND booking_status != 'Canceled'
+                         AND (:current_booking_id IS NULL OR booking_id != :current_booking_id)
                      )
+                     OR r.room_id IN (
+                         SELECT room_id FROM bookings 
+                         WHERE booking_id = :current_booking_id
+                     ))
                      ORDER BY r.room_number";
+
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':check_in', $checkIn);
             $stmt->bindParam(':check_out', $checkOut);
+            $stmt->bindParam(':current_booking_id', $currentBookingId);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -68,11 +78,20 @@ class BookingManager
     public function addBooking($userId, $roomId, $checkIn, $checkOut, $totalPrice)
     {
         try {
-
             if (!$userId || !$roomId || !$checkIn || !$checkOut || !$totalPrice) {
                 return ['success' => false, 'message' => 'All fields are required'];
             }
 
+            // Validate dates
+            if (strtotime($checkIn) >= strtotime($checkOut)) {
+                return ['success' => false, 'message' => 'Check-out date must be after check-in date'];
+            }
+
+            // Check if dates are in the past
+            $today = date('Y-m-d');
+            if (strtotime($checkIn) < strtotime($today)) {
+                return ['success' => false, 'message' => 'Check-in date cannot be in the past'];
+            }
 
             $query = "SELECT COUNT(*) as count FROM bookings 
                      WHERE room_id = :room_id 
@@ -93,7 +112,7 @@ class BookingManager
 
             $query = "INSERT INTO bookings (user_id, room_id, booking_check_in, booking_check_out, 
                      booking_total_price, booking_status) 
-                     VALUES (:user_id, :room_id, :check_in, :check_out, :total_price, 'pending')";
+                     VALUES (:user_id, :room_id, :check_in, :check_out, :total_price, 'Pending')";
 
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':user_id', $userId);
@@ -117,16 +136,25 @@ class BookingManager
     public function updateBooking($bookingId, $roomId, $checkIn, $checkOut, $totalPrice, $status)
     {
         try {
-
             if (!$bookingId || !$roomId || !$checkIn || !$checkOut || !$totalPrice || !$status) {
                 return ['success' => false, 'message' => 'All fields are required'];
             }
 
+            // Validate dates
+            if (strtotime($checkIn) >= strtotime($checkOut)) {
+                return ['success' => false, 'message' => 'Check-out date must be after check-in date'];
+            }
+
+            // Check if dates are in the past
+            $today = date('Y-m-d');
+            if (strtotime($checkIn) < strtotime($today)) {
+                return ['success' => false, 'message' => 'Check-in date cannot be in the past'];
+            }
 
             $query = "SELECT COUNT(*) as count FROM bookings 
                      WHERE room_id = :room_id 
                      AND booking_id != :booking_id
-                     AND booking_status != 'canceled'
+                     AND booking_status != 'Canceled'
                      AND ((booking_check_in <= :check_out AND booking_check_out >= :check_in))";
 
             $stmt = $this->conn->prepare($query);
@@ -179,7 +207,7 @@ class BookingManager
             $stmt->execute();
             $booking = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($booking && $booking['booking_status'] === 'confirmed') {
+            if ($booking && $booking['booking_status'] === 'Confirmed') {
                 return ['success' => false, 'message' => 'Cannot delete confirmed bookings'];
             }
 
@@ -197,7 +225,7 @@ class BookingManager
     public function getBookingDetails($bookingId)
     {
         try {
-            $query = "SELECT b.*, u.user_name, r.room_number, r.room_type 
+            $query = "SELECT b.*, u.user_name, r.room_number, r.room_type, r.room_price 
                      FROM bookings b 
                      JOIN users u ON b.user_id = u.user_id 
                      JOIN rooms r ON b.room_id = r.room_id 
@@ -232,7 +260,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         case 'get_available_rooms':
             $checkIn = $_POST['check_in'] ?? '';
             $checkOut = $_POST['check_out'] ?? '';
-            $rooms = $bookingManager->getAvailableRooms($checkIn, $checkOut);
+            $currentBookingId = $_POST['current_booking_id'] ?? null;
+            $rooms = $bookingManager->getAvailableRooms($checkIn, $checkOut, $currentBookingId);
             echo json_encode(['success' => true, 'data' => $rooms]);
             break;
 
