@@ -29,6 +29,11 @@ $currentPage = basename($_SERVER['PHP_SELF']); // gets the current file name, li
             Payments
         </a>
 
+        <a href="invoice.php" class="block px-3 py-2 rounded-lg hover:bg-blue-50 font-medium
+        <?= $currentPage == 'invoice.php' ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-700' ?>">
+            Invoices
+        </a>
+
         <a href="users.php" class="block px-3 py-2 rounded-lg hover:bg-blue-50 font-medium
         <?= $currentPage == 'users.php' ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-700' ?>">
             Users
