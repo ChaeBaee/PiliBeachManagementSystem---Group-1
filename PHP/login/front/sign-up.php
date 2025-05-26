@@ -1,6 +1,12 @@
 <?php
 session_start();
 
+if (isset($_SESSION['user_id']) && isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Guest') {
+  header("Location: ../../home.php");
+  exit;
+
+
+}
 $emailMsg = $passwordMsg = $fullNameMsg = $contactNoMsg = $termsMsg = "";
 $email = $password = $fullName = $contactNo = $confirmPassword = "";
 $termsAccepted = false;

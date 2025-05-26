@@ -3,6 +3,8 @@ session_start();
 
 include '../../db.php';
 
+$conn->exec("SET @current_user_id = 0");
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $name = $_POST['name'];
     $email = $_POST['email'];
@@ -31,6 +33,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $userId = $conn->lastInsertId();
         $_SESSION['user_id'] = $userId;
         $_SESSION['user_name'] = $name;
+        $_SESSION['user_role'] = 'Guest';
+
+        $currentUserId = isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : 0;
+        $conn->exec("SET @current_user_id = $currentUserId");
 
         echo "<script>
                 alert('Signup successful! Logged in as $name.');

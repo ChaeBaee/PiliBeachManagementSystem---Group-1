@@ -1,92 +1,9 @@
 <?php
 session_start();
-require_once '../PHP/db.php';
-
 
 if (isset($_SESSION['user_id']) && isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
     header("Location: index.php");
     exit;
-}
-
-
-$conn->exec("SET @current_user_id = 0");
-
-$emailMsg = $passwordMsg = $fullNameMsg = $contactNoMsg = $confirmPassword = "";
-$email = $password = $fullName = $contactNo = $confirmPasswordMsg = "";
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-    $email = trim($_POST["user_email"] ?? "");
-    $password = $_POST["user_password"] ?? "";
-    $confirmPassword = $_POST["confirm_password"] ?? "";
-    $fullName = trim($_POST["user_name"] ?? "");
-    $contactNo = trim($_POST["user_phone"] ?? "");
-
-
-    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $emailMsg = "Please enter a valid email.";
-    }
-
-
-    if (empty($password)) {
-        $passwordMsg = "Password cannot be empty.";
-    } else if (strlen($password) < 8) {
-        $passwordMsg = "Password must be at least 8 characters.";
-    }
-
-    if ($password != $confirmPassword) {
-        $confirmPasswordMsg = "Password do not match.";
-    }
-
-
-    if (empty($fullName)) {
-        $fullNameMsg = "Full name cannot be empty.";
-    }
-
-
-    if (empty($contactNo)) {
-        $contactNoMsg = "Contact number cannot be empty.";
-    } elseif (!preg_match("/^(09\d{9}|639\d{9})$/", $contactNo)) {
-        $contactNoMsg = "Contact number must start with 09 or 639 and be 11 digits.";
-    }
-
-
-    if ($emailMsg === "" && $passwordMsg === "" && $fullNameMsg === "" && $contactNoMsg === "" && $confirmPasswordMsg === "") {
-        try {
-
-            $stmt = $conn->prepare("SELECT user_email FROM users WHERE user_email = ?");
-            $stmt->execute([$email]);
-            if ($stmt->rowCount() > 0) {
-                $emailMsg = "Email is already registered.";
-            } else {
-
-                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                $user_role = 'Admin';
-
-                $stmt = $conn->prepare("INSERT INTO users (user_name, user_email, user_password, user_role, user_phone) VALUES (?, ?, ?, ?, ?)");
-                $success = $stmt->execute([$fullName, $email, $hashed_password, $user_role, $contactNo]);
-
-                if ($success) {
-                    $user_id = $conn->lastInsertId();
-
-
-                    $_SESSION['user_id'] = $user_id;
-                    $_SESSION['user_name'] = $fullName;
-                    $_SESSION['user_role'] = $user_role;
-
-                    $currentUserId = isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : 0;
-                    $conn->exec("SET @current_user_id = $currentUserId");
-                    header("Location: index.php");
-                    exit();
-                } else {
-                    $emailMsg = "Registration failed. Please try again.";
-                }
-            }
-        } catch (PDOException $e) {
-            $emailMsg = "An error occurred. Please try again later.";
-
-        }
-    }
 }
 ?>
 
@@ -114,32 +31,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
-
     <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-8 space-y-6">
         <h2 class="text-2xl font-bold text-center text-primary">Create an Account</h2>
 
-        <form action="" method="POST" class="space-y-4" id="signupForm">
-
+        <form id="signupForm" class="space-y-4">
             <div>
                 <label for="user_name" class="block text-sm font-medium text-gray-700">Full Name</label>
-                <input type="text" id="user_name" name="user_name" value="<?= htmlspecialchars($fullName) ?>"
+                <input type="text" id="user_name" name="user_name"
                     class="mt-1 w-full border border-gray-300 rounded-lg shadow-sm px-4 py-2 focus:ring-primary focus:border-primary" />
-                <span class="text-red-600 text-sm"><?= $fullNameMsg ?></span>
+                <span id="fullNameMsg" class="text-red-600 text-sm"></span>
             </div>
 
             <div>
                 <label for="user_email" class="block text-sm font-medium text-gray-700">Email Address</label>
-                <input type="email" id="user_email" name="user_email" value="<?= htmlspecialchars($email) ?>"
+                <input type="email" id="user_email" name="user_email"
                     class="mt-1 w-full border border-gray-300 rounded-lg shadow-sm px-4 py-2 focus:ring-primary focus:border-primary" />
-                <span class="text-red-600 text-sm"><?= $emailMsg ?></span>
+                <span id="emailMsg" class="text-red-600 text-sm"></span>
             </div>
 
             <div>
                 <label for="user_phone" class="block text-sm font-medium text-gray-700">Contact Number</label>
-                <input type="text" id="user_phone" name="user_phone" value="<?= htmlspecialchars($contactNo) ?>"
-                    pattern="^(09\d{9}|639\d{9})$" title="Must start with 09 or 639 and be 11 digits total"
+                <input type="text" id="user_phone" name="user_phone" pattern="^(09\d{9}|639\d{9})$"
+                    title="Must start with 09 or 639 and be 11 digits total"
                     class="mt-1 w-full border border-gray-300 rounded-lg shadow-sm px-4 py-2 focus:ring-primary focus:border-primary" />
-                <span class="text-red-600 text-sm"><?= $contactNoMsg ?></span>
+                <span id="contactNoMsg" class="text-red-600 text-sm"></span>
             </div>
 
             <div>
@@ -150,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <button type="button" onclick="togglePassword('user_password', this)"
                         class="absolute inset-y-0 right-0 px-3 text-gray-500 hover:text-primary focus:outline-none">👁️</button>
                 </div>
-                <span class="text-red-600 text-sm"><?= $passwordMsg ?></span>
+                <span id="passwordMsg" class="text-red-600 text-sm"></span>
             </div>
 
             <div>
@@ -160,8 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         class="mt-1 w-full border border-gray-300 rounded-lg shadow-sm px-4 py-2 pr-10 focus:ring-primary focus:border-primary" />
                     <button type="button" onclick="togglePassword('confirm_password', this)"
                         class="absolute inset-y-0 right-0 px-3 text-gray-500 hover:text-primary focus:outline-none">👁️</button>
-                    <span class="text-red-600 text-sm"><?= $confirmPasswordMsg ?></span>
-
+                    <span id="confirmPasswordMsg" class="text-red-600 text-sm"></span>
                 </div>
             </div>
 
@@ -186,8 +100,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             input.type = isPassword ? 'text' : 'password';
             button.textContent = isPassword ? '🙈' : '👁️';
         }
-    </script>
 
+        document.getElementById('signupForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            try {
+                const response = await fetch('signup_handler.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                // Clear previous error messages
+                document.querySelectorAll('.text-red-600').forEach(el => el.textContent = '');
+
+                if (data.success) {
+                    // If successful, redirect immediately
+                    window.location.href = data.redirect;
+                } else {
+                    // Display error messages if any
+                    if (data.emailMsg) document.getElementById('emailMsg').textContent = data.emailMsg;
+                    if (data.passwordMsg) document.getElementById('passwordMsg').textContent = data.passwordMsg;
+                    if (data.fullNameMsg) document.getElementById('fullNameMsg').textContent = data.fullNameMsg;
+                    if (data.contactNoMsg) document.getElementById('contactNoMsg').textContent = data.contactNoMsg;
+                    if (data.confirmPasswordMsg) document.getElementById('confirmPasswordMsg').textContent = data.confirmPasswordMsg;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    </script>
 </body>
 
 </html>
