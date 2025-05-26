@@ -2,7 +2,10 @@
 session_start();
 require_once '../PHP/db.php';
 
-
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
+    header("Location: login.php");
+    exit;
+}
 // Set current user ID for audit triggers
 $currentUserId = isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : 0;
 $conn->exec("SET @current_user_id = $currentUserId");

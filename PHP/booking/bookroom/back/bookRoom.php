@@ -36,7 +36,7 @@ $hasError = false;
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['checkin'], $_POST['checkout'], $_POST['guests'])) {
     $checkIn = $_POST["checkin"];
     $checkOut = $_POST["checkout"];
-    $guest  = $_POST["guests"];
+    $guest = $_POST["guests"];
 
     if (empty($checkIn)) {
         $checkInMsg = "Please enter check-in date.";
@@ -71,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['checkin'], $_POST['che
             'guests' => $guest
         ];
 
-        header("Location: /Proj/PHP/booking/front/booking-confirmation.php");
+        header("Location: /Proj/PiliBeachManagementSystem---Group-1/PHP/booking/front/booking-confirmation.php");
         exit();
     }
 }

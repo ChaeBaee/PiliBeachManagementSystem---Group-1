@@ -123,11 +123,48 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
         </div>
     </div>
 
+    <!-- Notification Modal -->
+    <div id="notificationModal"
+        class="hidden fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md transform transition-all">
+            <div class="flex items-center justify-between mb-6">
+                <h3 id="notificationTitle" class="text-2xl font-semibold text-gray-800 tracking-tight"></h3>
+                <button onclick="closeNotificationModal()"
+                    class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+            <p id="notificationMessage" class="text-gray-600 text-base leading-relaxed mb-8"></p>
+            <div class="flex justify-end">
+                <button onclick="closeNotificationModal()"
+                    class="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const userModal = document.getElementById("userModal");
         const userModalTitle = document.getElementById("userModalTitle");
         const passwordField = document.getElementById("passwordField");
         const userForm = document.getElementById("userForm");
+        const notificationModal = document.getElementById("notificationModal");
+        const notificationTitle = document.getElementById("notificationTitle");
+        const notificationMessage = document.getElementById("notificationMessage");
+
+        function showNotification(title, message) {
+            notificationTitle.textContent = title;
+            notificationMessage.textContent = message;
+            notificationModal.classList.remove("hidden");
+        }
+
+        function closeNotificationModal() {
+            notificationModal.classList.add("hidden");
+        }
 
         // Load users on page load
         document.addEventListener('DOMContentLoaded', loadUsers);
@@ -158,7 +195,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
                         `;
                     });
                 })
-                .catch(error => console.error('Error loading users:', error));
+                .catch(error => {
+                    console.error('Error loading users:', error);
+                    showNotification('Error', 'Failed to load users. Please try again.');
+                });
         }
 
         function openUserModal(isEdit = false, userData = null) {
@@ -166,11 +206,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             document.getElementById('isEdit').value = isEdit;
             document.getElementById('formAction').value = isEdit ? 'edit' : 'add';
 
-
             passwordField.style.display = isEdit ? 'none' : 'block';
             document.getElementById('confirmPasswordField').style.display = isEdit ? 'none' : 'block';
             dateCreatedField.style.display = isEdit ? 'block' : 'none';
-
 
             document.getElementById('userEmail').disabled = isEdit;
             document.getElementById('userRole').disabled = isEdit;
@@ -183,7 +221,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
                 document.getElementById('userRole').value = userData.user_role;
                 document.getElementById('userDateCreated').value = userData.user_date_created;
             } else {
-
                 userForm.reset();
                 document.getElementById('userDateCreated').value = '';
             }
@@ -201,17 +238,15 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             const formData = new FormData(userForm);
             const isEdit = formData.get('isEdit') === 'true';
 
-
             if (!isEdit) {
                 const password = formData.get('userPassword');
                 const confirmPassword = formData.get('confirmPassword');
 
                 if (password !== confirmPassword) {
-                    alert('Passwords do not match!');
+                    showNotification('Error', 'Passwords do not match!');
                     return;
                 }
             }
-
 
             if (isEdit) {
                 formData.delete('userPassword');
@@ -227,45 +262,61 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
                     if (data.success) {
                         closeUserModal();
                         loadUsers();
-                        alert(data.message);
+                        showNotification('Success', data.message);
                     } else {
-                        alert(data.message);
+                        showNotification('Error', data.message);
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('An error occurred while processing your request.');
+                    showNotification('Error', 'An error occurred while processing your request.');
                 });
         }
 
         function confirmDelete(userId, userRole) {
-            if (userRole === 'Admin') {
-                alert('Admin users cannot be deleted.');
-                return;
-            }
+            const confirmModal = document.createElement('div');
+            confirmModal.className = 'fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50';
+            confirmModal.innerHTML = `
+                <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Confirm Delete</h3>
+                    <p class="text-gray-600 mb-6">Are you sure you want to delete this user?</p>
+                    <div class="flex justify-end gap-3">
+                        <button onclick="this.closest('.fixed').remove()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+                            Cancel
+                        </button>
+                        <button onclick="deleteUser(${userId}, this)" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(confirmModal);
+        }
 
-            if (confirm("Are you sure you want to delete this user?")) {
-                fetch('users_backend.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `action=delete&userId=${userId}`
+        function deleteUser(userId, button) {
+            const modal = button.closest('.fixed');
+            fetch('users_backend.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `action=delete&userId=${userId}`
+            })
+                .then(response => response.json())
+                .then(data => {
+                    modal.remove();
+                    if (data.success) {
+                        loadUsers();
+                        showNotification('Success', data.message);
+                    } else {
+                        showNotification('Error', data.message);
+                    }
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            loadUsers();
-                            alert(data.message);
-                        } else {
-                            alert(data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('An error occurred while deleting the user.');
-                    });
-            }
+                .catch(error => {
+                    console.error('Error:', error);
+                    modal.remove();
+                    showNotification('Error', 'An error occurred while deleting the user.');
+                });
         }
     </script>
 

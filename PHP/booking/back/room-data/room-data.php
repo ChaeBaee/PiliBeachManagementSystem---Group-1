@@ -11,7 +11,7 @@ $available_rooms = [];
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $checkIn = $_POST["checkin"] ?? "";
     $checkOut = $_POST["checkout"] ?? "";
-    $guest  = $_POST["guests"] ?? "";
+    $guest = $_POST["guests"] ?? "";
     $roomType = $_POST["room_type"] ?? "";
 
     // Validation
@@ -80,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     'room_description' => $row['room_description'] ?? 'No description provided.',
                     'room_price' => $row['room_price'],
                     'room_status' => ucfirst($row['room_status']),
-                    'room_image' => $row['room_image'] ? '/Proj/PHP/assets/' . $row['room_image'] : 'https://via.placeholder.com/150'
+                    'room_image' => $row['room_image'] ? '/Proj/PiliBeachManagementSystem---Group-1/PHP/assets/' . $row['room_image'] : 'https://via.placeholder.com/150'
                 ];
             }
 

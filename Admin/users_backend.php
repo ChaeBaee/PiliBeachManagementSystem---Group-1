@@ -111,14 +111,6 @@ switch ($action) {
                 throw new Exception('User ID is required');
             }
 
-            $stmt = $conn->prepare("SELECT user_role FROM users WHERE user_id = ?");
-            $stmt->execute([$_POST['userId']]);
-            $userRole = $stmt->fetchColumn();
-
-            if ($userRole === 'Admin') {
-                throw new Exception('Admin users cannot be deleted');
-            }
-
             $stmt = $conn->prepare("DELETE FROM users WHERE user_id = ?");
             $result = $stmt->execute([$_POST['userId']]);
 

@@ -7,7 +7,7 @@ $fullNameMsg = $checkInMsg = $checkOutMsg = $guestMsg = "";
 
 // Check login and booking data
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['booking_data'])) {
-    header("Location: /Proj/PHP/booking/front/2ndlogin.php");
+    header("Location: /Proj/PiliBeachManagementSystem---Group-1/PHP/booking/front/2ndlogin.php");
     exit();
 }
 

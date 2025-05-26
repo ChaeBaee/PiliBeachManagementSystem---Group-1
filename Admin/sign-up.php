@@ -9,6 +9,8 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_role']) && $_SESSION['u
 }
 
 
+$conn->exec("SET @current_user_id = 0");
+
 $emailMsg = $passwordMsg = $fullNameMsg = $contactNoMsg = $confirmPassword = "";
 $email = $password = $fullName = $contactNo = $confirmPasswordMsg = "";
 
@@ -72,6 +74,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $_SESSION['user_name'] = $fullName;
                     $_SESSION['user_role'] = $user_role;
 
+                    $currentUserId = isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : 0;
+                    $conn->exec("SET @current_user_id = $currentUserId");
                     header("Location: index.php");
                     exit();
                 } else {

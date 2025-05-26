@@ -9,14 +9,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $_SESSION['booking'] = [
         'room_type' => $_POST['room_type'],
-        'checkin'   => $_POST['checkin'],
-        'checkout'  => $_POST['checkout'],
-        'guests'    => $_POST['guests']
+        'checkin' => $_POST['checkin'],
+        'checkout' => $_POST['checkout'],
+        'guests' => $_POST['guests']
     ];
 
-    header("Location: /Proj/PHP/booking/front/booking-confirmation.php");
+    header("Location: /Proj/PiliBeachManagementSystem---Group-1/PHP/booking/front/booking-confirmation.php");
     exit();
 } else {
-    header("Location: /Proj/PHP/booking/front/edit-booking.php");
+    header("Location: /Proj/PiliBeachManagementSystem---Group-1/PHP/booking/front/edit-booking.php");
     exit();
 }
