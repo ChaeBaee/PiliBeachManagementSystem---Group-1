@@ -165,7 +165,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <?php foreach ($rooms as $room): ?>
                             <div class="room-card bg-white rounded-xl overflow-hidden shadow">
-                                <img src="assets/<?= htmlspecialchars($room['room_image']) ?>" alt=""
+                                <img src="../../assets/<?= htmlspecialchars($room['room_image']) ?>" alt=""
                                     class="w-full h-64 object-cover" />
                                 <div class="p-6">
                                     <h3 class="text-xl font-bold mb-3"><?= htmlspecialchars($room['room_type']) ?></h3>

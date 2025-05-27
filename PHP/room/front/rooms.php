@@ -235,7 +235,7 @@ if ($room_type || $price_range || $capacity) {
                                 <span class="text-sm text-gray-500 ml-1">/ night</span>
                             </div>
 
-                            <form action="/Proj/PHP/bookings.php" method="GET">
+                            <form action="/Proj/PHP/booking/front/bookings.php" method="GET">
                                 <input type="hidden" name="room_type" value="<?= htmlspecialchars($room['room_type']) ?>">
                                 <button type="submit"
                                     class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition duration-300">
