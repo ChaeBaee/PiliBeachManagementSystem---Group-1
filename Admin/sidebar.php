@@ -43,10 +43,44 @@ $currentPage = basename($_SERVER['PHP_SELF']); // gets the current file name, li
         <?= $currentPage == 'activity-logs.php' ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-700' ?>">
             Activity Logs
         </a>
+
+        <div class="border-t border-gray-200 my-2"></div>
+
+        <a href="#" onclick="confirmLogout()"
+            class="block px-3 py-2 rounded-lg hover:bg-red-50 font-medium text-red-600 hover:text-red-700">
+            Logout
+        </a>
     </nav>
 </aside>
 
 <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
+
+<!-- Logout Confirmation Modal -->
+<div id="logoutModal" class="hidden fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md transform transition-all">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-2xl font-semibold text-gray-800 tracking-tight">Confirm Logout</h3>
+            <button onclick="closeLogoutModal()"
+                class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+        </div>
+        <p class="text-gray-600 text-base leading-relaxed mb-8">Are you sure you want to logout?</p>
+        <div class="flex justify-end gap-3">
+            <button onclick="closeLogoutModal()"
+                class="px-6 py-2.5 bg-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                Cancel
+            </button>
+            <button onclick="proceedLogout()"
+                class="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                Logout
+            </button>
+        </div>
+    </div>
+</div>
 
 <!-- JS for sidebar only -->
 <script>
@@ -77,4 +111,17 @@ $currentPage = basename($_SERVER['PHP_SELF']); // gets the current file name, li
             });
         }
     });
+
+    // Logout Modal Functions
+    function confirmLogout() {
+        document.getElementById('logoutModal').classList.remove('hidden');
+    }
+
+    function closeLogoutModal() {
+        document.getElementById('logoutModal').classList.add('hidden');
+    }
+
+    function proceedLogout() {
+        window.location.href = 'actions/logout.php';
+    }
 </script>

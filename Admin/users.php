@@ -15,6 +15,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Manage Users</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 
 <body class="bg-gray-100 font-sans">
@@ -186,10 +187,14 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
                                 <td class="px-6 py-4">${user.user_role}</td>
                                 <td class="px-6 py-4">${user.user_date_created}</td>
                                 <td class="px-6 py-4">
-                                    <button class="text-blue-600 hover:underline mr-3"
-                                        onclick="openUserModal(true, ${JSON.stringify(user).replace(/"/g, '&quot;')})">Edit</button>
-                                    <button class="text-red-600 hover:underline" 
-                                        onclick="confirmDelete(${user.user_id}, '${user.user_role}')">Delete</button>
+                                    <button class="text-blue-600 hover:text-blue-800 mr-3"
+                                        onclick="openUserModal(true, ${JSON.stringify(user).replace(/"/g, '&quot;')})">
+                                        <i class="fas fa-edit text-lg"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-800" 
+                                        onclick="confirmDelete(${user.user_id}, '${user.user_role}')">
+                                        <i class="fas fa-trash text-lg"></i>
+                                    </button>
                                 </td>
                             </tr>
                         `;

@@ -71,6 +71,7 @@ $hasErrors = !empty($room_numberMsg) || !empty($room_typeMsg) || !empty($room_pr
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Manage Rooms</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 
 <body class="bg-gray-100 font-sans">
@@ -136,8 +137,12 @@ $hasErrors = !empty($room_numberMsg) || !empty($room_typeMsg) || !empty($room_pr
                                   </td>";
                             echo "<td class='px-6 py-4'><img src='{$image_path}' alt='Room {$room['room_number']}' class='w-16 h-16 object-cover rounded'></td>";
                             echo "<td class='px-6 py-4'>
-                                    <button class='text-blue-600 hover:underline mr-3' onclick='openEditModal({$room['room_id']})'>Edit</button>
-                                    <button class='text-red-600 hover:underline' onclick='confirmDelete({$room['room_id']})'>Delete</button>
+                                    <button class='text-blue-600 hover:text-blue-800 mr-3' onclick='openEditModal({$room['room_id']})'>
+                                        <i class='fas fa-edit text-lg'></i>
+                                    </button>
+                                    <button class='text-red-600 hover:text-red-800' onclick='confirmDelete({$room['room_id']})'>
+                                        <i class='fas fa-trash text-lg'></i>
+                                    </button>
                                   </td>";
                             echo "</tr>";
                         }

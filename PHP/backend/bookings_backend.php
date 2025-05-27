@@ -35,15 +35,26 @@ if (isset($_GET['check_in']) && isset($_GET['check_out'])) {
     } elseif ($check_in_date >= $check_out_date) {
         $error = "Check-out date must be after check-in date.";
     } else {
-        $query = "SELECT * FROM rooms WHERE room_status = 'available'";
+        $query = "SELECT r.* FROM rooms r 
+                 WHERE r.room_status IN ('available', 'Booked')
+                 AND NOT EXISTS (
+                     SELECT 1 FROM bookings b 
+                     WHERE b.room_id = r.room_id 
+                     AND b.booking_status != 'Canceled'
+                     AND (
+                         (b.booking_check_in <= :check_out AND b.booking_check_out >= :check_in)
+                     )
+                 )";
         if ($room_type) {
-            $query .= " AND room_type = :room_type";
+            $query .= " AND r.room_type = :room_type";
         }
         if ($guests) {
-            $query .= " AND room_capacity >= :guests";
+            $query .= " AND r.room_capacity >= :guests";
         }
 
         $stmt = $conn->prepare($query);
+        $stmt->bindParam(':check_in', $check_in);
+        $stmt->bindParam(':check_out', $check_out);
         if ($room_type) {
             $stmt->bindParam(':room_type', $room_type);
         }

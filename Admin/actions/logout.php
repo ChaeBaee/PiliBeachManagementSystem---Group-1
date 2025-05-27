@@ -4,5 +4,5 @@ session_unset();
 session_destroy();
 
 
-header("Location: /Proj/PiliBeachManagementSystem---Group-1/Admin/login.php");
+header("Location: /Proj/Admin/login.php");
 exit();

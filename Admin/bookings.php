@@ -16,6 +16,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bookings - Admin Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -490,9 +491,13 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
                                 </td>
                                 <td class="px-6 py-4 space-x-2">
                                     <button onclick="editBooking(${booking.booking_id})" 
-                                        class="text-primary hover:underline">Edit</button>
+                                        class="text-primary hover:text-blue-800">
+                                        <i class="fas fa-edit text-lg"></i>
+                                    </button>
                                     <button onclick="deleteBooking(${booking.booking_id})" 
-                                        class="text-danger hover:underline">Delete</button>
+                                        class="text-danger hover:text-red-800">
+                                        <i class="fas fa-trash text-lg"></i>
+                                    </button>
                                 </td>
                             </tr>
                         `;
@@ -503,7 +508,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
                 console.error('Error loading bookings:', error);
             }
         }
-
 
         function deleteBooking(bookingId) {
             currentBookingId = bookingId;

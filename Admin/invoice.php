@@ -12,7 +12,7 @@ $conn->exec("SET @current_user_id = $currentUserId");
 
 // Fetch all invoices with user and booking details
 $stmt = $conn->query("
-    SELECT i.*, u.user_name, b.booking_id, b.booking_total_price 
+    SELECT i.*, u.user_name, b.booking_id, b.booking_total_price, p.payment_status 
     FROM invoice i 
     JOIN payments p ON i.payment_id = p.payment_id 
     JOIN bookings b ON p.booking_id = b.booking_id 
@@ -67,6 +67,9 @@ $invoices = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                             Invoice ID</th>
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Payment ID</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Customer</th>
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -76,7 +79,10 @@ $invoices = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                             Amount</th>
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Status</th>
+                                            Payment Status</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Invoice Status</th>
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Date Created</th>
@@ -92,6 +98,9 @@ $invoices = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 <?php echo $invoice['invoice_id']; ?>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                <?php echo $invoice['payment_id']; ?>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                 <?php echo htmlspecialchars($invoice['user_name']); ?>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -99,6 +108,14 @@ $invoices = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                 ₱<?php echo number_format($invoice['invoice_total_amount'], 2); ?></td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                <?php echo $invoice['payment_status'] === 'paid' ? 'bg-green-100 text-green-800' :
+                                                    ($invoice['payment_status'] === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                        'bg-red-100 text-red-800'); ?>">
+                                                    <?php echo ucfirst($invoice['payment_status']); ?>
+                                                </span>
+                                            </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                                 <?php echo $invoice['invoice_status'] === 'paid' ? 'bg-green-100 text-green-800' :
@@ -150,6 +167,11 @@ $invoices = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 FROM bookings b 
                                 JOIN users u ON b.user_id = u.user_id 
                                 WHERE b.booking_status = 'Confirmed'
+                                AND b.booking_id NOT IN (
+                                    SELECT p.booking_id 
+                                    FROM payments p 
+                                    JOIN invoice i ON p.payment_id = i.payment_id
+                                )
                             ");
                             while ($booking = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                 echo "<option value='{$booking['booking_id']}'>Booking #{$booking['booking_id']} - {$booking['user_name']} (₱{$booking['booking_total_price']})</option>";

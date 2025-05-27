@@ -50,10 +50,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Set current user ID again before update
                     $conn->exec("SET @current_user_id = $currentUserId");
 
+                    // Start transaction
+                    $conn->beginTransaction();
+
+                    // Update payment status
                     $stmt = $conn->prepare("UPDATE payments SET payment_status = ? WHERE payment_id = ?");
                     $stmt->execute([$_POST['payment_status'], $_POST['payment_id']]);
+
+                    // If payment status is changed to paid, update corresponding invoice status
+                    if ($_POST['payment_status'] === 'paid') {
+                        $stmt = $conn->prepare("UPDATE invoice SET invoice_status = 'paid' WHERE payment_id = ?");
+                        $stmt->execute([$_POST['payment_id']]);
+                    }
+
+                    $conn->commit();
                     $_SESSION['success'] = "Payment updated successfully!";
                 } catch (PDOException $e) {
+                    $conn->rollBack();
                     $_SESSION['error'] = "Error updating payment: " . $e->getMessage();
                 }
                 break;
