@@ -30,7 +30,7 @@ session_start();
     <div style="min-height: 60px;" class="mb-4 px-6">
         <?php if (isset($_GET['success'])): ?>
             <div class="bg-green-200 text-green-800 p-4 rounded">
-                Thank you for your feedback!
+                Thank you for your feedback!!
             </div>
         <?php endif; ?>
     </div>

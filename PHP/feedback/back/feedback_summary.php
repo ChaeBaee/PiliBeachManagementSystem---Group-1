@@ -3,6 +3,7 @@ require_once '../../db.php';
 
 try {
 
+
     $stmt = $conn->query("SELECT COUNT(*) AS total_reviews, AVG(feedback_rating) AS avg_rating FROM feedback");
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 

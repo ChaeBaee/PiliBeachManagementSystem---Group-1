@@ -59,5 +59,5 @@ try {
     exit();
 
 } catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();
+    echo "Error:  " . $e->getMessage();
 }

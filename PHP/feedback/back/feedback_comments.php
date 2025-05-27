@@ -23,7 +23,7 @@ try {
 
     $counter = 0;
 
-    echo '<div style="max-height: 600px; overflow-y: auto; padding-right: 10px;">'; // container with scroll, adjust height as needed
+    echo '<div style="max-height: 600px; overflow-y: auto; padding-right: 10px;">';
 
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $commentText = trim($row['feedback_comments']);
