@@ -141,7 +141,7 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
                                 </p>
                             </div>
 
-                            <?php if ($booking['booking_status'] != 'Canceled'): ?>
+                            <?php if (!in_array($booking['booking_status'], ['Canceled', 'Checked-in', 'Checked-out'])): ?>
                                 <form action="./back/cancel-booking.php" method="POST">
                                     <input type="hidden" name="booking_id" value="<?= $booking['booking_id']; ?>">
                                     <button type="submit"
@@ -150,7 +150,9 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
                                     </button>
                                 </form>
                             <?php else: ?>
-                                <span class="text-red-400 font-semibold">Cancelled</span>
+                                <span class="text-gray-500 italic">
+        <?= $booking['booking_status'] === 'Canceled' ? 'Cancelled' : 'Cancellation unavailable'; ?>
+    </span>
                             <?php endif; ?>
                         </li>
                     <?php endforeach; ?>

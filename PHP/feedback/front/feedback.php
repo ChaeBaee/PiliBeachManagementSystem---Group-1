@@ -111,6 +111,17 @@ session_start();
                 </form>
             </section>
 
+            <div class="mb-4 flex justify-end">
+                <form method="GET" class="flex items-center gap-2">
+                    <label for="sort" class="text-sm text-gray-700">Sort by:</label>
+                    <select name="sort" id="sort" class="p-2 border rounded" onchange="this.form.submit()">
+                        <option value="date_desc" <?= ($_GET['sort'] ?? '') === 'date_desc' ? 'selected' : '' ?>>Newest</option>
+                        <option value="date_asc" <?= ($_GET['sort'] ?? '') === 'date_asc' ? 'selected' : '' ?>>Oldest</option>
+                        <option value="rating_desc" <?= ($_GET['sort'] ?? '') === 'rating_desc' ? 'selected' : '' ?>>Highest Rated</option>
+                        <option value="rating_asc" <?= ($_GET['sort'] ?? '') === 'rating_asc' ? 'selected' : '' ?>>Lowest Rated</option>
+                    </select>
+                </form>
+            </div>
             <section class="space-y-6">
                 <?php include '../back/feedback_comments.php'; ?>
             </section>
