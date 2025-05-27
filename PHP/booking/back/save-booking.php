@@ -14,9 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'guests' => $_POST['guests']
     ];
 
-    header("Location: /Proj/PiliBeachManagementSystem---Group-1/PHP/booking/front/booking-confirmation.php");
+    header("Location: ../../../PHP/booking/front/booking-confirmation.php");
     exit();
 } else {
-    header("Location: /Proj/PiliBeachManagementSystem---Group-1/PHP/booking/front/edit-booking.php");
+    header("Location: ../../../PHP/booking/front/edit-booking.php");
     exit();
 }

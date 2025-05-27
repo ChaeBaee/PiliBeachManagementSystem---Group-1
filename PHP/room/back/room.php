@@ -3,7 +3,7 @@ require_once '../../db.php';
 session_start();
 
 try {
-    $sql = "SELECT * FROM rooms WHERE room_status = 'available'";
+    $sql = "SELECT * FROM rooms";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);

@@ -1,5 +1,4 @@
 <?php include 'back/room-data/room-data.php'; ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,130 +9,147 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            background-color: #f3f8ff; /* Light bluish theme background */
         }
 
         main {
             flex: 1;
-            padding-top: 200px;
+            padding-top: 150px;
         }
     </style>
 </head>
 
-<body class="bg-gray-100">
+<body class="flex flex-col min-h-screen text-gray-800">
 
-    <?php include('../elements/navbar.php'); ?>
+<?php include('../elements/navbar.php'); ?>
 
-    <?php
-    if (!isset($_SESSION['user_id'])) {
-        header("Location: ../login/front/login.php");
-        exit();
-    }
-    ?>
+<?php
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../login/front/login.php");
+    exit();
+}
+?>
 
-    <main>
-        <section class="py-10 px-4">
-            <div class="max-w-5xl mx-auto">
-                <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-6">Room Options</h2>
+<main>
+    <section class="py-10 px-4">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Search Available Rooms</h2>
 
-                <form method="POST"
-                    class="bg-white rounded-full border border-gray-200 shadow-sm px-6 py-6 flex flex-col md:flex-row items-center gap-4 md:gap-6 mb-8">
-                    <div class="flex-1">
-                        <label class="text-sm text-gray-700 block mb-1">Room Type (Optional)</label>
-                        <select name="room_type"
+            <form method="POST"
+                  class="bg-white rounded-2xl border border-gray-200 shadow px-6 py-6 flex flex-col md:flex-row items-center gap-4 md:gap-6 mb-8">
+                <!-- Room Type -->
+                <div class="flex-1">
+                    <label class="text-sm text-gray-700 block mb-1">Room Type</label>
+                    <select name="room_type"
                             class="w-full bg-white border border-gray-300 rounded-full px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                            <option value="" <?= $roomType == "" ? "selected" : "" ?>>All Room Types</option>
-                            <option value="Single Room" <?= $roomType == "Single Room" ? "selected" : "" ?>>Single Room
-                            </option>
-                            <option value="Standard Room" <?= $roomType == "Standard Room" ? "selected" : "" ?>>Standard
-                                Room</option>
-                            <option value="Double Room" <?= $roomType == "Double Room" ? "selected" : "" ?>>Double Room
-                            </option>
-                            <option value="Deluxe Room" <?= $roomType == "Deluxe Room" ? "selected" : "" ?>>Deluxe Room
-                            </option>
-                        </select>
-                    </div>
+                        <option value="" <?= ($roomType ?? "") == "" ? "selected" : "" ?>>All Room Types</option>
+                        <option value="Single Room" <?= ($roomType ?? "") == "Single Room" ? "selected" : "" ?>>Single Room</option>
+                        <option value="Standard Room" <?= ($roomType ?? "") == "Standard Room" ? "selected" : "" ?>>Standard Room</option>
+                        <option value="Double Room" <?= ($roomType ?? "") == "Double Room" ? "selected" : "" ?>>Double Room</option>
+                        <option value="Deluxe Room" <?= ($roomType ?? "") == "Deluxe Room" ? "selected" : "" ?>>Deluxe Room</option>
+                    </select>
+                </div>
 
-                    <div class="hidden md:block h-10 w-px bg-gray-200"></div>
+                <!-- Divider -->
+                <div class="hidden md:block h-10 w-px bg-gray-200"></div>
 
-                    <div class="flex-1">
-                        <label class="text-sm text-gray-700 block mb-1">Check In</label>
-                        <input type="date" name="checkin" min="<?= $today ?>" value="<?= htmlspecialchars($checkIn) ?>"
-                            class="w-full bg-white border border-gray-300 rounded-full px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
-                        <span style="color: red"><?= $checkInMsg ?></span>
-                    </div>
+                <!-- Check-In -->
+                <div class="flex-1">
+                    <label class="text-sm text-gray-700 block mb-1">Check In</label>
+                    <input type="date" name="checkin" min="<?= $today ?? date('Y-m-d') ?>" value="<?= htmlspecialchars($checkIn ?? '') ?>"
+                           class="w-full bg-white border border-gray-300 rounded-full px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+                    <span class="text-red-500 text-xs"><?= $checkInMsg ?? '' ?></span>
+                </div>
 
-                    <div class="hidden md:block h-10 w-px bg-gray-200"></div>
+                <!-- Divider -->
+                <div class="hidden md:block h-10 w-px bg-gray-200"></div>
 
-                    <div class="flex-1">
-                        <label class="text-sm text-gray-700 block mb-1">Check Out</label>
-                        <input type="date" name="checkout" min="<?= $today ?>"
-                            value="<?= htmlspecialchars($checkOut) ?>"
-                            class="w-full bg-white border border-gray-300 rounded-full px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
-                        <span style="color: red"><?= $checkOutMsg ?></span>
-                    </div>
+                <!-- Check-Out -->
+                <div class="flex-1">
+                    <label class="text-sm text-gray-700 block mb-1">Check Out</label>
+                    <input type="date" name="checkout" min="<?= $today ?? date('Y-m-d') ?>" value="<?= htmlspecialchars($checkOut ?? '') ?>"
+                           class="w-full bg-white border border-gray-300 rounded-full px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+                    <span class="text-red-500 text-xs"><?= $checkOutMsg ?? '' ?></span>
+                </div>
 
-                    <div class="hidden md:block h-10 w-px bg-gray-200"></div>
+                <!-- Divider -->
+                <div class="hidden md:block h-10 w-px bg-gray-200"></div>
 
-                    <div class="flex-1">
-                        <label class="text-sm text-gray-700 block mb-1">Guests</label>
-                        <input type="number" name="guests" min="1" value="<?= htmlspecialchars($guest) ?>"
-                            placeholder="Add Guests"
-                            class="w-full bg-white border border-gray-300 rounded-full px-3 py-2 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-300" />
-                        <span style="color: red"><?= $guestMsg ?></span>
-                    </div>
+                <!-- Guests -->
+                <div class="flex-1">
+                    <label class="text-sm text-gray-700 block mb-1">Guests</label>
+                    <input type="number" name="guests" min="1" value="<?= htmlspecialchars($guest ?? '') ?>" placeholder="Add Guests"
+                           class="w-full bg-white border border-gray-300 rounded-full px-3 py-2 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+                    <span class="text-red-500 text-xs"><?= $guestMsg ?? '' ?></span>
+                </div>
 
-                    <button type="submit"
+                <!-- Submit -->
+                <button type="submit"
                         class="w-12 h-12 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white rounded-full transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                    </button>
-                </form>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </button>
+            </form>
 
-                <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && !$hasError && !empty($available_rooms)): ?>
-                    <div class="space-y-6">
-                        <h3 class="text-lg font-semibold text-gray-700">Available Rooms</h3>
+            <!-- Results -->
+            <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && !$hasError && !empty($available_rooms)): ?>
+                <div class="space-y-6">
+                    <h3 class="text-lg font-semibold text-gray-700">Available Rooms</h3>
 
-                        <?php foreach ($available_rooms as $room): ?>
-                            <div
-                                class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 flex flex-col md:flex-row gap-4">
-                                <img src="<?= htmlspecialchars($room['room_image']) ?>" alt="Room"
-                                    class="w-full md:w-48 h-32 object-cover rounded-lg">
-                                <div class="flex-1">
-                                    <h4 class="text-md font-semibold text-gray-800"><?= htmlspecialchars($room['room_type']) ?>
-                                    </h4>
+                    <?php foreach ($available_rooms as $room): ?>
+                        <?php
+                        $statusRaw = $room['room_status'];
+                        $status = strtolower(trim($statusRaw));
+                        $colorClass = match ($status) {
+                            'available' => 'text-green-600',
+                            'booked' => 'text-yellow-500',
+                            'maintenance' => 'text-red-500',
+                            default => 'text-gray-600'
+                        };
+                        ?>
+                        <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 flex flex-col md:flex-row gap-4">
+                            <img src="../assets/<?= htmlspecialchars('/' . $room['room_image']) ?>" alt="Room Image"
+                                 class="w-full md:w-48 h-32 object-cover rounded-lg" />
+
+                            <div class="flex-1 flex flex-col justify-between">
+                                <div>
+                                    <h4 class="text-md font-semibold text-gray-800"><?= htmlspecialchars($room['room_type']) ?></h4>
                                     <p class="text-sm text-gray-600 mb-2"><?= htmlspecialchars($room['room_description']) ?></p>
-                                    <p class="text-blue-600 font-semibold text-sm">$<?= htmlspecialchars($room['room_price']) ?>
-                                        / night</p>
+                                    <p class="text-blue-600 font-semibold text-sm mb-2">₱<?= htmlspecialchars($room['room_price']) ?> / night</p>
+                                    <p class="text-sm font-medium <?= $colorClass ?>">Status: <?= htmlspecialchars($statusRaw) ?></p>
                                 </div>
-                                <div class="flex items-center justify-end md:flex-col md:justify-between gap-2">
-                                    <span
-                                        class="text-sm text-green-600 font-medium"><?= htmlspecialchars($room['room_status']) ?></span>
-                                    <form method="POST" action="bookroom/front/bookRoom.php">
-                                        <input type="hidden" name="room_id" value="<?= $room['room_id'] ?>">
-                                        <input type="hidden" name="checkin" value="<?= htmlspecialchars($checkIn) ?>">
-                                        <input type="hidden" name="checkout" value="<?= htmlspecialchars($checkOut) ?>">
-                                        <input type="hidden" name="guests" value="<?= htmlspecialchars($guest) ?>">
-                                        <button type="submit"
-                                            class="bg-blue-500 text-white text-sm px-4 py-2 rounded-full hover:bg-blue-600">
-                                            Book Now
+
+                                <div class="mt-4">
+                                    <?php if ($status === 'available'): ?>
+                                        <form method="POST" action="bookroom/front/bookRoom.php">
+                                            <input type="hidden" name="room_id" value="<?= $room['room_id'] ?>">
+                                            <input type="hidden" name="checkin" value="<?= htmlspecialchars($checkIn ?? '') ?>">
+                                            <input type="hidden" name="checkout" value="<?= htmlspecialchars($checkOut ?? '') ?>">
+                                            <input type="hidden" name="guests" value="<?= htmlspecialchars($guest ?? '') ?>">
+                                            <button type="submit"
+                                                    class="bg-blue-500 text-white text-sm px-4 py-2 rounded-full hover:bg-blue-600 transition">
+                                                Book Now
+                                            </button>
+                                        </form>
+                                    <?php else: ?>
+                                        <button disabled
+                                                class="bg-gray-400 cursor-not-allowed text-white text-sm px-4 py-2 rounded-full">
+                                            Not Available
                                         </button>
-                                    </form>
+                                    <?php endif; ?>
                                 </div>
                             </div>
-                        <?php endforeach; ?>
-                    </div>
-                <?php elseif ($_SERVER["REQUEST_METHOD"] == "POST" && !$hasError): ?>
-                    <p class="text-center text-gray-500">No rooms available matching your criteria.</p>
-                <?php endif; ?>
-            </div>
-        </section>
-    </main>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php elseif ($_SERVER["REQUEST_METHOD"] == "POST" && !$hasError): ?>
+                <p class="text-center text-gray-500 mt-6">No rooms available matching your criteria.</p>
+            <?php endif; ?>
+        </div>
+    </section>
+</main>
 
-    <?php include('../elements/footer.php'); ?>
+<?php include('../elements/footer.php'); ?>
 </body>
-
 </html>

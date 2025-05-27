@@ -2,8 +2,10 @@
 session_start();
 
 if (isset($_SESSION['user_id']) && isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Guest') {
-  header("Location: ../../home.php");
-  exit;
+  header("Location: /Proj/PHP/home.php");
+//  header("Location: ../../home.php");
+
+    exit;
 }
 $emailMsg = $passwordMsg = "";
 $email = $password = "";
@@ -63,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <div class="flex-grow h-px bg-gray-300"></div>
     </div>
 
-    <form method="POST" action="/Proj/PiliBeachManagementSystem---Group-1/PHP/login/back/login.php">
+    <form method="POST" action="../../../PHP/login/back/login.php">
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700">Email</label>
         <input type="email" name="email" value="<?= htmlspecialchars($email) ?>"
@@ -86,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <p class="text-sm text-center text-gray-600 mt-4">
       Don’t have an account?
-      <a href="/Proj/PHP/login/front/sign-up.php" class="text-blue-600 hover:underline">Sign up</a>
+      <a href="../../../PHP/login/front/sign-up.php" class="text-blue-600 hover:underline">Sign up</a>
     </p>
   </div>
 

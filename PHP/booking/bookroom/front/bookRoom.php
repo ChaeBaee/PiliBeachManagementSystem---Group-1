@@ -1,75 +1,125 @@
 <?php
-include("../back/bookRoom.php");
+session_start();
+
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['booking_data'])) {
+    header("Location: ../../../PHP/login/front/login.php");
+    exit();
+}
+
+require_once '../../../db.php';
+
+$user_name = $_SESSION['user_name'] ?? 'N/A';
+$user_email = $_SESSION['user_email'] ?? 'N/A';
+$booking = $_SESSION['booking_data'];
+
+$room_price = 0;
+if (isset($booking['room_id'])) {
+    try {
+        $stmt = $conn->prepare("SELECT room_price FROM rooms WHERE room_id = ?");
+        $stmt->execute([$booking['room_id']]);
+        $room = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($room) {
+            $room_price = (float) $room['room_price'];
+        }
+    } catch (PDOException $e) {
+        $room_price = 0;
+    }
+}
+
+$checkin_date = new DateTime($booking['checkin']);
+$checkout_date = new DateTime($booking['checkout']);
+$interval = $checkin_date->diff($checkout_date);
+$days = $interval->days;
+
+$total_price = $days * $room_price;
+
+$_SESSION['booking'] = $booking;
+$_SESSION['booking']['total_amount'] = $total_price;
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
-    <title>Booking - <?= htmlspecialchars($room['room_type']) ?></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking Confirmation</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #f3f8ff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1;
+            padding-top: 150px;
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
+
+<body class="text-gray-800">
 <?php include('../../../elements/navbar.php'); ?>
 
-<div class="max-w-3xl mx-auto p-8">
-    <h1 class="text-3xl font-bold mb-4">Book Room: <?= htmlspecialchars($room['room_type']) ?></h1>
+<main class="px-4 pb-12">
+    <div class="max-w-2xl mx-auto bg-white p-8 rounded-3xl shadow-xl opacity-95">
+        <h2 class="text-2xl md:text-3xl font-bold text-center mb-8">Review & Confirm Your Booking</h2>
 
-    <img src="../assets/<?= htmlspecialchars($room['room_image']) ?>" alt="Room Image" class="w-full h-48 object-cover rounded mb-6" />
+        <div class="space-y-4 text-base">
+            <div class="flex justify-between border-b pb-2">
+                <span class="font-semibold">Full Name:</span>
+                <span><?= htmlspecialchars($user_name) ?></span>
+            </div>
+            <div class="flex justify-between border-b pb-2">
+                <span class="font-semibold">Email:</span>
+                <span><?= htmlspecialchars($user_email) ?></span>
+            </div>
+            <div class="flex justify-between border-b pb-2">
+                <span class="font-semibold">Room Type:</span>
+                <span><?= htmlspecialchars($booking['room_type'] ?? 'N/A') ?></span>
+            </div>
+            <div class="flex justify-between border-b pb-2">
+                <span class="font-semibold">Check-in:</span>
+                <span><?= htmlspecialchars($booking['checkin']) ?></span>
+            </div>
+            <div class="flex justify-between border-b pb-2">
+                <span class="font-semibold">Check-out:</span>
+                <span><?= htmlspecialchars($booking['checkout']) ?></span>
+            </div>
+            <div class="flex justify-between border-b pb-2">
+                <span class="font-semibold">Guests:</span>
+                <span><?= htmlspecialchars($booking['guests']) ?> Guest(s)</span>
+            </div>
+            <div class="flex justify-between border-b pb-2">
+                <span class="font-semibold">Number of Nights:</span>
+                <span><?= $days ?> night(s)</span>
+            </div>
+            <div class="flex justify-between border-b pb-2">
+                <span class="font-semibold">Price per Night:</span>
+                <span>₱<?= number_format($room_price, 2) ?></span>
+            </div>
+            <div class="flex justify-between font-semibold text-lg border-t pt-3">
+                <span>Total Amount:</span>
+                <span>₱<?= number_format($total_price, 2) ?></span>
+            </div>
+        </div>
 
-    <p class="mb-4"><?= htmlspecialchars($room['room_description']) ?></p>
-    <p class="mb-6 font-semibold text-blue-600">$<?= htmlspecialchars($room['room_price']) ?> / night</p>
-
-    <form method="POST" action="" class="bg-white p-6 rounded shadow space-y-4">
-        <input type="hidden" name="room_id" value="<?= $room['room_id'] ?>" />
-
-        <label class="block">
-            <span class="text-gray-700">Check-in Date</span>
-            <input
-                type="date"
-                name="checkin"
-                min="<?= $today ?>"
-                value="<?= htmlspecialchars($checkIn) ?>"
-                required
-                class="w-full border rounded px-3 py-2"
-            />
-            <span class="text-red-600 text-sm"><?= $checkInMsg ?></span>
-        </label>
-
-        <label class="block">
-            <span class="text-gray-700">Check-out Date</span>
-            <input
-                type="date"
-                name="checkout"
-                min="<?= $today ?>"
-                value="<?= htmlspecialchars($checkOut) ?>"
-                required
-                class="w-full border rounded px-3 py-2"
-            />
-            <span class="text-red-600 text-sm"><?= $checkOutMsg ?></span>
-        </label>
-
-        <label class="block">
-            <span class="text-gray-700">Guests</span>
-            <input
-                type="number"
-                name="guests"
-                min="1"
-                max="<?= $room['room_capacity'] ?>"
-                value="<?= htmlspecialchars($guest ?: 1) ?>"
-                required
-                class="w-full border rounded px-3 py-2"
-            />
-            <small class="text-gray-500">Max guests: <?= $room['room_capacity'] ?></small>
-            <span class="text-red-600 text-sm"><?= $guestMsg ?></span>
-        </label>
-
-        <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded hover:bg-green-700">
-            Confirm Booking
-        </button>
-    </form>
-</div>
+        <div class="mt-8 flex flex-col md:flex-row gap-4">
+            <a href="../../../PHP/booking/front/edit-booking.php"
+               class="flex-1 text-center bg-gray-100 text-gray-800 py-3 rounded-full hover:bg-gray-200 transition">
+                Edit Details
+            </a>
+            <a href="../../../PHP/Payment/Front/payment.php"
+               class="flex-1 text-center bg-blue-500 text-white py-3 rounded-full hover:bg-blue-600 transition">
+                Confirm &amp; Pay
+            </a>
+        </div>
+    </div>
+</main>
 
 <?php include('../../../elements/footer.php'); ?>
 </body>
+
 </html>

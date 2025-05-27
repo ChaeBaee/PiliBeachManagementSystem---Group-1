@@ -11,12 +11,12 @@ include_once '../../elements/navbar.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-[#faebe1] min-h-screen flex flex-col">
+<body class="bg-[#f3f8ff] min-h-screen flex flex-col">
 
 <main class="flex-grow p-6 pt-28 min-h-screen overflow-y-auto">
     <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-2xl mx-auto relative">
 
-        <a href="/Proj/PHP/booking/front/booking-confirmation.php" class="absolute top-4 left-4 text-gray-600 hover:text-black text-sm flex items-center">
+        <a href="../../../PHP/booking/front/booking-confirmation.php" class="absolute top-4 left-4 text-gray-600 hover:text-black text-sm flex items-center">
             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
@@ -65,7 +65,7 @@ include_once '../../elements/navbar.php';
                     </div>
 
                     <div class="mt-3 text-center">
-                        <img src="../PHP/assets/qr.jpg" alt="GCash QR Code" class="mx-auto w-48 h-48 border rounded-lg shadow-md">
+                        <img src="../../../PHP/assets/qr.jpg" alt="GCash QR Code" class="mx-auto w-48 h-48 border rounded-lg shadow-md">
                         <p class="text-xs text-gray-500 mt-2">Scan to Pay with GCash</p>
                     </div>
 
@@ -92,7 +92,7 @@ include_once '../../elements/navbar.php';
                     🔒 All payments are secured with end-to-end encryption.
                 </p>
 
-                <button type="submit" class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition">
+                <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition">
                     Pay ₱<?= number_format($total, 2) ?>
                 </button>
             </form>

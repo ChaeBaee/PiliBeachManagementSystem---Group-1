@@ -3,9 +3,13 @@ require_once 'db.php';
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../login.php");
+    header("Location: login/front/login.php");
     exit();
 }
+//if (!isset($_SESSION['user_id'])) {
+//    header("Location: ../login.php");
+//    exit();
+//}
 
 if (!isset($_GET['payment_id'])) {
     header("Location: ../bookings.php");

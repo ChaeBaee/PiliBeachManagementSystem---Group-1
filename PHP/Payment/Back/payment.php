@@ -1,12 +1,12 @@
 <?php
 session_start();
-
+include_once '../../db.php';
 $payment_method = $card_number = $expiry = $cvv = "";
 $card_numberMsg = $expiryMsg = $cvvMsg = $paymentMethodMsg = $gcashProofMsg = "";
 
 // Redirect if no user or booking info
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['booking'])) {
-    header("Location: PHP/login/front/login.php");
+    header("Location: ../../../PHP/login/front/login.php");
     exit();
 }
 
@@ -79,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['booking']['payment_method'] = $payment_method;
             $_SESSION['booking']['card_number'] = $card_number;
 
-            header('Location: /Proj/PHP/Invoice/Front/invoice.php');
+            header('Location: ../../../PHP/Invoice/Front/invoice.php');
             exit();
         }
     }

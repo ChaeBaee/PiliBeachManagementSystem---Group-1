@@ -10,7 +10,7 @@ include '../Back/invoice.php';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-[#faebe1] min-h-screen flex flex-col">
+<body class="bg-[#f3f8ff] min-h-screen flex flex-col">
 
 <?php include('../../elements/navbar.php'); ?>
 
@@ -57,7 +57,12 @@ include '../Back/invoice.php';
             </div>-->
             <hr class="my-2">
             <div class="flex justify-between font-bold text-base">
-                <span>Total Paid</span>
+            <span>
+                <?php
+                $normalized_payment = strtolower(trim($payment_method));
+                echo in_array($normalized_payment, ['cod', 'cash on delivery', 'cash on arrival']) ? 'Amount to Pay' : 'Total Paid';
+                ?>
+            </span>
                 <span>₱<?= $total_amount ?></span>
             </div>
         </div>
@@ -68,7 +73,7 @@ include '../Back/invoice.php';
         </div>
 
         <div class="mt-6 flex justify-center gap-4">
-            <a href="/Proj/PHP/home.php" class="text-sm text-blue-600 hover:underline">Back to Home</a>
+            <a href="../../home.php" class="text-sm text-blue-600 hover:underline">Back to Home</a>
             <a href="#" onclick="window.print()" class="text-sm text-gray-700 hover:underline">Print Invoice</a>
         </div>
     </div>

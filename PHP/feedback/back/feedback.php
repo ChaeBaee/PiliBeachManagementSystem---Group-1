@@ -3,7 +3,7 @@ session_start();
 require_once '../../db.php';
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: /Proj/PHP/login/front/login.php?error=not_logged_in");
+    header("Location: /login/front/login.php");
     exit();
 }
 

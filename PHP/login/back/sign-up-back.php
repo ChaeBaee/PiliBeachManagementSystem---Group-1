@@ -40,7 +40,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         echo "<script>
                 alert('Signup successful! Logged in as $name.');
-                window.location.href = '/Proj/PiliBeachManagementSystem---Group-1/PHP/home.php';
+                window.location.href = '../PHP/login/front/login.php';
+//                window.location.href = '/Proj/PiliBeachManagementSystem---Group-1/PHP/home.php';
               </script>";
     } catch (PDOException $e) {
         echo "<script>alert('Signup failed: " . $e->getMessage() . "');</script>";

@@ -26,7 +26,7 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 </head>
 
-<body class="bg-gray-100 pt-20 min-h-screen">
+<body class="bg-[#f3f8ff] min-h-screen flex flex-col">
 
   <div class="max-w-5xl mx-auto py-12 px-6">
     <h1 class="text-4xl font-bold text-center text-blue-900 mb-12">Manage Your Account</h1>
@@ -108,7 +108,7 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
           </div>
 
           <button type="submit"
-            class="w-full mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded transition-all">
+            class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition-all">
             Update Password
           </button>
         </form>

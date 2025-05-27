@@ -82,7 +82,7 @@ session_start();
                     </p>
                 </div>
 
-                <form action="/Proj/PiliBeachManagementSystem---Group-1/PHP/feedback/back/feedback.php" method="POST">
+                <form action="../../../PHP/feedback/back/feedback.php" method="POST">
                     <div class="flex gap-2 mb-4 justify-center">
                         <button type="button" class="rating-star text-orange-400 text-2xl"
                             onclick="setRating(1)">★</button>

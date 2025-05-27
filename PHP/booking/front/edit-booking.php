@@ -26,7 +26,7 @@ include '../back/edit-booking.php';
         class="flex-grow flex flex-col items-center justify-start px-4 pt-24 pb-12 relative overflow-hidden min-h-[800px]">
         <div class="absolute -top-20 -right-20 w-80 h-80 bg-white/20 rounded-full blur-3xl z-0"></div>
         <div class="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-2xl z-10 opacity-90 relative">
-            <a href="/Proj/PiliBeachManagementSystem---Group-1/PHP/booking/front/booking-confirmation.php"
+            <a href="../../../PHP/booking/front/booking-confirmation.php"
                 class="absolute top-4 left-4 text-gray-600 hover:text-black">← Back</a>
             <h2 class="text-3xl font-extrabold text-center text-gray-800 mb-8">Edit Booking Details</h2>
 
@@ -77,7 +77,7 @@ include '../back/edit-booking.php';
                 </div>
 
                 <div class="mt-10 flex justify-between gap-4">
-                    <a href="/Proj/PiliBeachManagementSystem---Group-1/PHP/booking/front/booking-confirmation.php"
+                    <a href="../../../PHP/booking/front/booking-confirmation.php"
                         class="flex-1 bg-gray-200 text-gray-800 py-3 rounded-xl text-center font-medium hover:bg-gray-300 transition duration-200">Cancel</a>
                     <button type="submit"
                         class="flex-1 bg-blue-600 text-white py-3 rounded-xl text-center font-semibold hover:bg-blue-700 transition duration-200">Save
