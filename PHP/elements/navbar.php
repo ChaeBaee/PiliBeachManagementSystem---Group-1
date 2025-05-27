@@ -33,15 +33,15 @@
       <!-- Desktop Menu -->
       <ul class="hidden md:flex space-x-6 text-black" id="desktop-menu">
         <li><a href="/Proj/PiliBeachManagementSystem---Group-1/PHP/home.php"
-            class="hover:text-[#7FFFD4] transition duration-300">Home</a></li>
+            class="hover:text-[#3b82f6] transition duration-300">Home</a></li>
         <li><a href="/Proj/PiliBeachManagementSystem---Group-1/PHP/room/front/rooms.php"
-            class="hover:text-[#7FFFD4] transition duration-300">Rooms</a></li>
+            class="hover:text-[#3b82f6] transition duration-300">Rooms</a></li>
         <li><a href="/Proj/PiliBeachManagementSystem---Group-1/PHP/bookings.php"
-            class="hover:text-[#7FFFD4] transition duration-300">Book</a></li>
+            class="hover:text-[#3b82f6] transition duration-300">Book</a></li>
         <li><a href="/Proj/PiliBeachManagementSystem---Group-1/PHP/feedback/front/feedback.php"
-            class="hover:text-[#7FFFD4] transition duration-300">Reviews</a></li>
+            class="hover:text-[#3b82f6] transition duration-300">Reviews</a></li>
         <li><a href="/Proj/PiliBeachManagementSystem---Group-1/PHP/room/about.php"
-            class="hover:text-[#7FFFD4] transition duration-300">About Us</a></li>
+            class="hover:text-[#3b82f6] transition duration-300">About Us</a></li>
       </ul>
 
       <!-- Desktop Auth Buttons -->
