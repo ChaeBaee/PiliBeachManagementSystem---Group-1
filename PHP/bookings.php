@@ -79,8 +79,7 @@ require_once 'backend/bookings_backend.php';
         </div>
     </div>
 
-    <div class="container mx-auto px-4 py-12 -mt-36">
-        <h2 class="text-4xl font-bold text-white mb-4 lg:mb-0">Search Available Rooms</h2>
+    <div class="container mx-auto px-4 py-12 -mt-24">
 
         <div class="search-container rounded-2xl shadow-xl p-6 w-full lg:w-auto">
             <form action="" method="GET" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
