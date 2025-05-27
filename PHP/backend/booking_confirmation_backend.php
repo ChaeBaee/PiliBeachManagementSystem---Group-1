@@ -60,8 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$room_id]);
         $room_status = $stmt->fetchColumn();
 
-        if ($room_status !== 'available') {
-            throw new Exception("Room is no longer available. Please select another room.");
+        if ($room_status === 'maintenance') {
+            throw new Exception("Room is not available. Please select another room.");
         }
 
         $stmt = $conn->prepare("INSERT INTO bookings (user_id, room_id, booking_check_in, booking_check_out, booking_total_price, booking_status) VALUES (?, ?, ?, ?, ?, 'Pending')");

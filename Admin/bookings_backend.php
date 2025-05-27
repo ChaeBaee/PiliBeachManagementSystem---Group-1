@@ -48,19 +48,35 @@ class BookingManager
     public function getAvailableRooms($checkIn, $checkOut, $currentBookingId = null)
     {
         try {
-            $query = "SELECT r.* FROM rooms r 
-                     WHERE r.room_status = 'available' 
-                     AND (r.room_id NOT IN (
-                         SELECT room_id FROM bookings 
-                         WHERE (booking_check_in <= :check_out AND booking_check_out >= :check_in)
-                         AND booking_status != 'Canceled'
-                         AND (:current_booking_id IS NULL OR booking_id != :current_booking_id)
-                     )
-                     OR r.room_id IN (
-                         SELECT room_id FROM bookings 
-                         WHERE booking_id = :current_booking_id
-                     ))
-                     ORDER BY r.room_number";
+            $query = "SELECT r.*
+FROM rooms r
+WHERE 
+    (
+        r.room_status = 'available'
+        OR (
+            r.room_status = 'booked'
+            AND (
+                r.room_id NOT IN (
+                    SELECT room_id
+                    FROM bookings
+                    WHERE booking_status != 'Canceled'
+                      AND booking_check_in <= :check_out
+                      AND booking_check_out >= :check_in
+                      AND (
+                          :current_booking_id IS NULL 
+                          OR booking_id != :current_booking_id
+                      )
+                )
+                OR r.room_id IN (
+                    SELECT room_id
+                    FROM bookings
+                    WHERE booking_id = :current_booking_id
+                )
+            )
+        )
+    )
+ORDER BY r.room_number;
+";
 
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':check_in', $checkIn);

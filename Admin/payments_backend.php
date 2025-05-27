@@ -112,10 +112,13 @@ $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Fetch available bookings for new payment
 $stmt = $conn->query("
-    SELECT b.booking_id, b.booking_check_in, b.booking_check_out, u.user_name, r.room_number 
+    SELECT b.booking_id, b.booking_check_in, b.booking_check_out, u.user_name, r.room_number,
+           (DATEDIFF(b.booking_check_out, b.booking_check_in) * r.room_price) as total_amount
     FROM bookings b 
     JOIN users u ON b.user_id = u.user_id 
     JOIN rooms r ON b.room_id = r.room_id 
     WHERE b.booking_id NOT IN (SELECT booking_id FROM payments)
+    AND b.booking_status = 'confirmed'
+    ORDER BY b.booking_check_in DESC
 ");
 $availableBookings = $stmt->fetchAll(PDO::FETCH_ASSOC);

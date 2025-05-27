@@ -60,19 +60,55 @@ require_once 'backend/payments_backend.php';
             </div>
 
             <div class="bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-xl font-semibold mb-4">GCash Payment</h2>
-                <form method="POST" enctype="multipart/form-data" class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">GCash Account Number</label>
-                        <input type="text" name="gcash_number" required
-                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                            placeholder="Enter your GCash account number">
-                    </div>
+                <h2 class="text-xl font-semibold mb-6">Payment Instructions</h2>
 
+                <!-- GCash Payment Steps -->
+                <div class="bg-blue-50 rounded-lg p-6 mb-8">
+                    <h3 class="text-lg font-semibold text-blue-800 mb-4">How to Pay via GCash</h3>
+                    <ol class="space-y-3 text-gray-700">
+                        <li class="flex items-start">
+                            <span
+                                class="flex items-center justify-center w-6 h-6 rounded-full bg-blue-600 text-white text-sm mr-3 flex-shrink-0">1</span>
+                            <span>Open your GCash app</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span
+                                class="flex items-center justify-center w-6 h-6 rounded-full bg-blue-600 text-white text-sm mr-3 flex-shrink-0">2</span>
+                            <span>Tap "Pay QR"</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span
+                                class="flex items-center justify-center w-6 h-6 rounded-full bg-blue-600 text-white text-sm mr-3 flex-shrink-0">3</span>
+                            <span>Scan the QR code below</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span
+                                class="flex items-center justify-center w-6 h-6 rounded-full bg-blue-600 text-white text-sm mr-3 flex-shrink-0">4</span>
+                            <span>Enter amount: <span
+                                    class="font-semibold">₱<?php echo number_format($booking['booking_total_price']); ?></span></span>
+                        </li>
+                        <li class="flex items-start">
+                            <span
+                                class="flex items-center justify-center w-6 h-6 rounded-full bg-blue-600 text-white text-sm mr-3 flex-shrink-0">5</span>
+                            <span>Upload proof of payment below</span>
+                        </li>
+                    </ol>
+                </div>
+
+                <!-- QR Code Section -->
+                <div class="flex flex-col items-center mb-8">
+                    <h3 class="text-lg font-semibold mb-4">Scan QR Code to Pay</h3>
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                        <img src="assets/qr.jpg" alt="GCash QR Code" class="w-64 h-64 object-contain">
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">Scan this QR code with your GCash app to make the payment</p>
+                </div>
+
+                <form method="POST" enctype="multipart/form-data" class="space-y-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Payment Proof</label>
                         <div
-                            class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                            class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-blue-500 transition-colors">
                             <div class="space-y-1 text-center">
                                 <i class="fas fa-upload text-gray-400 text-3xl mb-2"></i>
                                 <div class="flex text-sm text-gray-600">
@@ -91,10 +127,11 @@ require_once 'backend/payments_backend.php';
 
                     <div class="flex justify-end space-x-4">
                         <a href="?cancel=1" onclick="return confirm('Are you sure you want to cancel this booking?')"
-                            class="px-6 py-2 border border-red-300 rounded-md text-red-700 hover:bg-red-50">
+                            class="px-6 py-2 border border-red-300 rounded-md text-red-700 hover:bg-red-50 transition-colors">
                             Cancel Booking
                         </a>
-                        <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                        <button type="submit"
+                            class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
                             Submit Payment
                         </button>
                     </div>

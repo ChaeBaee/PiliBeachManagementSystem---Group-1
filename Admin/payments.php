@@ -131,11 +131,12 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
 
                     <div class="mb-4">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="booking_id">Booking</label>
-                        <select name="booking_id" id="booking_id" required
+                        <select name="booking_id" id="booking_id" required onchange="updatePaymentAmount(this.value)"
                             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                             <option value="">Select a booking</option>
                             <?php foreach ($availableBookings as $booking): ?>
-                                <option value="<?php echo $booking['booking_id']; ?>">
+                                <option value="<?php echo $booking['booking_id']; ?>"
+                                    data-amount="<?php echo $booking['total_amount']; ?>">
                                     Room <?php echo $booking['room_number']; ?> - <?php echo $booking['user_name']; ?>
                                     (<?php echo date('M d, Y', strtotime($booking['booking_check_in'])); ?>)
                                 </option>
@@ -246,6 +247,16 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
 
         function closeAddModal() {
             document.getElementById('addModal').classList.add('hidden');
+            // Reset form when closing
+            document.getElementById('booking_id').value = '';
+            document.getElementById('payment_amount').value = '';
+        }
+
+        function updatePaymentAmount(bookingId) {
+            const select = document.getElementById('booking_id');
+            const selectedOption = select.options[select.selectedIndex];
+            const amount = selectedOption.getAttribute('data-amount');
+            document.getElementById('payment_amount').value = amount || '';
         }
 
         function openEditModal(payment) {
