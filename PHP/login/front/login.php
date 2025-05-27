@@ -113,15 +113,6 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_role']) && $_SESSION['u
                 <?php endif; ?>
             </div>
 
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <input type="checkbox" id="remember"
-                        class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
-                    <label for="remember" class="ml-2 block text-sm text-gray-700">Remember me</label>
-                </div>
-                <a href="#" class="text-sm text-green-600 hover:text-green-500">Forgot password?</a>
-            </div>
-
             <button type="submit" class="btn-gradient w-full text-white py-3 rounded-xl font-semibold">
                 Sign In
             </button>

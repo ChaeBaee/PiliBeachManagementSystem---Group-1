@@ -60,12 +60,8 @@
           </a>
         <?php else: ?>
           <a href="/Proj/PHP/login/front/login.php"
-            class="bg-[#7FFFD4] text-[#484848] px-4 py-2 rounded-lg hover:bg-[#6EEFBF] transition duration-300 shadow-sm">
+            class="border-2 border-[#3B82F6] text-[#3B82F6] px-4 py-2 rounded-lg hover:bg-[#3B82F6] hover:text-white transition duration-300 shadow-sm">
             Login
-          </a>
-          <a href="/Proj/PHP/login/front/sign-up.php"
-            class="bg-[#7FFFD4] text-[#484848] px-4 py-2 rounded-lg hover:bg-[#6EEFBF] transition duration-300 shadow-sm">
-            Sign Up
           </a>
         <?php endif; ?>
       </div>
@@ -89,8 +85,8 @@
             <i class="fas fa-sign-out-alt mr-2"></i>Logout
           </a>
         <?php else: ?>
-          <a href="/Proj/PHP/login/front/login.php" class="block px-4 py-2 hover:bg-gray-100">Login</a>
-          <a href="/Proj/PHP/login/front/sign-up.php" class="block px-4 py-2 hover:bg-gray-100">Sign Up</a>
+          <a href="/Proj/PHP/login/front/login.php"
+            class="block px-4 py-2 border-2 border-[#3B82F6] text-[#3B82F6] rounded-lg hover:bg-[#3B82F6] hover:text-white transition duration-300">Login</a>
         <?php endif; ?>
       </div>
     </div>
