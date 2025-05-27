@@ -12,7 +12,8 @@ $stmt = $conn->query("SELECT DISTINCT room_type FROM rooms");
 $room_types = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
 // Function to fetch available rooms
-function getAvailableRooms($check_in, $check_out, $guests = 1, $room_type = '') {
+function getAvailableRooms($check_in, $check_out, $guests = 1, $room_type = '')
+{
     global $conn;
 
     $query = "SELECT r.* FROM rooms r 
@@ -20,7 +21,7 @@ function getAvailableRooms($check_in, $check_out, $guests = 1, $room_type = '') 
               AND NOT EXISTS (
                   SELECT 1 FROM bookings b 
                   WHERE b.room_id = r.room_id 
-                  AND b.booking_status != 'Canceled'
+                  AND (b.booking_status != 'Canceled' OR b.booking_status != 'Checked-out')
                   AND (
                       (b.booking_check_in <= :check_out AND b.booking_check_out >= :check_in)
                   )

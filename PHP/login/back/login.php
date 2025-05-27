@@ -21,8 +21,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['user_role'] = $user['user_role'];
             $_SESSION['user_email'] = $user['user_email'];
 
-            header("Location: ../../PHP/home.php");
-//            header("Location: /Proj/PiliBeachManagementSystem---Group-1/PHP/home.php");
+            header("Location: /Proj/PHP/home.php");
+            //            header("Location: /Proj/PiliBeachManagementSystem---Group-1/PHP/home.php");
 
             exit();
         } else {

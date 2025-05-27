@@ -170,7 +170,7 @@ ORDER BY r.room_number;
             $query = "SELECT COUNT(*) as count FROM bookings 
                      WHERE room_id = :room_id 
                      AND booking_id != :booking_id
-                     AND booking_status != 'Canceled'
+                     AND (booking_status != 'Canceled' OR booking_status != 'Checked-out')
                      AND ((booking_check_in <= :check_out AND booking_check_out >= :check_in))";
 
             $stmt = $this->conn->prepare($query);
@@ -261,7 +261,7 @@ ORDER BY r.room_number;
         try {
             $query = "SELECT COUNT(*) as count FROM bookings 
                      WHERE room_id = :room_id 
-                     AND booking_status != 'Canceled'
+                     AND (booking_status != 'Canceled' OR booking_status != 'Checked-out')
                      AND ((booking_check_in <= :check_out AND booking_check_out >= :check_in))";
 
             if ($currentBookingId) {

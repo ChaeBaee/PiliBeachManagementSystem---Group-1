@@ -11,11 +11,13 @@
   <title>Resort Navbar</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     html,
     body {
       max-width: 100%;
       overflow-x: hidden;
+      font-family: 'Inter', sans-serif;
     }
   </style>
 </head>
@@ -74,8 +76,8 @@
       <ul class="py-2">
         <li><a href="/Proj/PHP/home.php" class="block px-4 py-2 hover:bg-gray-100">Home</a></li>
         <li><a href="/Proj/PHP/room/front/rooms.php" class="block px-4 py-2 hover:bg-gray-100">Rooms</a></li>
-        <li><a href="/Proj/PHP/bookings.php" class="block px-4 py-2 hover:bg-gray-100">Booking</a></li>
-        <li><a href="/Proj/PHP/feedback/front/feedback.php" class="block px-4 py-2 hover:bg-gray-100">Feedbacks</a></li>
+        <li><a href="/Proj/PHP/bookings.php" class="block px-4 py-2 hover:bg-gray-100">Book</a></li>
+        <li><a href="/Proj/PHP/feedback/front/feedback.php" class="block px-4 py-2 hover:bg-gray-100">Reviews</a></li>
         <li><a href="/Proj/PHP/room/about.php" class="block px-4 py-2 hover:bg-gray-100">About Us</a></li>
       </ul>
       <div class="border-t border-gray-200 py-2">

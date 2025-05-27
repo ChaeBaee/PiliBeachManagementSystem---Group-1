@@ -78,77 +78,180 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Signup</title>
+    <title>Create Account - Pili Beach Resort</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a365d 0%, #2d3748 100%);
+        }
+
+        .signup-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .input-field {
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .checkbox-custom {
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-custom:checked {
+            background-color: #059669;
+            border-color: #059669;
+        }
+    </style>
 </head>
 
-<body class="bg-[#faebe1] min-h-screen flex items-center justify-center">
-<div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
-    <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Create Account</h2>
-
-    <form method="POST" action="" class="space-y-4">
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Full name</label>
-            <input type="text" name="name" value="<?php echo htmlspecialchars($fullName); ?>"
-                   class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="john_doe" />
-            <span class="text-red-600 text-sm"><?php echo $fullNameMsg; ?></span>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="signup-container w-full max-w-md rounded-2xl p-8 animate-fade-in">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">Create Account</h2>
+            <p class="text-gray-600">Join us for an unforgettable experience</p>
         </div>
 
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Email</label>
-            <input type="email" name="email" value="<?php echo htmlspecialchars($email); ?>"
-                   class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="you@example.com" />
-            <span class="text-red-600 text-sm"><?php echo $emailMsg; ?></span>
-        </div>
+        <form method="POST" action="" class="space-y-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                        <i class="far fa-user"></i>
+                    </span>
+                    <input type="text" name="name" value="<?php echo htmlspecialchars($fullName); ?>"
+                        class="input-field w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        placeholder="John Doe" />
+                </div>
+                <span class="text-red-600 text-sm block mt-2"><?php echo $fullNameMsg; ?></span>
+            </div>
 
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Contact Number</label>
-            <input type="tel" name="phone" value="<?php echo htmlspecialchars($contactNo); ?>"
-                   pattern="^(09|\+639)\d{9}$"
-                   class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="09xxxxxxxxx or +639xxxxxxxxx" />
-            <span class="text-red-600 text-sm"><?php echo $contactNoMsg; ?></span>
-        </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                        <i class="far fa-envelope"></i>
+                    </span>
+                    <input type="email" name="email" value="<?php echo htmlspecialchars($email); ?>"
+                        class="input-field w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        placeholder="you@example.com" />
+                </div>
+                <span class="text-red-600 text-sm block mt-2"><?php echo $emailMsg; ?></span>
+            </div>
 
-        <div class="relative">
-            <label class="block text-sm font-medium text-gray-700">Password</label>
-            <input type="password" id="password" name="password" minlength="8"
-                   class="w-full mt-1 px-3 py-2 border rounded-lg pr-10" placeholder="Enter your password" />
-            <span onclick="togglePassword('password')"
-                  class="absolute right-3 top-9 cursor-pointer text-sm text-blue-500">Show</span>
-            <span class="text-red-600 text-sm block mt-1"><?php echo $passwordMsg; ?></span>
-        </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Contact Number</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                        <i class="far fa-phone"></i>
+                    </span>
+                    <input type="tel" name="phone" value="<?php echo htmlspecialchars($contactNo); ?>"
+                        pattern="^(09|\+639)\d{9}$"
+                        class="input-field w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        placeholder="09xxxxxxxxx or +639xxxxxxxxx" />
+                </div>
+                <span class="text-red-600 text-sm block mt-2"><?php echo $contactNoMsg; ?></span>
+            </div>
 
-        <div class="relative">
-            <label class="block text-sm font-medium text-gray-700">Confirm Password</label>
-            <input type="password" id="confirm_password" name="confirm_password"
-                   class="w-full mt-1 px-3 py-2 border rounded-lg pr-10" placeholder="Re-enter your password" />
-            <span onclick="togglePassword('confirm_password')"
-                  class="absolute right-3 top-9 cursor-pointer text-sm text-blue-500">Show</span>
-        </div>
+            <div class="relative">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                        <i class="far fa-lock"></i>
+                    </span>
+                    <input type="password" id="password" name="password" minlength="8"
+                        class="input-field w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        placeholder="••••••••" />
+                    <span onclick="togglePassword('password')"
+                        class="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-sm text-gray-400 hover:text-gray-600">
+                        <i class="far fa-eye"></i>
+                    </span>
+                </div>
+                <span class="text-red-600 text-sm block mt-2"><?php echo $passwordMsg; ?></span>
+            </div>
 
-        <div class="flex items-center">
-            <input id="terms" name="terms" type="checkbox" class="mr-2" <?php echo $termsAccepted ? "checked" : ""; ?> />
-            <label for="terms" class="text-sm text-gray-600">I agree to the terms and conditions</label>
-        </div>
-        <span class="text-red-600 text-sm block"><?php echo $termsMsg; ?></span>
+            <div class="relative">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                        <i class="far fa-lock"></i>
+                    </span>
+                    <input type="password" id="confirm_password" name="confirm_password"
+                        class="input-field w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        placeholder="••••••••" />
+                    <span onclick="togglePassword('confirm_password')"
+                        class="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-sm text-gray-400 hover:text-gray-600">
+                        <i class="far fa-eye"></i>
+                    </span>
+                </div>
+            </div>
 
-        <button type="submit" class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition">
-            Sign Up
-        </button>
+            <div class="flex items-start space-x-3">
+                <input id="terms" name="terms" type="checkbox"
+                    class="checkbox-custom h-5 w-5 text-green-600 focus:ring-green-500 border-gray-300 rounded mt-1"
+                    <?php echo $termsAccepted ? "checked" : ""; ?> />
+                <label for="terms" class="text-sm text-gray-600">
+                    I agree to the <a href="#" class="text-green-600 hover:text-green-500">Terms and Conditions</a> and
+                    <a href="#" class="text-green-600 hover:text-green-500">Privacy Policy</a>
+                </label>
+            </div>
+            <span class="text-red-600 text-sm block"><?php echo $termsMsg; ?></span>
 
-        <p class="text-center text-sm text-gray-600 mt-4">
+            <button type="submit" class="btn-gradient w-full text-white py-3 rounded-xl font-semibold">
+                Create Account
+            </button>
+        </form>
+
+        <p class="text-center text-gray-600 mt-8">
             Already have an account?
-            <a href="login.php" class="text-blue-500 hover:underline">Log in</a>
+            <a href="login.php" class="text-green-600 hover:text-green-500 font-semibold">Sign in</a>
         </p>
-    </form>
-</div>
+    </div>
 
-<script>
-    function togglePassword(id) {
-        const input = document.getElementById(id);
-        input.type = input.type === "password" ? "text" : "password";
-    }
-</script>
+    <script>
+        function togglePassword(id) {
+            const input = document.getElementById(id);
+            const icon = input.nextElementSibling.querySelector('i');
+            input.type = input.type === "password" ? "text" : "password";
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        }
+    </script>
 </body>
 
 </html>
