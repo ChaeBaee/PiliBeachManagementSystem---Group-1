@@ -11,14 +11,20 @@ $allowedSorts = [
 $sort = $_GET['sort'] ?? 'date_desc';
 $orderBy = $allowedSorts[$sort] ?? $allowedSorts['date_desc'];
 try {
-    $stmt = $conn_slave->query("
-        SELECT f.feedback_rating, f.feedback_comments, f.feedback_date_created, u.user_name
-        FROM feedback f
-        JOIN users u ON f.user_id = u.user_id
-        ORDER BY $orderBy
-    ");
+    $stmt = $conn->prepare("
+    SELECT f.feedback_rating, f.feedback_comments, f.feedback_date_created, u.user_name,
+           r.room_number, r.room_type
+    FROM feedback f
+    JOIN users u ON f.user_id = u.user_id
+    JOIN rooms r ON f.room_id = r.room_id
+    ORDER BY $orderBy
+");
+    $stmt->execute();
 
     $counter = 0;
+
+    echo '<div style="max-height: 600px; overflow-y: auto; padding-right: 10px;">';
+
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $commentText = trim($row['feedback_comments']);
 
@@ -36,16 +42,19 @@ try {
         }
 
         echo '
-            <div class="flex gap-4 ' . $borderClass . '">
-                <div>
-                    <p class="font-semibold">' . htmlspecialchars($row['user_name']) . '</p>
-                    <p class="text-xs text-gray-500">' . date("M d, Y", strtotime($row['feedback_date_created'])) . '</p>
-                    <div class="text-yellow-400 text-sm">' . $starsHtml . '</div>
-                    <p class="text-sm text-gray-700 mt-1">' . htmlspecialchars($commentText) . '</p>
-                </div>
+        <div class="flex gap-4 ' . $borderClass . '">
+            <div>
+                <p class="font-semibold">' . htmlspecialchars($row['user_name']) . '</p>
+                <p class="text-xs text-gray-500">' . date("M d, Y", strtotime($row['feedback_date_created'])) . '</p>
+                <p class="text-sm text-gray-700 italic">Room: ' . htmlspecialchars($row['room_number']) . ' (' . htmlspecialchars($row['room_type']) . ')</p>
+                <div class="text-yellow-400 text-sm">' . $starsHtml . '</div>
+                <p class="text-sm text-gray-700 mt-1">' . htmlspecialchars($commentText) . '</p>
             </div>
+        </div>
         ';
     }
+
+    echo '</div>'; // close scroll container
 
     if ($counter === 0) {
         echo "<p class='text-gray-500'>No feedback available.</p>";
