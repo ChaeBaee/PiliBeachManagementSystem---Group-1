@@ -75,36 +75,41 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             <form id="addBookingForm" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Guest Name</label>
-                    <select id="addUserId" name="userId" required
+                    <select id="addUserId" name="userId"
                         class="mt-1 block w-full h-12 pl-3 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
                         <option value="">Select Guest</option>
                     </select>
+                    <span id="addGuestNameMsg" class="text-red-600 text-sm"></span>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Room</label>
-                    <select id="addRoomId" name="roomId" required
+                    <select id="addRoomId" name="roomId"
                         class="mt-1 block w-full h-12 pl-3 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
                         <option value="">Select Room</option>
                     </select>
+                    <span id="addRoomMsg" class="text-red-600 text-sm"></span>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Check-in Date</label>
-                    <input type="date" id="addCheckIn" name="checkIn" required
+                    <input type="date" id="addCheckIn" name="checkIn"
                         class="mt-1 block w-full h-12 pl-3 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                    <span id="addCheckInMsg" class="text-red-600 text-sm"></span>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Check-out Date</label>
-                    <input type="date" id="addCheckOut" name="checkOut" required
+                    <input type="date" id="addCheckOut" name="checkOut"
                         class="mt-1 block w-full h-12 pl-3 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                    <span id="addCheckOutMsg" class="text-red-600 text-sm"></span>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Total Price</label>
-                    <input type="number" id="addTotalPrice" name="totalPrice" required
+                    <input type="number" id="addTotalPrice" name="totalPrice"
                         class="mt-1 block w-full h-12 pl-3 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                    <span id="addTotalPriceMsg" class="text-red-600 text-sm"></span>
                 </div>
 
                 <div class="flex justify-end space-x-3 mt-6">
@@ -129,44 +134,51 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
                     <input type="text" id="editUserName" name="userName" readonly
                         class="mt-1 block w-full h-12 pl-3 rounded-md border-gray-300 bg-gray-100 shadow-sm focus:border-primary focus:ring-primary">
                     <input type="hidden" id="editUserId" name="userId">
+                    <span id="editGuestNameMsg" class="text-red-600 text-sm"></span>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Room</label>
-                    <select id="editRoomId" name="roomId" required
+                    <select id="editRoomId" name="roomId"
                         class="mt-1 block w-full h-12 pl-3 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
                         <option value="">Select Room</option>
                     </select>
+                    <span id="editRoomMsg" class="text-red-600 text-sm"></span>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Check-in Date</label>
-                    <input type="date" id="editCheckIn" name="checkIn" required
+                    <input type="date" id="editCheckIn" name="checkIn"
                         class="mt-1 block w-full h-12 pl-3 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                    <span id="editCheckInMsg" class="text-red-600 text-sm"></span>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Check-out Date</label>
-                    <input type="date" id="editCheckOut" name="checkOut" required
+                    <input type="date" id="editCheckOut" name="checkOut"
                         class="mt-1 block w-full h-12 pl-3 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                    <span id="editCheckOutMsg" class="text-red-600 text-sm"></span>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Total Price</label>
-                    <input type="number" id="editTotalPrice" name="totalPrice" required
+                    <input type="number" id="editTotalPrice" name="totalPrice"
                         class="mt-1 block w-full h-12 pl-3 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                    <span id="editTotalPriceMsg" class="text-red-600 text-sm"></span>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Status</label>
                     <select id="editStatus" name="status"
                         class="mt-1 block w-full h-12 pl-3 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                        <option value="">Select Status</option>
                         <option value="Pending">Pending</option>
                         <option value="Confirmed">Confirmed</option>
                         <option value="Checked-in">Checked-in</option>
                         <option value="Checked-out">Checked-out</option>
                         <option value="Canceled">Canceled</option>
                     </select>
+                    <span id="editStatusMsg" class="text-red-600 text-sm"></span>
                 </div>
 
                 <div class="flex justify-end space-x-3 mt-6">
@@ -195,6 +207,58 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
     <script>
         let currentBookingId = null;
 
+        // Add validation functions
+        function validateGuestName(userId) {
+            if (!userId) {
+                return "Guest name cannot be empty.";
+            }
+            return "";
+        }
+
+        function validateRoom(roomId) {
+            if (!roomId) {
+                return "Room cannot be empty.";
+            }
+            return "";
+        }
+
+        function validateDates(checkIn, checkOut) {
+            if (!checkIn) {
+                return "Check-in date cannot be empty.";
+            }
+            if (!checkOut) {
+                return "Check-out date cannot be empty.";
+            }
+            if (new Date(checkIn) >= new Date(checkOut)) {
+                return "Check-out date must be after check-in date.";
+            }
+            if (new Date(checkIn) < new Date().setHours(0, 0, 0, 0)) {
+                return "Check-in date cannot be in the past.";
+            }
+            return "";
+        }
+
+        function validateTotalPrice(totalPrice) {
+            if (!totalPrice) {
+                return "Total price cannot be empty.";
+            }
+            if (isNaN(totalPrice) || totalPrice <= 0) {
+                return "Total price must be a positive number.";
+            }
+            return "";
+        }
+
+        function validateStatus(status) {
+            if (!status) {
+                return "Status cannot be empty.";
+            }
+            return "";
+        }
+
+        function clearValidationMessages() {
+            document.querySelectorAll('[id$="Msg"]').forEach(el => el.textContent = '');
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             loadBookings();
             loadGuestUsers();
@@ -205,13 +269,179 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             const today = new Date().toISOString().split('T')[0];
             const addCheckIn = document.getElementById('addCheckIn');
             const addCheckOut = document.getElementById('addCheckOut');
+            const editCheckIn = document.getElementById('editCheckIn');
+            const editCheckOut = document.getElementById('editCheckOut');
 
+            // Set minimum dates to today
             addCheckIn.min = today;
             addCheckOut.min = today;
+            editCheckIn.min = today;
+            editCheckOut.min = today;
 
+            // Set initial values
             addCheckIn.value = today;
             addCheckOut.value = today;
         }
+
+        function calculateTotalPrice(checkIn, checkOut, roomPrice) {
+            if (!checkIn || !checkOut || !roomPrice) return 0;
+
+            const start = new Date(checkIn);
+            const end = new Date(checkOut);
+
+            // Calculate number of nights
+            const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+
+            // Return total price (nights * price per night)
+            return nights * roomPrice;
+        }
+
+        function updateTotalPrice(checkIn, checkOut, roomId, isEdit = false) {
+            const prefix = isEdit ? 'edit' : 'add';
+            const roomSelect = document.getElementById(`${prefix}RoomId`);
+            const totalPriceInput = document.getElementById(`${prefix}TotalPrice`);
+
+            if (!roomId) {
+                totalPriceInput.value = '';
+                return;
+            }
+
+            const selectedOption = roomSelect.options[roomSelect.selectedIndex];
+            const roomPrice = parseFloat(selectedOption.getAttribute('data-price'));
+
+            if (roomPrice) {
+                const totalPrice = calculateTotalPrice(checkIn, checkOut, roomPrice);
+                totalPriceInput.value = totalPrice.toFixed(2);
+            }
+        }
+
+        // Modify the loadAvailableRooms function to include room price
+        async function loadAvailableRooms(checkIn, checkOut, currentBookingId = null) {
+            if (!checkIn || !checkOut) return;
+
+            try {
+                const response = await fetch('bookings_backend.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `action=get_available_rooms&check_in=${checkIn}&check_out=${checkOut}${currentBookingId ? `&current_booking_id=${currentBookingId}` : ''}`
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    const addSelect = document.getElementById('addRoomId');
+                    const editSelect = document.getElementById('editRoomId');
+
+                    const roomOptions = '<option value="">Select Room</option>' +
+                        data.data.map(room =>
+                            `<option value="${room.room_id}" data-price="${room.room_price}">${room.room_number} - ${room.room_type} (₱${room.room_price}/night)</option>`
+                        ).join('');
+
+                    addSelect.innerHTML = roomOptions;
+                    editSelect.innerHTML = roomOptions;
+
+                    // Update total price if dates and room are selected
+                    const addCheckIn = document.getElementById('addCheckIn').value;
+                    const addCheckOut = document.getElementById('addCheckOut').value;
+                    const addRoomId = addSelect.value;
+                    if (addCheckIn && addCheckOut && addRoomId) {
+                        updateTotalPrice(addCheckIn, addCheckOut, addRoomId);
+                    }
+
+                    const editCheckIn = document.getElementById('editCheckIn').value;
+                    const editCheckOut = document.getElementById('editCheckOut').value;
+                    const editRoomId = editSelect.value;
+                    if (editCheckIn && editCheckOut && editRoomId) {
+                        updateTotalPrice(editCheckIn, editCheckOut, editRoomId, true);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading rooms:', error);
+            }
+        }
+
+        // Add event listeners for date and room changes
+        document.getElementById('addCheckIn').addEventListener('change', function () {
+            const checkOut = document.getElementById('addCheckOut');
+            const roomId = document.getElementById('addRoomId').value;
+
+            // Set minimum check-out date to next day after check-in
+            const nextDay = new Date(this.value);
+            nextDay.setDate(nextDay.getDate() + 1);
+            checkOut.min = nextDay.toISOString().split('T')[0];
+
+            // If current check-out is before or equal to check-in, update it
+            if (checkOut.value <= this.value) {
+                checkOut.value = nextDay.toISOString().split('T')[0];
+            }
+
+            loadAvailableRooms(this.value, checkOut.value);
+            if (roomId) {
+                updateTotalPrice(this.value, checkOut.value, roomId);
+            }
+        });
+
+        document.getElementById('addCheckOut').addEventListener('change', function () {
+            const checkIn = document.getElementById('addCheckIn').value;
+            const roomId = document.getElementById('addRoomId').value;
+
+            if (checkIn) {
+                loadAvailableRooms(checkIn, this.value);
+                if (roomId) {
+                    updateTotalPrice(checkIn, this.value, roomId);
+                }
+            }
+        });
+
+        document.getElementById('addRoomId').addEventListener('change', function () {
+            const checkIn = document.getElementById('addCheckIn').value;
+            const checkOut = document.getElementById('addCheckOut').value;
+
+            if (checkIn && checkOut) {
+                updateTotalPrice(checkIn, checkOut, this.value);
+            }
+        });
+
+        // Edit form event listeners
+        document.getElementById('editCheckIn').addEventListener('change', function () {
+            const checkOut = document.getElementById('editCheckOut');
+            const roomId = document.getElementById('editRoomId').value;
+
+            // Set minimum check-out date to next day after check-in
+            const nextDay = new Date(this.value);
+            nextDay.setDate(nextDay.getDate() + 1);
+            checkOut.min = nextDay.toISOString().split('T')[0];
+
+            // If current check-out is before or equal to check-in, update it
+            if (checkOut.value <= this.value) {
+                checkOut.value = nextDay.toISOString().split('T')[0];
+            }
+
+            loadAvailableRooms(this.value, checkOut.value, currentBookingId);
+            if (roomId) {
+                updateTotalPrice(this.value, checkOut.value, roomId, true);
+            }
+        });
+
+        document.getElementById('editCheckOut').addEventListener('change', function () {
+            const checkIn = document.getElementById('editCheckIn').value;
+            const roomId = document.getElementById('editRoomId').value;
+
+            if (checkIn) {
+                loadAvailableRooms(checkIn, this.value, currentBookingId);
+                if (roomId) {
+                    updateTotalPrice(checkIn, this.value, roomId, true);
+                }
+            }
+        });
+
+        document.getElementById('editRoomId').addEventListener('change', function () {
+            const checkIn = document.getElementById('editCheckIn').value;
+            const checkOut = document.getElementById('editCheckOut').value;
+
+            if (checkIn && checkOut) {
+                updateTotalPrice(checkIn, checkOut, this.value, true);
+            }
+        });
 
         function openAddModal() {
             document.getElementById('addBookingModal').classList.remove('hidden');
@@ -263,39 +493,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             }
         }
 
-        async function loadAvailableRooms(checkIn, checkOut, currentBookingId = null) {
-            if (!checkIn || !checkOut) return;
-
-            try {
-                const response = await fetch('bookings_backend.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `action=get_available_rooms&check_in=${checkIn}&check_out=${checkOut}${currentBookingId ? `&current_booking_id=${currentBookingId}` : ''}`
-                });
-                const data = await response.json();
-
-                if (data.success) {
-                    const addSelect = document.getElementById('addRoomId');
-                    const editSelect = document.getElementById('editRoomId');
-
-                    const roomOptions = '<option value="">Select Room</option>' +
-                        data.data.map(room =>
-                            `<option value="${room.room_id}">${room.room_number} - ${room.room_type} (₱${room.room_price}/night)</option>`
-                        ).join('');
-
-                    addSelect.innerHTML = roomOptions;
-                    editSelect.innerHTML = roomOptions;
-                }
-            } catch (error) {
-                console.error('Error loading rooms:', error);
-            }
-        }
-
         document.getElementById('addBookingForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            const formData = new FormData();
-            formData.append('action', 'add_booking');
+            clearValidationMessages();
 
             const userId = document.getElementById('addUserId').value;
             const roomId = document.getElementById('addRoomId').value;
@@ -303,17 +503,25 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             const checkOut = document.getElementById('addCheckOut').value;
             const totalPrice = document.getElementById('addTotalPrice').value;
 
-            // Validate dates
-            if (new Date(checkIn) >= new Date(checkOut)) {
-                alert('Check-out date must be after check-in date');
+            // Validate all fields
+            const guestNameMsg = validateGuestName(userId);
+            const roomMsg = validateRoom(roomId);
+            const datesMsg = validateDates(checkIn, checkOut);
+            const totalPriceMsg = validateTotalPrice(totalPrice);
+
+            // Display validation messages
+            if (guestNameMsg) document.getElementById('addGuestNameMsg').textContent = guestNameMsg;
+            if (roomMsg) document.getElementById('addRoomMsg').textContent = roomMsg;
+            if (datesMsg) document.getElementById('addCheckOutMsg').textContent = datesMsg;
+            if (totalPriceMsg) document.getElementById('addTotalPriceMsg').textContent = totalPriceMsg;
+
+            // If any validation failed, stop form submission
+            if (guestNameMsg || roomMsg || datesMsg || totalPriceMsg) {
                 return;
             }
 
-            if (!userId || !roomId || !checkIn || !checkOut || !totalPrice) {
-                alert('Please fill in all required fields');
-                return;
-            }
-
+            const formData = new FormData();
+            formData.append('action', 'add_booking');
             formData.append('user_id', userId);
             formData.append('room_id', roomId);
             formData.append('check_in', checkIn);
@@ -343,9 +551,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
 
         document.getElementById('editBookingForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            const formData = new FormData();
-            formData.append('action', 'update_booking');
+            clearValidationMessages();
 
             const userId = document.getElementById('editUserId').value;
             const roomId = document.getElementById('editRoomId').value;
@@ -354,17 +560,27 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             const totalPrice = document.getElementById('editTotalPrice').value;
             const status = document.getElementById('editStatus').value;
 
-            // Validate dates
-            if (new Date(checkIn) >= new Date(checkOut)) {
-                alert('Check-out date must be after check-in date');
+            // Validate all fields
+            const guestNameMsg = validateGuestName(userId);
+            const roomMsg = validateRoom(roomId);
+            const datesMsg = validateDates(checkIn, checkOut);
+            const totalPriceMsg = validateTotalPrice(totalPrice);
+            const statusMsg = validateStatus(status);
+
+            // Display validation messages
+            if (guestNameMsg) document.getElementById('editGuestNameMsg').textContent = guestNameMsg;
+            if (roomMsg) document.getElementById('editRoomMsg').textContent = roomMsg;
+            if (datesMsg) document.getElementById('editCheckOutMsg').textContent = datesMsg;
+            if (totalPriceMsg) document.getElementById('editTotalPriceMsg').textContent = totalPriceMsg;
+            if (statusMsg) document.getElementById('editStatusMsg').textContent = statusMsg;
+
+            // If any validation failed, stop form submission
+            if (guestNameMsg || roomMsg || datesMsg || totalPriceMsg || statusMsg) {
                 return;
             }
 
-            if (!userId || !roomId || !checkIn || !checkOut || !totalPrice || !status) {
-                alert('Please fill in all required fields');
-                return;
-            }
-
+            const formData = new FormData();
+            formData.append('action', 'update_booking');
             formData.append('booking_id', document.getElementById('editBookingId').value);
             formData.append('user_id', userId);
             formData.append('room_id', roomId);
@@ -426,39 +642,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
                 console.error('Error loading booking details:', error);
             }
         }
-
-        // Date change event listeners
-        document.getElementById('addCheckIn').addEventListener('change', function () {
-            const checkOut = document.getElementById('addCheckOut');
-            checkOut.min = this.value;
-            if (checkOut.value && checkOut.value < this.value) {
-                checkOut.value = this.value;
-            }
-            loadAvailableRooms(this.value, checkOut.value);
-        });
-
-        document.getElementById('addCheckOut').addEventListener('change', function () {
-            const checkIn = document.getElementById('addCheckIn');
-            if (checkIn.value) {
-                loadAvailableRooms(checkIn.value, this.value);
-            }
-        });
-
-        document.getElementById('editCheckIn').addEventListener('change', function () {
-            const checkOut = document.getElementById('editCheckOut');
-            checkOut.min = this.value;
-            if (checkOut.value && checkOut.value < this.value) {
-                checkOut.value = this.value;
-            }
-            loadAvailableRooms(this.value, checkOut.value, currentBookingId);
-        });
-
-        document.getElementById('editCheckOut').addEventListener('change', function () {
-            const checkIn = document.getElementById('editCheckIn');
-            if (checkIn.value) {
-                loadAvailableRooms(checkIn.value, this.value, currentBookingId);
-            }
-        });
 
         async function loadBookings() {
             try {

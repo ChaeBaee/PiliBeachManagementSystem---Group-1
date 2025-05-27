@@ -255,6 +255,47 @@ ORDER BY r.room_number;
             return false;
         }
     }
+
+    public function checkRoomAvailability($roomId, $checkIn, $checkOut, $currentBookingId = null)
+    {
+        try {
+            $query = "SELECT COUNT(*) as count FROM bookings 
+                     WHERE room_id = :room_id 
+                     AND booking_status != 'Canceled'
+                     AND ((booking_check_in <= :check_out AND booking_check_out >= :check_in))";
+
+            if ($currentBookingId) {
+                $query .= " AND booking_id != :current_booking_id";
+            }
+
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':room_id', $roomId);
+            $stmt->bindParam(':check_in', $checkIn);
+            $stmt->bindParam(':check_out', $checkOut);
+
+            if ($currentBookingId) {
+                $stmt->bindParam(':current_booking_id', $currentBookingId);
+            }
+
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($result['count'] > 0) {
+                return [
+                    'success' => false,
+                    'message' => 'Room is already booked for the selected dates'
+                ];
+            }
+
+            return ['success' => true];
+        } catch (PDOException $e) {
+            error_log("Error checking room availability: " . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => 'Error checking room availability'
+            ];
+        }
+    }
 }
 
 
@@ -312,6 +353,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         case 'get_booking_details':
             $details = $bookingManager->getBookingDetails($_POST['booking_id']);
             echo json_encode(['success' => true, 'data' => $details]);
+            break;
+
+        case 'check_room_availability':
+            $result = $bookingManager->checkRoomAvailability(
+                $_POST['room_id'] ?? '',
+                $_POST['check_in'] ?? '',
+                $_POST['check_out'] ?? '',
+                $_POST['current_booking_id'] ?? null
+            );
+            echo json_encode($result);
             break;
 
         default:
