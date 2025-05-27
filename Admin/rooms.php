@@ -107,7 +107,7 @@ $hasErrors = !empty($room_numberMsg) || !empty($room_typeMsg) || !empty($room_pr
                         require_once '../PHP/db.php';
                         $stmt = $conn->query("SELECT * FROM rooms ORDER BY room_id");
                         while ($room = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                            $image_path = $room['room_image'] ? '/Proj/PiliBeachManagementSystem---Group-1/PHP/assets/' . $room['room_image'] : '/Proj/PiliBeachManagementSystem---Group-1/PHP/assets/logo.jpg';
+                            $image_path = $room['room_image'] ? '/Proj/PHP/assets/' . $room['room_image'] : '/Proj/PHP/assets/logo.jpg';
 
 
                             $status_color = '';
@@ -209,8 +209,8 @@ $hasErrors = !empty($room_numberMsg) || !empty($room_typeMsg) || !empty($room_pr
                 <div class="mb-4">
                     <label class="block mb-1 font-medium text-sm">Room Image</label>
                     <div class="mt-2">
-                        <img id="currentImage" src="/Proj/PiliBeachManagementSystem---Group-1/PHP/assets/logo.jpg"
-                            alt="Current room image" class="w-32 h-32 object-cover rounded mb-2">
+                        <img id="currentImage" src="/Proj/PHP/assets/logo.jpg" alt="Current room image"
+                            class="w-32 h-32 object-cover rounded mb-2">
                         <input type="file" id="room_image" name="room_image" accept="image/jpeg,image/png,image/webp"
                             class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-500"
                             onchange="previewImage(this)">
@@ -237,7 +237,7 @@ $hasErrors = !empty($room_numberMsg) || !empty($room_typeMsg) || !empty($room_pr
         function openAddModal() {
             title.textContent = "Add Room";
             form.reset();
-            currentImage.src = "/Proj/PiliBeachManagementSystem---Group-1/PHP/assets/logo.jpg";
+            currentImage.src = "/Proj/PHP/assets/logo.jpg";
             document.getElementById("room_id").value = "";
             document.getElementById("room_status").value = "available";
             modal.classList.remove("hidden");
@@ -254,7 +254,7 @@ $hasErrors = !empty($room_numberMsg) || !empty($room_typeMsg) || !empty($room_pr
                     document.getElementById("room_type").value = room.room_type;
                     document.getElementById("room_price").value = room.room_price;
                     document.getElementById("room_status").value = room.room_status;
-                    currentImage.src = room.room_image ? `/Proj/PiliBeachManagementSystem---Group-1/PHP/assets/${room.room_image}` : "/Proj/PiliBeachManagementSystem---Group-1/PHP/assets/logo.jpg";
+                    currentImage.src = room.room_image ? `/Proj/PHP/assets/${room.room_image}` : "/Proj/PHP/assets/logo.jpg";
                     modal.classList.remove("hidden");
                 });
         }

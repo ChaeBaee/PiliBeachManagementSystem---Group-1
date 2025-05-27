@@ -89,7 +89,7 @@ require_once 'backend/bookings_backend.php';
                         class="input-focus w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                         <option value="">All Room Types</option>
                         <?php foreach ($room_types as $type): ?>
-                            <option value="<?php echo htmlspecialchars($type); ?>">
+                            <option value="<?php echo htmlspecialchars($type); ?>" <?php echo (isset($_GET['room_type']) && $_GET['room_type'] === $type) ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars($type); ?>
                             </option>
                         <?php endforeach; ?>

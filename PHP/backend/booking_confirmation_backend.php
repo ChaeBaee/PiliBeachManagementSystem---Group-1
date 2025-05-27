@@ -27,7 +27,10 @@ $room_id = $_GET['room_id'];
 $check_in = $_GET['check_in'];
 $check_out = $_GET['check_out'];
 
-$stmt = $conn->prepare("SELECT * FROM rooms WHERE room_id = ? AND room_status = 'available'");
+$stmt = $conn->prepare("SELECT * FROM rooms 
+WHERE room_id = ? 
+  AND (room_status = 'available' OR room_status = 'booked');
+");
 $stmt->execute([$room_id]);
 $room = $stmt->fetch(PDO::FETCH_ASSOC);
 
