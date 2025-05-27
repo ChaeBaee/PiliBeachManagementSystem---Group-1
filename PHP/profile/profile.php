@@ -113,6 +113,52 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
           </button>
         </form>
       </div>
+        <div class="bg-white rounded-lg shadow-lg p-6 mt-10">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Your Bookings</h2>
+
+            <?php
+            $stmt = $conn->prepare("SELECT b.*, r.room_number, r.room_type 
+                          FROM bookings b 
+                          JOIN rooms r ON b.room_id = r.room_id 
+                          WHERE b.user_id = ?");
+            $stmt->execute([$user_id]);
+            $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            ?>
+
+            <?php if ($bookings): ?>
+                <ul class="divide-y">
+                    <?php foreach ($bookings as $booking): ?>
+                        <li class="py-4 flex justify-between items-center">
+                            <div>
+                                <p class="font-medium text-gray-700">
+                                    Room <?= $booking['room_number']; ?> - <?= $booking['room_type']; ?>
+                                </p>
+                                <p class="text-sm text-gray-500">
+                                    <?= $booking['booking_check_in']; ?> to <?= $booking['booking_check_out']; ?>
+                                </p>
+                                <p class="text-sm text-gray-500">
+                                    Status: <?= $booking['booking_status']; ?> | Total: ₱<?= $booking['booking_total_price']; ?>
+                                </p>
+                            </div>
+
+                            <?php if ($booking['booking_status'] != 'Canceled'): ?>
+                                <form action="./back/cancel-booking.php" method="POST">
+                                    <input type="hidden" name="booking_id" value="<?= $booking['booking_id']; ?>">
+                                    <button type="submit"
+                                            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">
+                                        Cancel Booking
+                                    </button>
+                                </form>
+                            <?php else: ?>
+                                <span class="text-red-400 font-semibold">Cancelled</span>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php else: ?>
+                <p class="text-gray-500">You have no bookings yet.</p>
+            <?php endif; ?>
+        </div>
     </div>
   </div>
 
