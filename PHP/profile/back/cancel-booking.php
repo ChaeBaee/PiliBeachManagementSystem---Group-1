@@ -44,12 +44,10 @@ if ($booking) {
         $paymentIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
         if ($paymentIds) {
-            // Cancel payments
             $inQuery = implode(',', array_fill(0, count($paymentIds), '?'));
             $stmt = $conn->prepare("UPDATE payments SET payment_status = 'failed' WHERE payment_id IN ($inQuery)");
             $stmt->execute($paymentIds);
 
-            // Cancel invoices related to those payments
             $stmt = $conn->prepare("UPDATE invoice SET invoice_status = 'canceled' WHERE payment_id IN ($inQuery)");
             $stmt->execute($paymentIds);
         }

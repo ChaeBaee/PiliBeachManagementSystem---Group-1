@@ -4,7 +4,7 @@ session_start();
 
 try {
     $sql = "SELECT * FROM rooms";
-    $stmt = $conn->prepare($sql);
+    $stmt = $conn_slave->prepare($sql);
     $stmt->execute();
     $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
