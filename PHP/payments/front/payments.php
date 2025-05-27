@@ -1,5 +1,5 @@
 <?php
-require_once 'backend/payments_backend.php';
+require_once '../back/payments_backend.php';
 ?>
 
 <!DOCTYPE html>
@@ -20,7 +20,7 @@ require_once 'backend/payments_backend.php';
 </head>
 
 <body class="bg-gray-100">
-    <?php include 'elements/navbar.php'; ?>
+    <?php include '../../elements/navbar.php'; ?>
 
     <div class="container mx-auto px-4 py-8 mt-16">
         <div class="max-w-4xl mx-auto">
@@ -105,7 +105,7 @@ require_once 'backend/payments_backend.php';
                 <div class="flex flex-col items-center mb-8">
                     <h3 class="text-lg font-semibold mb-4">Scan QR Code to Pay</h3>
                     <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                        <img src="assets/qr.jpg" alt="GCash QR Code" class="w-64 h-64 object-contain">
+                        <img src="../../assets/qr.jpg" alt="GCash QR Code" class="w-64 h-64 object-contain">
                     </div>
                     <p class="text-sm text-gray-500 mt-2">Scan this QR code with your GCash app to make the payment</p>
                 </div>

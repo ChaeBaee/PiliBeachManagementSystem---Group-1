@@ -1,5 +1,5 @@
 <?php
-require_once 'backend/bookings_backend.php';
+require_once '../back/bookings_backend.php';
 
 // Initialize form variables
 $checkIn = $checkOut = $guest = $roomType = "";
@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         .hero-pattern {
             background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-                url('assets/home.jpg');
+                url('../../assets/home.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -93,7 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body class="bg-gray-50">
-    <?php include 'elements/navbar.php'; ?>
+    <?php include('../../elements/navbar.php'); ?>
 
     <div class="hero-pattern text-white py-40">
         <div class="container mx-auto px-4 text-center">

@@ -36,7 +36,7 @@
       <ul class="hidden md:flex space-x-6 text-black" id="desktop-menu">
         <li><a href="/Proj/PHP/home.php" class="hover:text-[#3b82f6] transition duration-300">Home</a></li>
         <li><a href="/Proj/PHP/room/front/rooms.php" class="hover:text-[#3b82f6] transition duration-300">Rooms</a></li>
-        <li><a href="/Proj/PHP/bookings.php" class="hover:text-[#3b82f6] transition duration-300">Book</a></li>
+        <li><a href="/Proj/PHP/booking/front/bookings.php" class="hover:text-[#3b82f6] transition duration-300">Book</a></li>
         <li><a href="/Proj/PHP/feedback/front/feedback.php"
             class="hover:text-[#3b82f6] transition duration-300">Reviews</a></li>
         <li><a href="/Proj/PHP/room/about.php" class="hover:text-[#3b82f6] transition duration-300">About Us</a></li>

@@ -262,7 +262,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 ?>
 
                 <?php if ($bookings): ?>
-                    <div class="space-y-4">
+                    <div class="space-y-4 max-h-[600px] overflow-y-auto pr-2">
                         <?php foreach ($bookings as $booking): ?>
                             <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300">
                                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">

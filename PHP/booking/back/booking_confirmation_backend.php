@@ -1,5 +1,5 @@
 <?php
-require_once 'db.php';
+require_once '../../db.php';
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ];
 
         $conn->commit();
-        header("Location: ../PHP/payments.php?booking_id=" . $booking_id);
+        header("Location: /Proj/PHP/payments/front/payments.php?booking_id=" . $booking_id);
         exit();
     } catch (Exception $e) {
         $conn->rollBack();

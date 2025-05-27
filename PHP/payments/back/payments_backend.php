@@ -1,5 +1,5 @@
 <?php
-require_once 'db.php';
+require_once '../../db.php';
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
@@ -12,7 +12,7 @@ if (!isset($_SESSION['user_id'])) {
 //}
 
 if (!isset($_GET['booking_id']) || !isset($_SESSION['booking_flow']) || $_GET['booking_id'] != $_SESSION['booking_flow']['booking_id']) {
-    header("Location: ../PHP/bookings.php");
+    header("Location: /Proj/PHP/booking/front/bookings.php");
     exit();
 }
 
@@ -32,7 +32,7 @@ $stmt->execute([$booking_id, $_SESSION['user_id']]);
 $booking = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$booking) {
-    header("Location: ../PHP/bookings.php");
+    header("Location: /Proj/PHP/booking/front/bookings.php");
     exit();
 }
 
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 throw new Exception('Invalid file type. Please upload JPG, PNG, or PDF files only.');
             }
 
-            $file_name = uniqid('payment_') . '.' . $file_extension;
+            $file_name = uniqid('payment_') . 'backend' . $file_extension;
             $target_path = $upload_dir . $file_name;
 
             if (move_uploaded_file($_FILES['payment_proof']['tmp_name'], $target_path)) {
@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         unset($_SESSION['booking_flow']);
         unset($_SESSION['booking_token']);
 
-        header("Location: ../PHP/invoice.php?payment_id=" . $payment_id);
+        header("Location: /Proj/PHP/invoice/Front/invoice.php?payment_id=" . $payment_id);
         exit();
     } catch (Exception $e) {
         $conn->rollBack();
@@ -114,7 +114,7 @@ if (isset($_GET['cancel'])) {
         unset($_SESSION['booking_flow']);
         unset($_SESSION['booking_token']);
 
-        header("Location: ../PHP/bookings.php");
+        header("Location: ../PHP/booking/front/bookings.php");
         exit();
     } catch (Exception $e) {
         $conn->rollBack();
