@@ -40,6 +40,7 @@ session_start();
 
             <section>
                 <h2 class="text-2xl font-semibold mb-2">Reviews</h2>
+
                 <div class="flex items-center gap-4">
                     <div class="text-5xl font-bold leading-none"><?= $avgRating ?></div>
                     <div class="space-y-1">
@@ -83,19 +84,39 @@ session_start();
                 </div>
 
                 <form action="../../../PHP/feedback/back/feedback.php" method="POST">
-                    <div class="flex gap-2 mb-4 justify-center">
-                        <button type="button" class="rating-star text-orange-400 text-2xl"
-                            onclick="setRating(1)">★</button>
-                        <button type="button" class="rating-star text-orange-400 text-2xl"
-                            onclick="setRating(2)">★</button>
-                        <button type="button" class="rating-star text-orange-400 text-2xl"
-                            onclick="setRating(3)">★</button>
-                        <button type="button" class="rating-star text-orange-400 text-2xl"
-                            onclick="setRating(4)">★</button>
-                        <button type="button" class="rating-star text-orange-400 text-2xl"
-                            onclick="setRating(5)">★</button>
-                    </div>
+                    <?php
+                    require_once '../../db.php';
+                    $stmt = $conn->prepare("SELECT b.room_id, r.room_number, r.room_type
+                        FROM bookings b
+                        JOIN rooms r ON b.room_id = r.room_id
+                        WHERE b.user_id = :user_id
+                        AND b.booking_status IN ('Confirmed', 'Checked-in', 'Checked-out')");
+                    $stmt->execute([':user_id' => $_SESSION['user_id']]);
+                    $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    ?>
 
+                    <?php if (count($rooms) > 0): ?>
+                        <label for="room_id" class="block mb-2 text-sm font-medium">Select Room</label>
+                        <select name="room_id" id="room_id" required class="w-full p-2 mb-4 border rounded-lg">
+                            <?php foreach ($rooms as $room): ?>
+                                <option value="<?= $room['room_id'] ?>">
+                                    Room <?= htmlspecialchars($room['room_number']) ?> - <?= htmlspecialchars($room['room_type']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    <?php else: ?>
+                        <div class="bg-yellow-100 text-yellow-800 p-3 rounded mb-4">
+                            You need to book a room before leaving feedback.
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="flex gap-2 mb-4 justify-center">
+                        <button type="button" class="rating-star text-orange-400 text-2xl" onclick="setRating(1)">★</button>
+                        <button type="button" class="rating-star text-orange-400 text-2xl" onclick="setRating(2)">★</button>
+                        <button type="button" class="rating-star text-orange-400 text-2xl" onclick="setRating(3)">★</button>
+                        <button type="button" class="rating-star text-orange-400 text-2xl" onclick="setRating(4)">★</button>
+                        <button type="button" class="rating-star text-orange-400 text-2xl" onclick="setRating(5)">★</button>
+                    </div>
                     <input type="hidden" id="selectedRating" name="feedback_rating" value="5" />
 
                     <textarea name="feedback_comments"
