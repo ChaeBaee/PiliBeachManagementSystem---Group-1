@@ -62,7 +62,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     ) {
         if ($payment_method === "gcash") {
             $uploadDir = "uploads/";
-            if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+            if (!is_dir($uploadDir))
+                mkdir($uploadDir, 0755, true);
 
             $uniqueName = uniqid() . "-" . basename($_FILES['gcash_proof']['name']);
             $targetFile = $uploadDir . $uniqueName;

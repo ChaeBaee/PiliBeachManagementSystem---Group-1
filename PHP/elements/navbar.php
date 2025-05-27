@@ -21,8 +21,8 @@
         <li><a href="/Proj/PiliBeachManagementSystem---Group-1/PHP/room/front/rooms.php"
             class="hover:text-gray-300">Rooms</a>
         </li>
-        <li><a href="/Proj/PiliBeachManagementSystem---Group-1/PHP/booking/booking.php"
-            class="hover:text-gray-300">Booking</a></li>
+        <li><a href="/Proj/PiliBeachManagementSystem---Group-1/PHP/bookings.php" class="hover:text-gray-300">Booking</a>
+        </li>
         <li><a href="/Proj/PiliBeachManagementSystem---Group-1/PHP/feedback/front/feedback.php"
             class="hover:text-gray-300">Feedbacks</a></li>
         <li><a href="/Proj/PiliBeachManagementSystem---Group-1/PHP/room/about.php" class="hover:text-gray-300">About
