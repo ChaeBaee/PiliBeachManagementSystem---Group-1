@@ -238,7 +238,7 @@ session_start();
                     </div>
                 </div>
                 <div class="team-card bg-white rounded-xl shadow-xl overflow-hidden hover-scale">
-                    <img src="../assets/logo.jpg" alt="Logo" class="w-full h-96 object-cover">
+                    <img src="../assets/logo.png" alt="Logo" class="w-full h-96 object-cover">
                     <div class="p-8 team-info">
                         <h4 class="text-2xl font-semibold mb-2">Pili Beach Resort Agmanic</h4>
                         <p class="text-blue-200">Your Paradise Destination</p>

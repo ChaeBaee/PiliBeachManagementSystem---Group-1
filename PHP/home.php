@@ -94,7 +94,7 @@ try {
                 <p class="text-xl md:text-2xl mb-8 text-gray-200 font-light hero-text">Experience Luxury and Serenity by
                     the Beach</p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="booking/booking.php"
+                    <a href="../PHP/booking/front/bookings.php"
                         class="bg-[#1D4ED8] hover:bg-[#93C5FD] text-[#ffffff] font-bold py-4 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105">
                         Book Your Stay
                     </a>
@@ -153,7 +153,7 @@ try {
                 <p class="text-lg mb-8 text-blue-100">Experience the perfect blend of luxury and comfort at Pili Beach
                     Resort Agmanic. Book your stay now and create unforgettable memories.</p>
                 <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="booking/booking.php"
+                    <a href="../PHP/booking/front/bookings.php"
                         class="bg-white text-blue-600 font-semibold py-4 px-8 rounded-lg shadow-lg hover:bg-blue-50 transition-all duration-300 transform hover:scale-105">
                         Book Now
                     </a>

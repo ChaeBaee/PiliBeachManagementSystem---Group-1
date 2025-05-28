@@ -108,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Room Type</label>
                     <select name="room_type"
-                        class="w-full rounded-xl border border-gray-400 focus:border-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-50">
+                        class="w-full rounded-xl border focus:border-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-50">
                         <option value="">All Room Types</option>
                         <?php foreach ($room_types as $type): ?>
                             <option value="<?= htmlspecialchars($type) ?>" <?= ($roomType === $type) ? 'selected' : '' ?>>
@@ -121,7 +121,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Check In</label>
                     <input type="date" name="checkin" id="check_in" value="<?= htmlspecialchars($checkIn) ?>"
-                        class="w-full rounded-xl border border-gray-400 focus:border-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-50" />
+                        class="w-full rounded-xl border = focus:border-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-50" />
                     <?php if ($checkInMsg): ?>
                         <span class="text-sm text-red-500"><?= $checkInMsg ?></span>
                     <?php endif; ?>
@@ -130,7 +130,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Check Out</label>
                     <input type="date" name="checkout" id="check_out" value="<?= htmlspecialchars($checkOut) ?>"
-                        class="w-full rounded-xl border border-gray-400 focus:border-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-50" />
+                        class="w-full rounded-xl border focus:border-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-50" />
                     <?php if ($checkOutMsg): ?>
                         <span class="text-sm text-red-500"><?= $checkOutMsg ?></span>
                     <?php endif; ?>
@@ -139,7 +139,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Guests</label>
                     <input type="number" name="guests" value="<?= htmlspecialchars($guest) ?>" min="1"
-                        class="w-full rounded-xl border border-gray-400 focus:border-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-50" />
+                        class="w-full rounded-xl border focus:border-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-50" />
                     <?php if ($guestMsg): ?>
                         <span class="text-sm text-red-500"><?= $guestMsg ?></span>
                     <?php endif; ?>
