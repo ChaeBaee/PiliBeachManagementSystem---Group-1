@@ -1,6 +1,3 @@
-<?php
-//session_start();
-?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -27,16 +24,14 @@
     <div class="container mx-auto flex justify-between items-center">
       <a href="/Proj/PHP/home.php" class="text-black text-2xl font-bold tracking-wider">PILI</a>
 
-      <!-- Mobile menu button -->
       <button id="mobile-menu-button" class="md:hidden text-gray-600 hover:text-gray-900 focus:outline-none">
         <i class="fas fa-bars text-2xl"></i>
       </button>
 
-      <!-- Desktop Menu -->
       <ul class="hidden md:flex space-x-6 text-black" id="desktop-menu">
         <li><a href="/Proj/PHP/home.php" class="hover:text-[#3b82f6] transition duration-300">Home</a></li>
         <li><a href="/Proj/PHP/room/front/rooms.php" class="hover:text-[#3b82f6] transition duration-300">Rooms</a></li>
-        <li><a href="/Proj/PHP/bookings.php" class="hover:text-[#3b82f6] transition duration-300">Book</a></li>
+        <li><a href="/Proj/PHP/booking/front/bookings.php" class="hover:text-[#3b82f6] transition duration-300">Book</a></li>
         <li><a href="/Proj/PHP/feedback/front/feedback.php"
             class="hover:text-[#3b82f6] transition duration-300">Reviews</a></li>
         <li><a href="/Proj/PHP/room/about.php" class="hover:text-[#3b82f6] transition duration-300">About Us</a></li>
@@ -70,7 +65,7 @@
       <ul class="py-2">
         <li><a href="/Proj/PHP/home.php" class="block px-4 py-2 hover:bg-gray-100">Home</a></li>
         <li><a href="/Proj/PHP/room/front/rooms.php" class="block px-4 py-2 hover:bg-gray-100">Rooms</a></li>
-        <li><a href="/Proj/PHP/bookings.php" class="block px-4 py-2 hover:bg-gray-100">Book</a></li>
+        <li><a href="/Proj/PHP/booking/front/bookings.php" class="block px-4 py-2 hover:bg-gray-100">Book</a></li>
         <li><a href="/Proj/PHP/feedback/front/feedback.php" class="block px-4 py-2 hover:bg-gray-100">Reviews</a></li>
         <li><a href="/Proj/PHP/room/about.php" class="block px-4 py-2 hover:bg-gray-100">About Us</a></li>
       </ul>
