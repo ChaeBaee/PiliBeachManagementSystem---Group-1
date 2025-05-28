@@ -198,7 +198,6 @@ if ($dashboardData === null) {
 
   <?php if (!isset($error)): ?>
     <script>
-      // Monthly Revenue Chart
       const revenueCtx = document.getElementById('revenueChart').getContext('2d');
       new Chart(revenueCtx, {
         type: 'line',
@@ -232,7 +231,6 @@ if ($dashboardData === null) {
         }
       });
 
-      // Room Type Revenue Chart
       const roomTypeCtx = document.getElementById('roomTypeChart').getContext('2d');
       new Chart(roomTypeCtx, {
         type: 'doughnut',

@@ -34,7 +34,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $hasError = true;
     }
 
-    // If no errors, fetch rooms
     if (!$hasError) {
         $rooms = getAvailableRooms($checkIn, $checkOut, $guest, $roomType);
     }

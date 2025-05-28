@@ -7,11 +7,9 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Get room types for dropdown
 $stmt = $conn->query("SELECT DISTINCT room_type FROM rooms");
 $room_types = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-// Function to fetch available rooms
 function getAvailableRooms($check_in, $check_out, $guests = 1, $room_type = '')
 {
     global $conn;

@@ -213,7 +213,7 @@ include_once '../../Room/back/room-back.php';
 
         function confirmDelete(roomId) {
             if (confirm("Are you sure you want to delete this room?")) {
-                window.location.href = `Proj/Admin/Room/back/delete_room.php`;
+                window.location.href = `/Proj/Admin/Room/back/delete_room.php`;
             }
         }
 

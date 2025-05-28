@@ -16,16 +16,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_password = $_POST['new_password'];
     $confirm_password = $_POST['confirm_password'];
 
-    // Initialize error flag
     $hasErrors = false;
 
-    // Validate current password
     if (empty($current_password)) {
         $_SESSION['currentPasswordMsg'] = "Current password is required.";
         $hasErrors = true;
     }
 
-    // Validate new password
     if (empty($new_password)) {
         $_SESSION['newPasswordMsg'] = "New password is required.";
         $hasErrors = true;
@@ -37,7 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $hasErrors = true;
     }
 
-    // Validate confirm password
     if (empty($confirm_password)) {
         $_SESSION['confirmPasswordMsg'] = "Please confirm your new password.";
         $hasErrors = true;
@@ -46,14 +42,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $hasErrors = true;
     }
 
-    // If there are validation errors, redirect back
     if ($hasErrors) {
         header("Location: ../profile.php");
         exit();
     }
 
     try {
-        // Verify current password
         $stmt = $conn->prepare("SELECT user_password FROM users WHERE user_id = ?");
         $stmt->execute([$user_id]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -64,7 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         }
 
-        // Hash and update new password
         $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
         $update = $conn->prepare("UPDATE users SET user_password = ? WHERE user_id = ?");
         $result = $update->execute([$hashed_password, $user_id]);
