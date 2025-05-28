@@ -98,10 +98,12 @@ ORDER BY r.room_number;
                 return ['success' => false, 'message' => 'All fields are required'];
             }
 
+            // Validate dates
             if (strtotime($checkIn) >= strtotime($checkOut)) {
                 return ['success' => false, 'message' => 'Check-out date must be after check-in date'];
             }
 
+            // Check if dates are in the past
             $today = date('Y-m-d');
             if (strtotime($checkIn) < strtotime($today)) {
                 return ['success' => false, 'message' => 'Check-in date cannot be in the past'];
@@ -154,10 +156,12 @@ ORDER BY r.room_number;
                 return ['success' => false, 'message' => 'All fields are required'];
             }
 
+            // Validate dates
             if (strtotime($checkIn) >= strtotime($checkOut)) {
                 return ['success' => false, 'message' => 'Check-out date must be after check-in date'];
             }
 
+            // Check if dates are in the past
             $today = date('Y-m-d');
             if (strtotime($checkIn) < strtotime($today)) {
                 return ['success' => false, 'message' => 'Check-in date cannot be in the past'];

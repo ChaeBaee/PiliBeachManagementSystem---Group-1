@@ -1,7 +1,8 @@
 <?php
 session_start();
+
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
-    header("Location: ../Login/front/login.php");
+    header("Location: login.php");
     exit;
 }
 
@@ -34,8 +35,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
 
 <body class="bg-gray-100 text-gray-800">
 
-<?php include '../../Elements/sidebar.php'; ?>
-<?php include '../../Elements/navbar.php'; ?>
+    <?php include '../../Elements/sidebar.php'; ?>
+    <?php include '../../Elements/navbar.php'; ?>
 
     <main class="md:ml-64 mt-16 p-6">
         <div class="flex justify-between items-center mb-6">
@@ -67,6 +68,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
         </div>
     </main>
 
+    <!-- Add Booking Modal -->
     <div id="addBookingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
         <div class="bg-white rounded-lg p-6 w-full max-w-md">
             <h2 class="text-2xl font-semibold mb-4">Add New Booking</h2>
@@ -120,7 +122,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
         </div>
     </div>
 
-    <div id="editBookingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+    <!-- Edit Booking Modal -->
+    <div id="editBookingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center pt-20">
         <div class="bg-white rounded-lg p-6 w-full max-w-md">
             <h2 class="text-2xl font-semibold mb-4">Edit Booking</h2>
             <form id="editBookingForm" class="space-y-4">
@@ -188,6 +191,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
         </div>
     </div>
 
+    <!-- Delete Modal -->
     <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
         <div class="bg-white rounded-lg p-6 w-full max-w-md">
             <h2 class="text-2xl font-semibold mb-4">Confirm Delete</h2>
@@ -201,9 +205,27 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
         </div>
     </div>
 
+    <!-- Notification Modal -->
+    <div id="notificationModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <div class="flex items-center justify-between mb-4">
+                <h2 id="notificationTitle" class="text-2xl font-semibold"></h2>
+                <button onclick="closeNotificationModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <p id="notificationMessage" class="text-gray-600 mb-6"></p>
+            <div class="flex justify-end">
+                <button onclick="closeNotificationModal()"
+                    class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600">OK</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let currentBookingId = null;
 
+        // Add validation functions
         function validateGuestName(userId) {
             if (!userId) {
                 return "Guest name cannot be empty.";
@@ -268,11 +290,13 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             const editCheckIn = document.getElementById('editCheckIn');
             const editCheckOut = document.getElementById('editCheckOut');
 
+            // Set minimum dates to today
             addCheckIn.min = today;
             addCheckOut.min = today;
             editCheckIn.min = today;
             editCheckOut.min = today;
 
+            // Set initial values
             addCheckIn.value = today;
             addCheckOut.value = today;
         }
@@ -283,8 +307,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             const start = new Date(checkIn);
             const end = new Date(checkOut);
 
+            // Calculate number of nights
             const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
 
+            // Return total price (nights * price per night)
             return nights * roomPrice;
         }
 
@@ -307,11 +333,12 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             }
         }
 
+        // Modify the loadAvailableRooms function to include room price
         async function loadAvailableRooms(checkIn, checkOut, currentBookingId = null) {
             if (!checkIn || !checkOut) return;
 
             try {
-                const response = await fetch('/Proj/Admin/Booking/back/bookings_backend.php', {
+                const response = await fetch('../back/bookings_backend.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: `action=get_available_rooms&check_in=${checkIn}&check_out=${checkOut}${currentBookingId ? `&current_booking_id=${currentBookingId}` : ''}`
@@ -330,6 +357,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
                     addSelect.innerHTML = roomOptions;
                     editSelect.innerHTML = roomOptions;
 
+                    // Update total price if dates and room are selected
                     const addCheckIn = document.getElementById('addCheckIn').value;
                     const addCheckOut = document.getElementById('addCheckOut').value;
                     const addRoomId = addSelect.value;
@@ -349,14 +377,17 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             }
         }
 
+        // Add event listeners for date and room changes
         document.getElementById('addCheckIn').addEventListener('change', function () {
             const checkOut = document.getElementById('addCheckOut');
             const roomId = document.getElementById('addRoomId').value;
 
+            // Set minimum check-out date to next day after check-in
             const nextDay = new Date(this.value);
             nextDay.setDate(nextDay.getDate() + 1);
             checkOut.min = nextDay.toISOString().split('T')[0];
 
+            // If current check-out is before or equal to check-in, update it
             if (checkOut.value <= this.value) {
                 checkOut.value = nextDay.toISOString().split('T')[0];
             }
@@ -388,14 +419,17 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             }
         });
 
+        // Edit form event listeners
         document.getElementById('editCheckIn').addEventListener('change', function () {
             const checkOut = document.getElementById('editCheckOut');
             const roomId = document.getElementById('editRoomId').value;
 
+            // Set minimum check-out date to next day after check-in
             const nextDay = new Date(this.value);
             nextDay.setDate(nextDay.getDate() + 1);
             checkOut.min = nextDay.toISOString().split('T')[0];
 
+            // If current check-out is before or equal to check-in, update it
             if (checkOut.value <= this.value) {
                 checkOut.value = nextDay.toISOString().split('T')[0];
             }
@@ -458,7 +492,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
 
         async function loadGuestUsers() {
             try {
-                const response = await fetch('bookings_backend.php', {
+                const response = await fetch('../back/bookings_backend.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: 'action=get_guest_users'
@@ -477,6 +511,18 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             }
         }
 
+        function showNotification(title, message) {
+            document.getElementById('notificationTitle').textContent = title;
+            document.getElementById('notificationMessage').textContent = message;
+            document.getElementById('notificationModal').classList.remove('hidden');
+            document.getElementById('notificationModal').classList.add('flex');
+        }
+
+        function closeNotificationModal() {
+            document.getElementById('notificationModal').classList.add('hidden');
+            document.getElementById('notificationModal').classList.remove('flex');
+        }
+
         document.getElementById('addBookingForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             clearValidationMessages();
@@ -487,16 +533,19 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             const checkOut = document.getElementById('addCheckOut').value;
             const totalPrice = document.getElementById('addTotalPrice').value;
 
+            // Validate all fields
             const guestNameMsg = validateGuestName(userId);
             const roomMsg = validateRoom(roomId);
             const datesMsg = validateDates(checkIn, checkOut);
             const totalPriceMsg = validateTotalPrice(totalPrice);
 
+            // Display validation messages
             if (guestNameMsg) document.getElementById('addGuestNameMsg').textContent = guestNameMsg;
             if (roomMsg) document.getElementById('addRoomMsg').textContent = roomMsg;
             if (datesMsg) document.getElementById('addCheckOutMsg').textContent = datesMsg;
             if (totalPriceMsg) document.getElementById('addTotalPriceMsg').textContent = totalPriceMsg;
 
+            // If any validation failed, stop form submission
             if (guestNameMsg || roomMsg || datesMsg || totalPriceMsg) {
                 return;
             }
@@ -510,7 +559,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             formData.append('total_price', totalPrice);
 
             try {
-                const response = await fetch('/Proj/Admin/Bookings/back/bookings_backend.php', {
+                const response = await fetch('../back/bookings_backend.php', {
                     method: 'POST',
                     body: formData
                 });
@@ -520,13 +569,13 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
                 if (data.success) {
                     closeAddModal();
                     loadBookings();
-                    alert('Booking added successfully!');
+                    showNotification('Success', 'Booking added successfully!');
                 } else {
-                    alert('Error: ' + (data.message || 'Failed to add booking'));
+                    showNotification('Error', data.message || 'Failed to add booking');
                 }
             } catch (error) {
                 console.error('Error adding booking:', error);
-                alert('Error adding booking. Please try again.');
+                showNotification('Error', 'Error adding booking. Please try again.');
             }
         });
 
@@ -541,18 +590,21 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             const totalPrice = document.getElementById('editTotalPrice').value;
             const status = document.getElementById('editStatus').value;
 
+            // Validate all fields
             const guestNameMsg = validateGuestName(userId);
             const roomMsg = validateRoom(roomId);
             const datesMsg = validateDates(checkIn, checkOut);
             const totalPriceMsg = validateTotalPrice(totalPrice);
             const statusMsg = validateStatus(status);
 
+            // Display validation messages
             if (guestNameMsg) document.getElementById('editGuestNameMsg').textContent = guestNameMsg;
             if (roomMsg) document.getElementById('editRoomMsg').textContent = roomMsg;
             if (datesMsg) document.getElementById('editCheckOutMsg').textContent = datesMsg;
             if (totalPriceMsg) document.getElementById('editTotalPriceMsg').textContent = totalPriceMsg;
             if (statusMsg) document.getElementById('editStatusMsg').textContent = statusMsg;
 
+            // If any validation failed, stop form submission
             if (guestNameMsg || roomMsg || datesMsg || totalPriceMsg || statusMsg) {
                 return;
             }
@@ -568,7 +620,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             formData.append('status', status);
 
             try {
-                const response = await fetch('/Proj/Admin/Bookings/back/bookings_backend.php', {
+                const response = await fetch('../back/bookings_backend.php', {
                     method: 'POST',
                     body: formData
                 });
@@ -578,19 +630,19 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
                 if (data.success) {
                     closeEditModal();
                     loadBookings();
-                    alert('Booking updated successfully!');
+                    showNotification('Success', 'Booking updated successfully!');
                 } else {
-                    alert('Error: ' + (data.message || 'Failed to update booking'));
+                    showNotification('Error', data.message || 'Failed to update booking');
                 }
             } catch (error) {
                 console.error('Error updating booking:', error);
-                alert('Error updating booking. Please try again.');
+                showNotification('Error', 'Error updating booking. Please try again.');
             }
         });
 
         async function editBooking(bookingId) {
             try {
-                const response = await fetch('/Proj/Admin/Bookings/back/bookings_backend.php', {
+                const response = await fetch('../back/bookings_backend.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: `action=get_booking_details&booking_id=${bookingId}`
@@ -599,6 +651,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
 
                 if (data.success) {
                     const booking = data.data;
+                    currentBookingId = bookingId;
 
                     document.getElementById('editBookingId').value = booking.booking_id;
                     document.getElementById('editUserId').value = booking.user_id;
@@ -609,7 +662,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
                     document.getElementById('editStatus').value = booking.booking_status;
 
                     await loadAvailableRooms(booking.booking_check_in, booking.booking_check_out, booking.booking_id);
-
                     document.getElementById('editRoomId').value = booking.room_id;
 
                     openEditModal(bookingId);
@@ -621,7 +673,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
 
         async function loadBookings() {
             try {
-                const response = await fetch('/Proj/Admin/Bookings/back/bookings_backend.php', {
+                const response = await fetch('../back/bookings_backend.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: 'action=get_bookings'
@@ -632,7 +684,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
                     const tbody = document.getElementById('bookingsTableBody');
                     tbody.innerHTML = '';
 
-                    data.data.forEach(booking => {
+                    // Filter out checked-out bookings
+                    const activeBookings = data.data.filter(booking => booking.booking_status !== 'Checked-out');
+
+                    activeBookings.forEach(booking => {
                         const row = `
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 font-medium">${booking.booking_id}</td>
@@ -678,7 +733,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             if (!currentBookingId) return;
 
             try {
-                const response = await fetch('/Proj/Admin/Bookings/back/bookings_backend.php', {
+                const response = await fetch('../back/bookings_backend.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: `action=delete_booking&booking_id=${currentBookingId}`
@@ -688,12 +743,13 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
                 if (data.success) {
                     closeDeleteModal();
                     loadBookings();
+                    showNotification('Success', 'Booking deleted successfully!');
                 } else {
-                    alert('Error: ' + (data.message || 'Failed to delete booking'));
+                    showNotification('Error', data.message || 'Failed to delete booking');
                 }
             } catch (error) {
                 console.error('Error deleting booking:', error);
-                alert('Error deleting booking');
+                showNotification('Error', 'Error deleting booking');
             }
         }
 
