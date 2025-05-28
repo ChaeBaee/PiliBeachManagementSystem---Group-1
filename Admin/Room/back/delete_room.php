@@ -26,7 +26,7 @@ if (isset($_GET['id'])) {
             }
         }
 
-        header("Location: ../Room/front/rooms.php");
+        header("Location: ../../Room/front/rooms.php");
         exit;
     } catch (PDOException $e) {
         error_log("Error deleting room: " . $e->getMessage());

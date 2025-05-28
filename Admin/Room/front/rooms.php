@@ -15,7 +15,7 @@ include_once '../../Room/back/room-back.php';
 
 <body class="bg-gray-100 font-sans">
 
-<?php include '../../Elements/navbar.php'; ?>
+    <?php include '../../Elements/navbar.php'; ?>
 
     <div class="flex flex-col md:flex-row">
 
@@ -213,7 +213,7 @@ include_once '../../Room/back/room-back.php';
 
         function confirmDelete(roomId) {
             if (confirm("Are you sure you want to delete this room?")) {
-                window.location.href = `Proj/Admin/Room/back/delete_room.php`;
+                window.location.href = `/Proj/Admin/Room/back/delete_room.php?id=${roomId}`;
             }
         }
 
