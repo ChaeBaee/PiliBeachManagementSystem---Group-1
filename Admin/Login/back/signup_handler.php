@@ -73,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         // Return success response
                         $response = [
                             'success' => true,
-                            'redirect' => 'index.php'
+                            'redirect' => '../Dashboard/front/index.php'
                         ];
                         header('Content-Type: application/json');
                         echo json_encode($response);

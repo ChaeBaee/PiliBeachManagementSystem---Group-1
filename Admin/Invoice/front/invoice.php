@@ -255,7 +255,7 @@ $invoices = $stmt->fetchAll(PDO::FETCH_ASSOC);
             const form = event.target;
             const formData = new FormData(form);
 
-            fetch('backend/invoice_edit.php', {
+            fetch('../back/invoice_edit.php', {
                 method: 'POST',
                 body: formData
             })
@@ -276,7 +276,7 @@ $invoices = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         function deleteInvoice(invoiceId) {
             if (confirm('Are you sure you want to delete this invoice?')) {
-                fetch('backend/invoice_delete.php', {
+                fetch('../back/invoice_delete.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',

@@ -107,7 +107,7 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_role']) && $_SESSION['u
             const formData = new FormData(this);
 
             try {
-                const response = await fetch('signup_handler.php', {
+                const response = await fetch('../back/signup_handler.php', {
                     method: 'POST',
                     body: formData
                 });
