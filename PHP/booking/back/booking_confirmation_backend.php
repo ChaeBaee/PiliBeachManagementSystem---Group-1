@@ -6,10 +6,7 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: login/front/login.php");
     exit();
 }
-//if (!isset($_SESSION['user_id'])) {
-//    header("Location: ../login.php");
-//    exit();
-//}
+
 
 $currentUserId = isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : 0;
 $conn->exec("SET @current_user_id = $currentUserId");

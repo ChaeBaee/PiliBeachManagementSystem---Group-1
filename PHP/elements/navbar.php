@@ -1,6 +1,3 @@
-<?php
-//session_start();
-?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -27,12 +24,10 @@
     <div class="container mx-auto flex justify-between items-center">
       <a href="/Proj/PHP/home.php" class="text-black text-2xl font-bold tracking-wider">PILI</a>
 
-      <!-- Mobile menu button -->
       <button id="mobile-menu-button" class="md:hidden text-gray-600 hover:text-gray-900 focus:outline-none">
         <i class="fas fa-bars text-2xl"></i>
       </button>
 
-      <!-- Desktop Menu -->
       <ul class="hidden md:flex space-x-6 text-black" id="desktop-menu">
         <li><a href="/Proj/PHP/home.php" class="hover:text-[#3b82f6] transition duration-300">Home</a></li>
         <li><a href="/Proj/PHP/room/front/rooms.php" class="hover:text-[#3b82f6] transition duration-300">Rooms</a></li>
@@ -42,7 +37,6 @@
         <li><a href="/Proj/PHP/room/about.php" class="hover:text-[#3b82f6] transition duration-300">About Us</a></li>
       </ul>
 
-      <!-- Desktop Auth Buttons -->
       <div class="hidden md:flex items-center space-x-4">
         <?php if (isset($_SESSION['user_id'])): ?>
           <div class="relative group">
@@ -67,12 +61,11 @@
       </div>
     </div>
 
-    <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden md:hidden mt-4 bg-white rounded-lg shadow-lg">
       <ul class="py-2">
         <li><a href="/Proj/PHP/home.php" class="block px-4 py-2 hover:bg-gray-100">Home</a></li>
         <li><a href="/Proj/PHP/room/front/rooms.php" class="block px-4 py-2 hover:bg-gray-100">Rooms</a></li>
-        <li><a href="/Proj/PHP/bookings.php" class="block px-4 py-2 hover:bg-gray-100">Book</a></li>
+        <li><a href="/Proj/PHP/booking/front/bookings.php" class="block px-4 py-2 hover:bg-gray-100">Book</a></li>
         <li><a href="/Proj/PHP/feedback/front/feedback.php" class="block px-4 py-2 hover:bg-gray-100">Reviews</a></li>
         <li><a href="/Proj/PHP/room/about.php" class="block px-4 py-2 hover:bg-gray-100">About Us</a></li>
       </ul>
@@ -93,7 +86,6 @@
   </nav>
 
   <script>
-    // Mobile menu toggle
     const mobileMenuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
 
@@ -101,7 +93,6 @@
       mobileMenu.classList.toggle('hidden');
     });
 
-    // Close mobile menu when clicking outside
     document.addEventListener('click', (e) => {
       if (!mobileMenuButton.contains(e.target) && !mobileMenu.contains(e.target)) {
         mobileMenu.classList.add('hidden');

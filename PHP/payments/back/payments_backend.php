@@ -6,10 +6,7 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: login/front/login.php");
     exit();
 }
-//if (!isset($_SESSION['user_id'])) {
-//    header("Location: ../login.php");
-//    exit();
-//}
+
 
 if (!isset($_GET['booking_id']) || !isset($_SESSION['booking_flow']) || $_GET['booking_id'] != $_SESSION['booking_flow']['booking_id']) {
     header("Location: /Proj/PHP/booking/front/bookings.php");
@@ -60,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 throw new Exception('Invalid file type. Please upload JPG, PNG, or PDF files only.');
             }
 
-            $file_name = uniqid('payment_') . 'backend' . $file_extension;
+            $file_name = uniqid('payment_') . 'back' . $file_extension;
             $target_path = $upload_dir . $file_name;
 
             if (move_uploaded_file($_FILES['payment_proof']['tmp_name'], $target_path)) {

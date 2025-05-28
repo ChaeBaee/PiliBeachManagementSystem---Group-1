@@ -1,7 +1,6 @@
 <?php
 require_once '../back/bookings_backend.php';
 
-// Initialize form variables
 $checkIn = $checkOut = $guest = $roomType = "";
 $checkInMsg = $checkOutMsg = $guestMsg = "";
 $today = date('Y-m-d');
@@ -14,7 +13,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $guest = $_POST["guests"] ?? "";
     $roomType = $_POST["room_type"] ?? "";
 
-    // Validation
     if (empty($checkIn)) {
         $checkInMsg = "Please enter check-in date.";
         $hasError = true;
@@ -36,7 +34,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $hasError = true;
     }
 
-    // If no errors, fetch rooms
     if (!$hasError) {
         $rooms = getAvailableRooms($checkIn, $checkOut, $guest, $roomType);
     }
@@ -108,7 +105,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Room Type</label>
                     <select name="room_type"
-                        class="w-full rounded-xl border border-gray-400 focus:border-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-50">
+                        class="w-full rounded-xl border focus:border-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-50">
                         <option value="">All Room Types</option>
                         <?php foreach ($room_types as $type): ?>
                             <option value="<?= htmlspecialchars($type) ?>" <?= ($roomType === $type) ? 'selected' : '' ?>>
@@ -121,7 +118,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Check In</label>
                     <input type="date" name="checkin" id="check_in" value="<?= htmlspecialchars($checkIn) ?>"
-                        class="w-full rounded-xl border border-gray-400 focus:border-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-50" />
+                        class="w-full rounded-xl border = focus:border-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-50" />
                     <?php if ($checkInMsg): ?>
                         <span class="text-sm text-red-500"><?= $checkInMsg ?></span>
                     <?php endif; ?>
@@ -130,7 +127,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Check Out</label>
                     <input type="date" name="checkout" id="check_out" value="<?= htmlspecialchars($checkOut) ?>"
-                        class="w-full rounded-xl border border-gray-400 focus:border-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-50" />
+                        class="w-full rounded-xl border focus:border-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-50" />
                     <?php if ($checkOutMsg): ?>
                         <span class="text-sm text-red-500"><?= $checkOutMsg ?></span>
                     <?php endif; ?>
@@ -139,7 +136,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Guests</label>
                     <input type="number" name="guests" value="<?= htmlspecialchars($guest) ?>" min="1"
-                        class="w-full rounded-xl border border-gray-400 focus:border-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-50" />
+                        class="w-full rounded-xl border focus:border-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-50" />
                     <?php if ($guestMsg): ?>
                         <span class="text-sm text-red-500"><?= $guestMsg ?></span>
                     <?php endif; ?>
@@ -165,7 +162,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <?php foreach ($rooms as $room): ?>
                             <div class="room-card bg-white rounded-xl overflow-hidden shadow">
-                                <img src="assets/<?= htmlspecialchars($room['room_image']) ?>" alt=""
+                                <img src="../../assets/<?= htmlspecialchars($room['room_image']) ?>" alt=""
                                     class="w-full h-64 object-cover" />
                                 <div class="p-6">
                                     <h3 class="text-xl font-bold mb-3"><?= htmlspecialchars($room['room_type']) ?></h3>

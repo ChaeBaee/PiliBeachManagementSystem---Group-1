@@ -41,7 +41,7 @@ require_once '../back/booking_confirmation_backend.php';
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <?php if ($room['room_image']): ?>
-                        <img src="assets/<?php echo htmlspecialchars($room['room_image']); ?>"
+                        <img src="../../assets/<?php echo htmlspecialchars($room['room_image']); ?>"
                             alt="<?php echo htmlspecialchars($room['room_type']); ?>"
                             class="w-full h-64 object-cover rounded-lg">
                     <?php endif; ?>

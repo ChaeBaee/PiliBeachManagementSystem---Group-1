@@ -2,7 +2,6 @@
 session_start();
 require_once 'db.php';
 
-// Fetch recent feedback with user and room details
 try {
     $stmt = $conn->query("
         SELECT f.feedback_rating, f.feedback_comments, f.feedback_date_created, u.user_name,
@@ -19,7 +18,6 @@ try {
     $recentFeedback = [];
 }
 
-// Get average rating
 try {
     $stmt = $conn->query("SELECT AVG(feedback_rating) as avg_rating FROM feedback");
     $avgRating = number_format($stmt->fetch(PDO::FETCH_ASSOC)['avg_rating'], 1);
@@ -27,7 +25,6 @@ try {
     $avgRating = "0.0";
 }
 
-// Fetch available rooms
 try {
     $stmt = $conn->query("
         SELECT room_id, room_type, room_price, room_capacity, room_image, room_description 
@@ -81,7 +78,6 @@ try {
 
     <?php include('elements/navbar.php'); ?>
 
-    <!-- Hero Section -->
     <section class="relative h-screen" data-aos="fade-in">
         <div class="absolute inset-0">
             <img src="assets/home.jpg" alt="Resort View" class="w-full h-full object-cover">
@@ -94,7 +90,7 @@ try {
                 <p class="text-xl md:text-2xl mb-8 text-gray-200 font-light hero-text">Experience Luxury and Serenity by
                     the Beach</p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="booking/booking.php"
+                    <a href="../PHP/booking/front/bookings.php"
                         class="bg-[#1D4ED8] hover:bg-[#93C5FD] text-[#ffffff] font-bold py-4 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105">
                         Book Your Stay
                     </a>
@@ -107,7 +103,6 @@ try {
         </div>
     </section>
 
-    <!-- Our Rooms -->
     <section class="py-20 px-4 bg-white" data-aos="fade-up">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16">
@@ -145,7 +140,6 @@ try {
         </div>
     </section>
 
-    <!-- Book Your Stay -->
     <section class="py-20 px-4 bg-gradient-to-r from-blue-600 to-indigo-700" data-aos="fade-left">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div class="text-white">
@@ -153,7 +147,7 @@ try {
                 <p class="text-lg mb-8 text-blue-100">Experience the perfect blend of luxury and comfort at Pili Beach
                     Resort Agmanic. Book your stay now and create unforgettable memories.</p>
                 <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="booking/booking.php"
+                    <a href="../PHP/booking/front/bookings.php"
                         class="bg-white text-blue-600 font-semibold py-4 px-8 rounded-lg shadow-lg hover:bg-blue-50 transition-all duration-300 transform hover:scale-105">
                         Book Now
                     </a>
@@ -170,7 +164,6 @@ try {
         </div>
     </section>
 
-    <!-- What Our Guests Say -->
     <section class="py-20 px-4 bg-gray-50" data-aos="fade-up">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16">
@@ -235,7 +228,6 @@ try {
 
     <?php include('elements/footer.php'); ?>
 
-    <!-- AOS JS -->
     <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
     <script>
         AOS.init({

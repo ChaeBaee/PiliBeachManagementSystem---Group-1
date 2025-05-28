@@ -68,7 +68,6 @@ require_once '../back/payments_backend.php';
             <div class="bg-white rounded-lg shadow-md p-6">
                 <h2 class="text-xl font-semibold mb-6">Payment Instructions</h2>
 
-                <!-- GCash Payment Steps -->
                 <div class="bg-blue-50 rounded-lg p-6 mb-8">
                     <h3 class="text-lg font-semibold text-blue-800 mb-4">How to Pay via GCash</h3>
                     <ol class="space-y-3 text-gray-700">
@@ -101,7 +100,6 @@ require_once '../back/payments_backend.php';
                     </ol>
                 </div>
 
-                <!-- QR Code Section -->
                 <div class="flex flex-col items-center mb-8">
                     <h3 class="text-lg font-semibold mb-4">Scan QR Code to Pay</h3>
                     <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
