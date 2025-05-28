@@ -156,8 +156,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     </svg>
                     Profile Information
                 </h2>
-                <form action="" method="POST" class="space-y-6">
-                    <input type="hidden" name="form_name" value="profile_update">
+                <form action="back/update-profile.php" method="POST" class="space-y-6">
+                    <input type="hidden" name="user_id" value="<?= $user_id ?>">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                         <input type="text" name="user_name" value="<?= htmlspecialchars($user['user_name']); ?>"
@@ -210,8 +210,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     </svg>
                     Change Password
                 </h2>
-                <form action="" method="POST" class="space-y-6">
-                    <input type="hidden" name="form_name" value="password_change">
+                <form action="back/change-password.php" method="POST" class="space-y-6">
+                    <input type="hidden" name="user_id" value="<?= $user_id ?>">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
                         <input type="password" name="current_password"
@@ -264,7 +264,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                                     <div class="space-y-2">
                                         <h3 class="text-lg font-semibold text-gray-800">Room <?= $booking['room_number']; ?> -
-                                            <?= $booking['room_type']; ?></h3>
+                                            <?= $booking['room_type']; ?>
+                                        </h3>
                                         <div class="flex flex-wrap gap-4 text-sm text-gray-600">
                                             <span class="flex items-center">
                                                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

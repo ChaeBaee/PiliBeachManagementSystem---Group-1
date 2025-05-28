@@ -7,67 +7,31 @@ if (isset($_SESSION['user_id']) && $_SESSION['user_role'] === 'Guest') {
     exit;
 }
 
-$emailMsg = $passwordMsg = $fullNameMsg = $contactNoMsg = $termsMsg = "";
-$email = $password = $fullName = $contactNo = $confirmPassword = "";
-$termsAccepted = false;
+// Get error messages from session if they exist
+$emailMsg = $_SESSION['emailMsg'] ?? "";
+$passwordMsg = $_SESSION['passwordMsg'] ?? "";
+$fullNameMsg = $_SESSION['fullNameMsg'] ?? "";
+$contactNoMsg = $_SESSION['contactNoMsg'] ?? "";
+$termsMsg = $_SESSION['termsMsg'] ?? "";
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $email = $_POST["email"] ?? "";
-    $password = $_POST["password"] ?? "";
-    $confirmPassword = $_POST["confirm_password"] ?? "";
-    $fullName = $_POST["name"] ?? "";
-    $contactNo = $_POST["phone"] ?? "";
-    $termsAccepted = isset($_POST["terms"]);
+// Get previous input values if they exist
+$email = $_SESSION['old_email'] ?? "";
+$fullName = $_SESSION['old_name'] ?? "";
+$contactNo = $_SESSION['old_phone'] ?? "";
+$termsAccepted = $_SESSION['old_terms'] ?? false;
 
-    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $emailMsg = "Please enter a valid email.";
-    }
-
-    if (empty($password)) {
-        $passwordMsg = "Password cannot be empty.";
-    } elseif (strlen($password) < 8) {
-        $passwordMsg = "Password must be at least 8 characters.";
-    } elseif ($password !== $confirmPassword) {
-        $passwordMsg = "Passwords do not match.";
-    }
-
-    if (empty($fullName)) {
-        $fullNameMsg = "Full name cannot be empty.";
-    }
-
-    if (empty($contactNo)) {
-        $contactNoMsg = "Contact number cannot be empty.";
-    }
-
-    if (!$termsAccepted) {
-        $termsMsg = "You must agree to the terms and conditions.";
-    }
-
-    if ($emailMsg === "" && $passwordMsg === "" && $fullNameMsg === "" && $contactNoMsg === "" && $termsMsg === "") {
-        try {
-            $checkStmt = $conn->prepare("SELECT * FROM users WHERE user_email = ?");
-            $checkStmt->execute([$email]);
-
-            if ($checkStmt->rowCount() > 0) {
-                $emailMsg = "Email already exists.";
-            } else {
-                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-                $stmt = $conn->prepare("INSERT INTO users (user_name, user_email, user_password, user_phone) VALUES (?, ?, ?, ?)");
-                $stmt->execute([$fullName, $email, $hashedPassword, $contactNo]);
-
-                $_SESSION['user_id'] = $conn->lastInsertId();
-                $_SESSION['user_name'] = $fullName;
-                $_SESSION['user_role'] = 'Guest';
-                $_SESSION['user_email'] = $email;
-
-                header("Location: ../../home.php");
-                exit();
-            }
-        } catch (PDOException $e) {
-            echo "<script>alert('Signup failed: " . $e->getMessage() . "');</script>";
-        }
-    }
-}
+// Clear session messages
+unset(
+    $_SESSION['emailMsg'],
+    $_SESSION['passwordMsg'],
+    $_SESSION['fullNameMsg'],
+    $_SESSION['contactNoMsg'],
+    $_SESSION['termsMsg'],
+    $_SESSION['old_email'],
+    $_SESSION['old_name'],
+    $_SESSION['old_phone'],
+    $_SESSION['old_terms']
+);
 ?>
 
 <!DOCTYPE html>
@@ -145,10 +109,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <p class="text-gray-600">Join us for an unforgettable experience</p>
     </div>
 
-    <form method="POST" action="" class="space-y-6">
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-            <div class="relative">
+        <form method="POST" action="../back/sign-up-back.php" class="space-y-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                <div class="relative">
                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                         <i class="far fa-user"></i>
                     </span>
