@@ -6,8 +6,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
     header("Location: ../Login/front/login.php");
     exit;
 }
-$currentUserId = isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : 0;
-$conn->exec("SET @current_user_id = $currentUserId");
+
 
 $stmt = $conn->query("
     SELECT i.*, u.user_name, b.booking_id, b.booking_total_price, p.payment_status 
@@ -232,7 +231,7 @@ $invoices = $stmt->fetchAll(PDO::FETCH_ASSOC);
             const form = event.target;
             const formData = new FormData(form);
 
-            fetch('backend/invoice_add.php', {
+            fetch('../back/invoice_add.php', {
                 method: 'POST',
                 body: formData
             })
