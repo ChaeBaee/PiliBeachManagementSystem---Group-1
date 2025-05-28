@@ -6,23 +6,18 @@ try {
         throw new PDOException("Database connection failed");
     }
 
-    // Total Bookings
     $stmt = $conn->query("SELECT COUNT(*) as total_bookings FROM bookings");
     $totalBookings = $stmt->fetch(PDO::FETCH_ASSOC)['total_bookings'] ?? 0;
 
-    // Total Payments Collected
     $stmt = $conn->query("SELECT COALESCE(SUM(payment_amount), 0) as total_payments FROM payments WHERE payment_status = 'paid'");
     $totalPayments = $stmt->fetch(PDO::FETCH_ASSOC)['total_payments'];
 
-    // Pending Bookings
     $stmt = $conn->query("SELECT COUNT(*) as pending_bookings FROM bookings WHERE booking_status = 'Pending'");
     $pendingBookings = $stmt->fetch(PDO::FETCH_ASSOC)['pending_bookings'] ?? 0;
 
-    // Total Invoices
     $stmt = $conn->query("SELECT COUNT(*) as total_invoices FROM invoice");
     $totalInvoices = $stmt->fetch(PDO::FETCH_ASSOC)['total_invoices'] ?? 0;
 
-    // Revenue by Room Type
     $stmt = $conn->query("
         SELECT r.room_type, COALESCE(SUM(p.payment_amount), 0) as total_revenue
         FROM rooms r
@@ -32,7 +27,6 @@ try {
     ");
     $revenueByRoomType = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Recent Bookings with User and Room Details
     $stmt = $conn->query("
         SELECT b.*, u.user_name, r.room_number, r.room_type
         FROM bookings b
@@ -43,7 +37,6 @@ try {
     ");
     $recentBookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Room Occupancy Status
     $stmt = $conn->query("
         SELECT 
             COUNT(CASE WHEN room_status = 'available' THEN 1 END) as available_rooms,
@@ -53,7 +46,6 @@ try {
     ");
     $roomStatus = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Monthly Revenue (Last 6 months)
     $stmt = $conn->query("
         SELECT 
             DATE_FORMAT(p.payment_date, '%Y-%m') as month,
@@ -66,7 +58,6 @@ try {
     ");
     $monthlyRevenue = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Return all data as JSON
     $dashboardData = [
         'totalBookings' => (int) $totalBookings,
         'totalPayments' => (float) $totalPayments,

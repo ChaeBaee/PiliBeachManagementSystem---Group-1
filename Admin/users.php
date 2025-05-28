@@ -124,7 +124,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
         </div>
     </div>
 
-    <!-- Notification Modal -->
     <div id="notificationModal"
         class="hidden fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
         <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md transform transition-all">

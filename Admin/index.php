@@ -1,14 +1,12 @@
 <?php
 session_start();
 
-// Check if user is not logged in or is not an admin
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'Admin') {
-  // Redirect to login page
+
   header("Location: login.php");
   exit;
 }
 
-// Function to fetch dashboard data
 function getDashboardData()
 {
   $ch = curl_init();
@@ -29,10 +27,8 @@ function getDashboardData()
   return $data;
 }
 
-// Get dashboard data
 $dashboardData = getDashboardData();
 
-// If data fetch failed, show error message
 if ($dashboardData === null) {
   $error = "Failed to load dashboard data. Please try again later.";
 }
@@ -50,23 +46,20 @@ if ($dashboardData === null) {
 
 <body class="bg-gray-100 font-sans">
 
-  <!-- Navbar -->
   <?php include 'navbar.php'; ?>
 
   <div class="flex flex-col md:flex-row">
-    <!-- Sidebar -->
     <?php include 'sidebar.php'; ?>
 
-    <!-- Main Content -->
     <div class="flex-1 p-4 md:p-6 pt-28 md:pt-24 md:ml-64 transition-all duration-300">
       <?php if (isset($error)): ?>
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
           <span class="block sm:inline"><?php echo htmlspecialchars($error); ?></span>
         </div>
       <?php else: ?>
-        <!-- Stats Cards -->
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          <!-- Total Bookings -->
+
           <div class="bg-white rounded-xl shadow p-5">
             <div class="flex items-center justify-between">
               <div>
@@ -84,7 +77,6 @@ if ($dashboardData === null) {
             </div>
           </div>
 
-          <!-- Total Revenue -->
           <div class="bg-white rounded-xl shadow p-5">
             <div class="flex items-center justify-between">
               <div>
@@ -101,7 +93,6 @@ if ($dashboardData === null) {
             </div>
           </div>
 
-          <!-- Pending Bookings -->
           <div class="bg-white rounded-xl shadow p-5">
             <div class="flex items-center justify-between">
               <div>
@@ -119,7 +110,6 @@ if ($dashboardData === null) {
             </div>
           </div>
 
-          <!-- Total Invoices -->
           <div class="bg-white rounded-xl shadow p-5">
             <div class="flex items-center justify-between">
               <div>
@@ -138,22 +128,19 @@ if ($dashboardData === null) {
           </div>
         </div>
 
-        <!-- Charts and Tables -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <!-- Revenue Chart -->
+
           <div class="bg-white rounded-xl shadow p-5">
             <h3 class="text-lg font-semibold text-gray-700 mb-4">Monthly Revenue</h3>
             <canvas id="revenueChart" height="300"></canvas>
           </div>
 
-          <!-- Room Type Revenue -->
           <div class="bg-white rounded-xl shadow p-5">
             <h3 class="text-lg font-semibold text-gray-700 mb-4">Revenue by Room Type</h3>
             <canvas id="roomTypeChart" height="300"></canvas>
           </div>
         </div>
 
-        <!-- Recent Bookings Table -->
         <div class="bg-white rounded-xl shadow p-5">
           <h3 class="text-lg font-semibold text-gray-700 mb-4">Recent Bookings</h3>
           <div class="overflow-x-auto">

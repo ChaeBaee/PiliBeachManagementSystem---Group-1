@@ -11,7 +11,7 @@ $allowedSorts = [
 $sort = $_GET['sort'] ?? 'date_desc';
 $orderBy = $allowedSorts[$sort] ?? $allowedSorts['date_desc'];
 try {
-    $stmt = $conn->prepare("
+    $stmt = $conn_slave->prepare("
     SELECT f.feedback_rating, f.feedback_comments, f.feedback_date_created, u.user_name,
            r.room_number, r.room_type
     FROM feedback f
@@ -32,7 +32,6 @@ try {
         $counter++;
         $borderClass = $counter > 1 ? 'border-t border-gray-200 pt-6' : '';
 
-        // Generate star HTML
         $starsHtml = '';
         for ($i = 1; $i <= 5; $i++) {
             $starsHtml .= $i <= $row['feedback_rating']

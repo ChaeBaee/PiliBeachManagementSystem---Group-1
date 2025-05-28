@@ -114,14 +114,13 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_role']) && $_SESSION['u
 
                 const data = await response.json();
 
-                // Clear previous error messages
                 document.querySelectorAll('.text-red-600').forEach(el => el.textContent = '');
 
                 if (data.success) {
-                    // If successful, redirect immediately
+
                     window.location.href = data.redirect;
                 } else {
-                    // Display error messages if any
+
                     if (data.emailMsg) document.getElementById('emailMsg').textContent = data.emailMsg;
                     if (data.passwordMsg) document.getElementById('passwordMsg').textContent = data.passwordMsg;
                     if (data.fullNameMsg) document.getElementById('fullNameMsg').textContent = data.fullNameMsg;

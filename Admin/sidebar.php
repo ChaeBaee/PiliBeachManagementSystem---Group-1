@@ -1,5 +1,5 @@
 <?php
-$currentPage = basename($_SERVER['PHP_SELF']); // gets the current file name, like 'bookings.php'
+$currentPage = basename($_SERVER['PHP_SELF']);
 ?>
 
 <aside id="sidebar"
@@ -55,7 +55,6 @@ $currentPage = basename($_SERVER['PHP_SELF']); // gets the current file name, li
 
 <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
 
-<!-- Logout Confirmation Modal -->
 <div id="logoutModal" class="hidden fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
     <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md transform transition-all">
         <div class="flex items-center justify-between mb-6">
@@ -82,7 +81,6 @@ $currentPage = basename($_SERVER['PHP_SELF']); // gets the current file name, li
     </div>
 </div>
 
-<!-- JS for sidebar only -->
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const sidebar = document.getElementById('sidebar');
@@ -112,7 +110,6 @@ $currentPage = basename($_SERVER['PHP_SELF']); // gets the current file name, li
         }
     });
 
-    // Logout Modal Functions
     function confirmLogout() {
         document.getElementById('logoutModal').classList.remove('hidden');
     }

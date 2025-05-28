@@ -43,7 +43,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(['success' => true, 'message' => 'Invoice status updated successfully']);
 
     } catch (Exception $e) {
-        // Rollback transaction on error
         $conn->rollBack();
         echo json_encode(['success' => false, 'message' => $e->getMessage()]);
     }

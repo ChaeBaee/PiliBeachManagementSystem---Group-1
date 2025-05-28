@@ -2,17 +2,14 @@
 require_once '../PHP/db.php';
 session_start();
 
-// Check if user is logged in and is an admin
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
     header('Location: login.php');
     exit();
 }
 
-// Get search parameters
 $search = isset($_GET['search']) ? $_GET['search'] : '';
 $date_filter = isset($_GET['date_filter']) ? $_GET['date_filter'] : '';
 
-// Build the query
 $query = "SELECT al.*, u.user_name as changed_by_name 
           FROM audit_logs al 
           LEFT JOIN users u ON al.changed_by = u.user_id 
@@ -33,7 +30,6 @@ if (!empty($date_filter)) {
 
 $query .= " ORDER BY al.changed_at DESC";
 
-// Prepare and execute the query
 $stmt = $conn->prepare($query);
 $stmt->execute($params);
 $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -50,13 +46,10 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 
 <body class="bg-gray-100">
-    <!-- Include Sidebar -->
     <?php include 'sidebar.php'; ?>
 
-    <!-- Include Navbar -->
     <?php include 'navbar.php'; ?>
 
-    <!-- Main Content -->
     <main class="md:ml-64 pt-16">
         <div class="p-6">
             <div class="mb-6">
@@ -64,7 +57,6 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <p class="text-gray-600">View and monitor all system activities</p>
             </div>
 
-            <!-- Search and Filter Section -->
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                 <form method="GET" class="flex flex-col md:flex-row gap-4">
                     <div class="flex-1">
@@ -83,7 +75,6 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </form>
             </div>
 
-            <!-- Logs Table -->
             <div class="bg-white rounded-lg shadow-md overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
@@ -150,7 +141,7 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 $new_data = json_decode($log['new_data'], true);
 
                                                 if ($old_data && $new_data && is_array($old_data) && is_array($new_data)) {
-                                                    // Handle JSON format
+
                                                     foreach ($old_data as $key => $value) {
                                                         if (isset($new_data[$key]) && $old_data[$key] !== $new_data[$key]) {
                                                             echo "<div class='text-xs'>";
@@ -161,7 +152,7 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                         }
                                                     }
                                                 } else {
-                                                    // Handle string format (for bookings)
+
                                                     $old_parts = explode(', ', $log['old_data']);
                                                     $new_parts = explode(', ', $log['new_data']);
 
@@ -199,12 +190,12 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 <?php
                                                 $new_data = json_decode($log['new_data'], true);
                                                 if ($new_data && is_array($new_data)) {
-                                                    // Handle JSON format
+
                                                     foreach ($new_data as $key => $value) {
                                                         echo "<div><span class='font-medium'>" . htmlspecialchars($key) . ":</span> " . htmlspecialchars($value) . "</div>";
                                                     }
                                                 } else {
-                                                    // Handle string format (for bookings)
+
                                                     $new_parts = explode(', ', $log['new_data']);
                                                     foreach ($new_parts as $part) {
                                                         if (strpos($part, ':') !== false) {
@@ -220,12 +211,12 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 <?php
                                                 $old_data = json_decode($log['old_data'], true);
                                                 if ($old_data && is_array($old_data)) {
-                                                    // Handle JSON format
+
                                                     foreach ($old_data as $key => $value) {
                                                         echo "<div><span class='font-medium'>" . htmlspecialchars($key) . ":</span> " . htmlspecialchars($value) . "</div>";
                                                     }
                                                 } else {
-                                                    // Handle string format (for bookings)
+
                                                     $old_parts = explode(', ', $log['old_data']);
                                                     foreach ($old_parts as $part) {
                                                         if (strpos($part, ':') !== false) {

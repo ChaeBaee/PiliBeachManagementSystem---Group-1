@@ -25,13 +25,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $isEdit = !empty($room_id);
 
-    // Room Number Validation
     if (empty($room_number)) {
         $room_numberMsg = "Room Number is required.";
     } elseif (!preg_match("/^[A-Za-z0-9-]+$/", $room_number)) {
         $room_numberMsg = "Room Number can only contain letters, numbers, and hyphens.";
     } else {
-        // Check if room number already exists (except for current room in edit mode)
+
         $stmt = $conn->prepare("SELECT COUNT(*) FROM rooms WHERE room_number = ? AND room_id != ?");
         $stmt->execute([$room_number, $room_id]);
         if ($stmt->fetchColumn() > 0) {
@@ -39,14 +38,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
 
-    // Room Type Validation
     if (empty($room_type)) {
         $room_typeMsg = "Room Type is required.";
     } elseif (!in_array($room_type, ['Deluxe Room', 'Standard Room', 'Single Room', 'Double Room'])) {
         $room_typeMsg = "Invalid room type selected.";
     }
 
-    // Room Price Validation
     if (empty($room_price)) {
         $room_priceMsg = "Room Price is required.";
     } elseif (!is_numeric($room_price)) {
@@ -57,21 +54,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $room_priceMsg = "Room Price cannot exceed ₱1,000,000.";
     }
 
-    // Room Status Validation
     if (empty($room_status)) {
         $room_statusMsg = "Room Status is required.";
     } elseif (!in_array(strtolower($room_status), ['available', 'booked', 'maintenance'])) {
         $room_statusMsg = "Invalid room status selected.";
     }
 
-    // If no validation errors, proceed with the form submission
     if (
         empty($room_numberMsg) &&
         empty($room_typeMsg) &&
         empty($room_priceMsg) &&
         empty($room_statusMsg)
     ) {
-        // Form is valid, proceed with submission
         header("Location: rooms.php");
         exit;
     }
@@ -171,7 +165,6 @@ $hasErrors = !empty($room_numberMsg) || !empty($room_typeMsg) || !empty($room_pr
         </div>
     </div>
 
-    <!-- Modal -->
     <div id="roomModal"
         class="<?= $hasErrors ? '' : 'hidden' ?> fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
         <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
@@ -300,10 +293,8 @@ $hasErrors = !empty($room_numberMsg) || !empty($room_typeMsg) || !empty($room_pr
         form.addEventListener('submit', function (e) {
             e.preventDefault();
 
-            // Reset previous error messages - only clear messages within the form
             form.querySelectorAll('.text-red-600').forEach(el => el.textContent = '');
 
-            // Get form values
             const roomNumber = document.getElementById('room_number').value.trim();
             const roomType = document.getElementById('room_type').value.trim();
             const roomPrice = document.getElementById('room_price').value.trim();
@@ -311,7 +302,6 @@ $hasErrors = !empty($room_numberMsg) || !empty($room_typeMsg) || !empty($room_pr
 
             let hasErrors = false;
 
-            // Room Number Validation
             if (!roomNumber) {
                 document.getElementById('room_number').nextElementSibling.textContent = 'Room Number is required.';
                 hasErrors = true;
@@ -320,7 +310,6 @@ $hasErrors = !empty($room_numberMsg) || !empty($room_typeMsg) || !empty($room_pr
                 hasErrors = true;
             }
 
-            // Room Type Validation
             if (!roomType) {
                 document.getElementById('room_type').nextElementSibling.textContent = 'Room Type is required.';
                 hasErrors = true;
@@ -329,7 +318,6 @@ $hasErrors = !empty($room_numberMsg) || !empty($room_typeMsg) || !empty($room_pr
                 hasErrors = true;
             }
 
-            // Room Price Validation
             if (!roomPrice) {
                 document.getElementById('room_price').nextElementSibling.textContent = 'Room Price is required.';
                 hasErrors = true;
@@ -344,7 +332,6 @@ $hasErrors = !empty($room_numberMsg) || !empty($room_typeMsg) || !empty($room_pr
                 hasErrors = true;
             }
 
-            // Room Status Validation
             if (!roomStatus) {
                 document.getElementById('room_status').nextElementSibling.textContent = 'Room Status is required.';
                 hasErrors = true;

@@ -17,7 +17,6 @@ $fullNameMsg = $emailMsg = $phoneNoMsg = "";
 $currentPasswordMsg = $newPasswordMsg = $confirmPasswordMsg = "";
 $successMessage = "";
 
-// Handle form submissions
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $formName = $_POST['form_name'] ?? '';
 
@@ -149,7 +148,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <?php endif; ?>
 
         <div class="grid md:grid-cols-2 gap-10">
-            <!-- Profile Information -->
             <div class="glass-card rounded-2xl shadow-xl p-8 transform hover:scale-[1.02] transition-all duration-300">
                 <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
                     <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -204,7 +202,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </form>
             </div>
 
-            <!-- Change Password -->
             <div class="glass-card rounded-2xl shadow-xl p-8 transform hover:scale-[1.02] transition-all duration-300">
                 <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
                     <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -246,7 +243,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </form>
             </div>
 
-            <!-- User Bookings -->
             <div class="glass-card rounded-2xl shadow-xl p-8 mt-10 md:col-span-2">
                 <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
                     <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

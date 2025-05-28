@@ -68,7 +68,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
         </div>
     </main>
 
-    <!-- Add Booking Modal -->
     <div id="addBookingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
         <div class="bg-white rounded-lg p-6 w-full max-w-md">
             <h2 class="text-2xl font-semibold mb-4">Add New Booking</h2>
@@ -122,7 +121,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
         </div>
     </div>
 
-    <!-- Edit Booking Modal -->
     <div id="editBookingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
         <div class="bg-white rounded-lg p-6 w-full max-w-md">
             <h2 class="text-2xl font-semibold mb-4">Edit Booking</h2>
@@ -207,7 +205,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
     <script>
         let currentBookingId = null;
 
-        // Add validation functions
         function validateGuestName(userId) {
             if (!userId) {
                 return "Guest name cannot be empty.";
@@ -272,13 +269,11 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             const editCheckIn = document.getElementById('editCheckIn');
             const editCheckOut = document.getElementById('editCheckOut');
 
-            // Set minimum dates to today
             addCheckIn.min = today;
             addCheckOut.min = today;
             editCheckIn.min = today;
             editCheckOut.min = today;
 
-            // Set initial values
             addCheckIn.value = today;
             addCheckOut.value = today;
         }
@@ -289,10 +284,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             const start = new Date(checkIn);
             const end = new Date(checkOut);
 
-            // Calculate number of nights
             const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
 
-            // Return total price (nights * price per night)
             return nights * roomPrice;
         }
 
@@ -315,7 +308,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             }
         }
 
-        // Modify the loadAvailableRooms function to include room price
         async function loadAvailableRooms(checkIn, checkOut, currentBookingId = null) {
             if (!checkIn || !checkOut) return;
 
@@ -339,7 +331,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
                     addSelect.innerHTML = roomOptions;
                     editSelect.innerHTML = roomOptions;
 
-                    // Update total price if dates and room are selected
                     const addCheckIn = document.getElementById('addCheckIn').value;
                     const addCheckOut = document.getElementById('addCheckOut').value;
                     const addRoomId = addSelect.value;
@@ -359,17 +350,14 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             }
         }
 
-        // Add event listeners for date and room changes
         document.getElementById('addCheckIn').addEventListener('change', function () {
             const checkOut = document.getElementById('addCheckOut');
             const roomId = document.getElementById('addRoomId').value;
 
-            // Set minimum check-out date to next day after check-in
             const nextDay = new Date(this.value);
             nextDay.setDate(nextDay.getDate() + 1);
             checkOut.min = nextDay.toISOString().split('T')[0];
 
-            // If current check-out is before or equal to check-in, update it
             if (checkOut.value <= this.value) {
                 checkOut.value = nextDay.toISOString().split('T')[0];
             }
@@ -401,17 +389,14 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             }
         });
 
-        // Edit form event listeners
         document.getElementById('editCheckIn').addEventListener('change', function () {
             const checkOut = document.getElementById('editCheckOut');
             const roomId = document.getElementById('editRoomId').value;
 
-            // Set minimum check-out date to next day after check-in
             const nextDay = new Date(this.value);
             nextDay.setDate(nextDay.getDate() + 1);
             checkOut.min = nextDay.toISOString().split('T')[0];
 
-            // If current check-out is before or equal to check-in, update it
             if (checkOut.value <= this.value) {
                 checkOut.value = nextDay.toISOString().split('T')[0];
             }
@@ -503,19 +488,16 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             const checkOut = document.getElementById('addCheckOut').value;
             const totalPrice = document.getElementById('addTotalPrice').value;
 
-            // Validate all fields
             const guestNameMsg = validateGuestName(userId);
             const roomMsg = validateRoom(roomId);
             const datesMsg = validateDates(checkIn, checkOut);
             const totalPriceMsg = validateTotalPrice(totalPrice);
 
-            // Display validation messages
             if (guestNameMsg) document.getElementById('addGuestNameMsg').textContent = guestNameMsg;
             if (roomMsg) document.getElementById('addRoomMsg').textContent = roomMsg;
             if (datesMsg) document.getElementById('addCheckOutMsg').textContent = datesMsg;
             if (totalPriceMsg) document.getElementById('addTotalPriceMsg').textContent = totalPriceMsg;
 
-            // If any validation failed, stop form submission
             if (guestNameMsg || roomMsg || datesMsg || totalPriceMsg) {
                 return;
             }
@@ -560,21 +542,18 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             const totalPrice = document.getElementById('editTotalPrice').value;
             const status = document.getElementById('editStatus').value;
 
-            // Validate all fields
             const guestNameMsg = validateGuestName(userId);
             const roomMsg = validateRoom(roomId);
             const datesMsg = validateDates(checkIn, checkOut);
             const totalPriceMsg = validateTotalPrice(totalPrice);
             const statusMsg = validateStatus(status);
 
-            // Display validation messages
             if (guestNameMsg) document.getElementById('editGuestNameMsg').textContent = guestNameMsg;
             if (roomMsg) document.getElementById('editRoomMsg').textContent = roomMsg;
             if (datesMsg) document.getElementById('editCheckOutMsg').textContent = datesMsg;
             if (totalPriceMsg) document.getElementById('editTotalPriceMsg').textContent = totalPriceMsg;
             if (statusMsg) document.getElementById('editStatusMsg').textContent = statusMsg;
 
-            // If any validation failed, stop form submission
             if (guestNameMsg || roomMsg || datesMsg || totalPriceMsg || statusMsg) {
                 return;
             }
@@ -630,10 +609,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
                     document.getElementById('editTotalPrice').value = booking.booking_total_price;
                     document.getElementById('editStatus').value = booking.booking_status;
 
-                    // Load available rooms for the selected dates
                     await loadAvailableRooms(booking.booking_check_in, booking.booking_check_out, booking.booking_id);
 
-                    // Set the current room after loading available rooms
                     document.getElementById('editRoomId').value = booking.room_id;
 
                     openEditModal(bookingId);

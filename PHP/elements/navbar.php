@@ -36,13 +36,12 @@
       <ul class="hidden md:flex space-x-6 text-black" id="desktop-menu">
         <li><a href="/Proj/PHP/home.php" class="hover:text-[#3b82f6] transition duration-300">Home</a></li>
         <li><a href="/Proj/PHP/room/front/rooms.php" class="hover:text-[#3b82f6] transition duration-300">Rooms</a></li>
-        <li><a href="/Proj/PHP/booking/front/bookings.php" class="hover:text-[#3b82f6] transition duration-300">Book</a></li>
+        <li><a href="/Proj/PHP/bookings.php" class="hover:text-[#3b82f6] transition duration-300">Book</a></li>
         <li><a href="/Proj/PHP/feedback/front/feedback.php"
             class="hover:text-[#3b82f6] transition duration-300">Reviews</a></li>
         <li><a href="/Proj/PHP/room/about.php" class="hover:text-[#3b82f6] transition duration-300">About Us</a></li>
       </ul>
 
-      <!-- Desktop Auth Buttons -->
       <div class="hidden md:flex items-center space-x-4">
         <?php if (isset($_SESSION['user_id'])): ?>
           <div class="relative group">
@@ -67,7 +66,6 @@
       </div>
     </div>
 
-    <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden md:hidden mt-4 bg-white rounded-lg shadow-lg">
       <ul class="py-2">
         <li><a href="/Proj/PHP/home.php" class="block px-4 py-2 hover:bg-gray-100">Home</a></li>
@@ -93,7 +91,6 @@
   </nav>
 
   <script>
-    // Mobile menu toggle
     const mobileMenuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
 
@@ -101,7 +98,6 @@
       mobileMenu.classList.toggle('hidden');
     });
 
-    // Close mobile menu when clicking outside
     document.addEventListener('click', (e) => {
       if (!mobileMenuButton.contains(e.target) && !mobileMenu.contains(e.target)) {
         mobileMenu.classList.add('hidden');

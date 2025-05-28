@@ -116,7 +116,6 @@ session_start();
     </div>
 
     <div class="container mx-auto px-4 sm:px-8 lg:px-16 py-20">
-        <!-- About Section -->
         <div class="max-w-6xl mx-auto mb-32" data-aos="fade-up">
             <h2 class="text-5xl font-bold text-blue-900 mb-16 text-center">Our Story</h2>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -198,7 +197,6 @@ session_start();
 
         <div class="section-divider"></div>
 
-        <!-- Team Section -->
         <div class="mb-32" data-aos="fade-up">
             <h3 class="text-4xl font-bold text-blue-900 mb-16 text-center">Meet Our Team</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
@@ -249,7 +247,6 @@ session_start();
 
         <div class="section-divider"></div>
 
-        <!-- Location Section -->
         <div class="max-w-4xl mx-auto" data-aos="fade-up">
             <h3 class="text-4xl font-bold text-blue-900 mb-12 text-center">Find Us</h3>
             <div class="premium-card rounded-2xl shadow-xl p-10 mb-12">

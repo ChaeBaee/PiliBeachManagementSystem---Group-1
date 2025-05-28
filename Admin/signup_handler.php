@@ -40,13 +40,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($emailMsg === "" && $passwordMsg === "" && $fullNameMsg === "" && $contactNoMsg === "" && $confirmPasswordMsg === "") {
         try {
-            // Check if email already exists
+
             $stmt = $conn->prepare("SELECT user_email FROM users WHERE user_email = ?");
             $stmt->execute([$email]);
             if ($stmt->rowCount() > 0) {
                 $emailMsg = "Email is already registered.";
             } else {
-                // Check admin count
+
                 $stmt = $conn->prepare("SELECT COUNT(*) as admin_count FROM users WHERE user_role = 'Admin'");
                 $stmt->execute();
                 $adminCount = $stmt->fetch(PDO::FETCH_ASSOC)['admin_count'];
@@ -89,7 +89,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// Return validation messages as JSON
 $response = [
     'success' => false,
     'emailMsg' => $emailMsg,

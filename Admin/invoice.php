@@ -6,11 +6,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
     header("Location: login.php");
     exit;
 }
-// Set current user ID for audit triggers
 $currentUserId = isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : 0;
 $conn->exec("SET @current_user_id = $currentUserId");
 
-// Fetch all invoices with user and booking details
 $stmt = $conn->query("
     SELECT i.*, u.user_name, b.booking_id, b.booking_total_price, p.payment_status 
     FROM invoice i 
@@ -35,17 +33,14 @@ $invoices = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <body class="bg-gray-100">
     <div class="flex h-screen">
-        <!-- Sidebar -->
         <?php require_once 'sidebar.php'; ?>
 
-        <!-- Main Content -->
         <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- Navbar -->
+
             <div class="md:ml-0 w-full">
                 <?php require_once 'navbar.php'; ?>
             </div>
 
-            <!-- Main Content Area -->
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 pt-20 px-6 md:ml-64">
                 <div class="container mx-auto">
                     <div class="flex justify-between items-center mb-6">
@@ -56,7 +51,6 @@ $invoices = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         </button>
                     </div>
 
-                    <!-- Invoice Table -->
                     <div class="bg-white rounded-lg shadow-md overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
@@ -149,7 +143,6 @@ $invoices = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 
-    <!-- Add Invoice Modal -->
     <div id="addInvoiceModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="mt-3">
@@ -189,7 +182,6 @@ $invoices = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 
-    <!-- Edit Invoice Modal -->
     <div id="editInvoiceModal"
         class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
@@ -236,7 +228,6 @@ $invoices = $stmt->fetchAll(PDO::FETCH_ASSOC);
             document.getElementById('editInvoiceModal').classList.add('hidden');
         }
 
-        // Form submission handlers
         function handleAddInvoice(event) {
             event.preventDefault();
             const form = event.target;
@@ -285,7 +276,6 @@ $invoices = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 });
         }
 
-        // Delete function
         function deleteInvoice(invoiceId) {
             if (confirm('Are you sure you want to delete this invoice?')) {
                 fetch('backend/invoice_delete.php', {

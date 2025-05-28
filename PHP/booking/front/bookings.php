@@ -1,7 +1,6 @@
 <?php
 require_once '../back/bookings_backend.php';
 
-// Initialize form variables
 $checkIn = $checkOut = $guest = $roomType = "";
 $checkInMsg = $checkOutMsg = $guestMsg = "";
 $today = date('Y-m-d');
@@ -14,7 +13,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $guest = $_POST["guests"] ?? "";
     $roomType = $_POST["room_type"] ?? "";
 
-    // Validation
     if (empty($checkIn)) {
         $checkInMsg = "Please enter check-in date.";
         $hasError = true;

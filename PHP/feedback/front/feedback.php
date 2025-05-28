@@ -64,7 +64,6 @@ session_start();
     <?php include('../back/feedback_summary.php'); ?>
     <?php include('../../elements/navbar.php'); ?>
 
-    <!-- Added decorative top section -->
     <div class="bg-gradient-to-b from-blue-50 to-transparent h-32"></div>
 
     <div class="max-w-6xl mx-auto w-full px-6 -mt-4">
@@ -81,7 +80,7 @@ session_start();
         <?php endif; ?>
 
         <div class="grid md:grid-cols-3 gap-8 mb-12">
-            <!-- Rating Summary -->
+
             <div class="glass-card rounded-2xl shadow-xl p-8 transform hover:scale-[1.02] transition-all duration-300">
                 <h2 class="text-2xl font-bold mb-6">Overall Rating</h2>
                 <div class="flex items-center gap-4 mb-6">
@@ -116,7 +115,6 @@ session_start();
                 </div>
             </div>
 
-            <!-- Feedback Form -->
             <div
                 class="glass-card rounded-2xl shadow-xl p-8 md:col-span-2 transform hover:scale-[1.02] transition-all duration-300">
                 <div class="mb-8">

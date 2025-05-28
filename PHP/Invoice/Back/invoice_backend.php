@@ -6,10 +6,7 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: login/front/login.php");
     exit();
 }
-//if (!isset($_SESSION['user_id'])) {
-//    header("Location: ../login.php");
-//    exit();
-//}
+
 
 if (!isset($_GET['payment_id'])) {
     header("Location: ../bookings.php");

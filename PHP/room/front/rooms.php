@@ -1,21 +1,17 @@
 <?php
 include('../back/room.php');
 
-// Get filter parameters
 $room_type = isset($_GET['room_type']) ? $_GET['room_type'] : '';
 $price_range = isset($_GET['price_range']) ? $_GET['price_range'] : '';
 $capacity = isset($_GET['capacity']) ? $_GET['capacity'] : '';
 
-// Function to filter rooms
 function filterRooms($rooms, $room_type, $price_range, $capacity)
 {
     return array_filter($rooms, function ($room) use ($room_type, $price_range, $capacity) {
-        // Room type filter
         if ($room_type && $room['room_type'] !== $room_type) {
             return false;
         }
 
-        // Price range filter
         if ($price_range) {
             list($min, $max) = explode('-', $price_range);
             if ($room['room_price'] < $min || ($max !== '+' && $room['room_price'] > $max)) {
@@ -23,7 +19,6 @@ function filterRooms($rooms, $room_type, $price_range, $capacity)
             }
         }
 
-        // Capacity filter
         if ($capacity) {
             list($min, $max) = explode('-', $capacity);
             if ($room['room_capacity'] < $min || ($max !== '+' && $room['room_capacity'] > $max)) {
@@ -35,7 +30,6 @@ function filterRooms($rooms, $room_type, $price_range, $capacity)
     });
 }
 
-// Apply filters if any are set
 $filtered_rooms = $rooms;
 if ($room_type || $price_range || $capacity) {
     $filtered_rooms = filterRooms($rooms, $room_type, $price_range, $capacity);
@@ -104,10 +98,8 @@ if ($room_type || $price_range || $capacity) {
 </head>
 
 <body class="bg-gray-50">
-    <!-- Navbar -->
     <?php include('../../elements/navbar.php'); ?>
 
-    <!-- Header Section with proper spacing -->
     <header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16 px-4 mt-16">
         <div class="max-w-7xl mx-auto">
             <h1 class="text-3xl md:text-4xl font-bold mb-4">Discover Your Perfect Stay</h1>
@@ -115,9 +107,8 @@ if ($room_type || $price_range || $capacity) {
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 py-8">
-        <!-- Mobile Filter Toggle -->
+
         <div class="md:hidden mb-4">
             <button id="filterToggle" class="w-full bg-white p-3 rounded-lg shadow flex items-center justify-between">
                 <span class="font-medium">Filter Rooms</span>
@@ -125,7 +116,6 @@ if ($room_type || $price_range || $capacity) {
             </button>
         </div>
 
-        <!-- Filter Section -->
         <div id="filterSection" class="filter-container md:static md:bg-transparent md:shadow-none md:p-0 mb-8">
             <form id="filterForm" method="GET" class="bg-white rounded-lg shadow-lg p-4 md:p-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -146,7 +136,6 @@ if ($room_type || $price_range || $capacity) {
                         </select>
                     </div>
 
-                    <!-- Price Range -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Price Range</label>
                         <select name="price_range"
@@ -165,7 +154,6 @@ if ($room_type || $price_range || $capacity) {
                         </select>
                     </div>
 
-                    <!-- Guest Capacity -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Guest Capacity</label>
                         <select name="capacity"
@@ -191,14 +179,12 @@ if ($room_type || $price_range || $capacity) {
             </form>
         </div>
 
-        <!-- Results Count -->
         <div class="mb-6">
             <p class="text-gray-600">
                 Showing <?= count($filtered_rooms) ?> of <?= count($rooms) ?> rooms
             </p>
         </div>
 
-        <!-- Room Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <?php if (empty($filtered_rooms)): ?>
                 <div class="col-span-full text-center py-12">
@@ -249,11 +235,9 @@ if ($room_type || $price_range || $capacity) {
         </div>
     </main>
 
-    <!-- Footer -->
     <?php include('../../elements/footer.php'); ?>
 
     <script>
-        // Mobile filter toggle
         const filterToggle = document.getElementById('filterToggle');
         const filterSection = document.getElementById('filterSection');
 
@@ -263,7 +247,6 @@ if ($room_type || $price_range || $capacity) {
             });
         }
 
-        // Initialize filter section visibility based on screen size
         function handleFilterVisibility() {
             if (window.innerWidth >= 768) {
                 filterSection.classList.remove('hidden');
@@ -272,7 +255,6 @@ if ($room_type || $price_range || $capacity) {
             }
         }
 
-        // Call on load and resize
         window.addEventListener('load', handleFilterVisibility);
         window.addEventListener('resize', handleFilterVisibility);
     </script>

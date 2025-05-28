@@ -24,7 +24,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
 
     <main class="md:ml-64 p-4 pt-20">
         <div class="max-w-7xl mx-auto">
-            <!-- Header -->
+
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-2xl font-semibold text-gray-800">Payments Management</h1>
                 <button onclick="openAddModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
@@ -32,7 +32,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
                 </button>
             </div>
 
-            <!-- Alert Messages -->
             <?php if (isset($_SESSION['success'])): ?>
                 <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4"
                     role="alert">
@@ -48,7 +47,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
                 </div>
             <?php endif; ?>
 
-            <!-- Payments Table -->
             <div class="bg-white rounded-lg shadow overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
@@ -121,7 +119,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
         </div>
     </main>
 
-    <!-- Add Payment Modal -->
     <div id="addModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="mt-3">
@@ -180,7 +177,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
         </div>
     </div>
 
-    <!-- Edit Payment Modal -->
     <div id="editModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="mt-3">
@@ -214,7 +210,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
         </div>
     </div>
 
-    <!-- Delete Payment Modal -->
     <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="mt-3">
@@ -240,14 +235,12 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
     </div>
 
     <script>
-        // Modal functions
         function openAddModal() {
             document.getElementById('addModal').classList.remove('hidden');
         }
 
         function closeAddModal() {
             document.getElementById('addModal').classList.add('hidden');
-            // Reset form when closing
             document.getElementById('booking_id').value = '';
             document.getElementById('payment_amount').value = '';
         }
@@ -278,7 +271,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             document.getElementById('deleteModal').classList.add('hidden');
         }
 
-        // Close modals when clicking outside
         window.onclick = function (event) {
             if (event.target == document.getElementById('addModal')) {
                 closeAddModal();
