@@ -13,7 +13,7 @@ function generateImageFilename($room_id)
 function validateImage($file)
 {
     $allowed_types = ['image/jpeg', 'image/png', 'image/webp'];
-    $max_size = 5 * 1024 * 1024; // 5MB
+    $max_size = 5 * 1024 * 1024;
 
     if (!in_array($file['type'], $allowed_types)) {
         return "Only JPG, PNG, and WEBP images are allowed.";

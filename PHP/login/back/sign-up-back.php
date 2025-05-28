@@ -14,16 +14,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $confirmPassword = $_POST['confirm_password'] ?? '';
     $termsAccepted = isset($_POST['terms']);
 
-    // Store old input for form repopulation
     $_SESSION['old_name'] = $name;
     $_SESSION['old_email'] = $email;
     $_SESSION['old_phone'] = $phone;
     $_SESSION['old_terms'] = $termsAccepted;
 
-    // Initialize error messages
     $hasErrors = false;
 
-    // Validate email
     if (empty($email)) {
         $_SESSION['emailMsg'] = "Email is required.";
         $hasErrors = true;
@@ -32,7 +29,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $hasErrors = true;
     }
 
-    // Validate password
     if (empty($password)) {
         $_SESSION['passwordMsg'] = "Password is required.";
         $hasErrors = true;
@@ -44,7 +40,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $hasErrors = true;
     }
 
-    // Validate name
     if (empty($name)) {
         $_SESSION['fullNameMsg'] = "Full name is required.";
         $hasErrors = true;
@@ -53,7 +48,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $hasErrors = true;
     }
 
-    // Validate phone number
     if (empty($phone)) {
         $_SESSION['contactNoMsg'] = "Contact number is required.";
         $hasErrors = true;
@@ -62,20 +56,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $hasErrors = true;
     }
 
-    // Validate terms
     if (!$termsAccepted) {
         $_SESSION['termsMsg'] = "You must agree to the terms and conditions.";
         $hasErrors = true;
     }
 
-    // If there are validation errors, redirect back to sign-up page
     if ($hasErrors) {
         header("Location: ../front/sign-up.php");
         exit;
     }
 
     try {
-        // Check if email already exists
         $checkSql = "SELECT * FROM users WHERE user_email = ?";
         $checkStmt = $conn->prepare($checkSql);
         $checkStmt->execute([$email]);
@@ -86,28 +77,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             exit;
         }
 
-        // Hash the password
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        // Insert new user
         $sql = "INSERT INTO users (user_name, user_email, user_password, user_phone, user_role) 
                 VALUES (?, ?, ?, ?, 'Guest')";
         $stmt = $conn->prepare($sql);
         $stmt->execute([$name, $email, $hashedPassword, $phone]);
 
-        // Get the new user's ID
         $userId = $conn->lastInsertId();
 
-        // Set session variables
         $_SESSION['user_id'] = $userId;
         $_SESSION['user_name'] = $name;
         $_SESSION['user_role'] = 'Guest';
         $_SESSION['user_email'] = $email;
 
-        // Clear any old input data
         unset($_SESSION['old_name'], $_SESSION['old_email'], $_SESSION['old_phone'], $_SESSION['old_terms']);
 
-        // Redirect to home page
         header("Location: /Proj/PHP/home.php");
         exit;
 
@@ -117,7 +102,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 } else {
-    // If not POST request, redirect to sign-up page
     header("Location: ../front/sign-up.php");
     exit;
 }

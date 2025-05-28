@@ -220,7 +220,6 @@ session_start();
                 <?php endif; ?>
             </div>
 
-            <!-- Reviews Section -->
             <div
                 class="glass-card rounded-2xl shadow-xl p-8 md:col-span-3 transform hover:scale-[1.02] transition-all duration-300">
                 <div class="flex justify-between items-center mb-6">

@@ -7,20 +7,17 @@ if (isset($_SESSION['user_id']) && $_SESSION['user_role'] === 'Guest') {
     exit;
 }
 
-// Get error messages from session if they exist
 $emailMsg = $_SESSION['emailMsg'] ?? "";
 $passwordMsg = $_SESSION['passwordMsg'] ?? "";
 $fullNameMsg = $_SESSION['fullNameMsg'] ?? "";
 $contactNoMsg = $_SESSION['contactNoMsg'] ?? "";
 $termsMsg = $_SESSION['termsMsg'] ?? "";
 
-// Get previous input values if they exist
 $email = $_SESSION['old_email'] ?? "";
 $fullName = $_SESSION['old_name'] ?? "";
 $contactNo = $_SESSION['old_phone'] ?? "";
 $termsAccepted = $_SESSION['old_terms'] ?? false;
 
-// Clear session messages
 unset(
     $_SESSION['emailMsg'],
     $_SESSION['passwordMsg'],

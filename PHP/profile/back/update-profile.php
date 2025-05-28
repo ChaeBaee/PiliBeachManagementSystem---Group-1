@@ -16,10 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['user_email']);
     $phone = trim($_POST['user_phone']);
 
-    // Initialize error flag
     $hasErrors = false;
 
-    // Validate name
     if (empty($name)) {
         $_SESSION['fullNameMsg'] = "Full name is required.";
         $hasErrors = true;
@@ -28,7 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $hasErrors = true;
     }
 
-    // Validate email
     if (empty($email)) {
         $_SESSION['emailMsg'] = "Email is required.";
         $hasErrors = true;
@@ -37,7 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $hasErrors = true;
     }
 
-    // Validate phone
     if (empty($phone)) {
         $_SESSION['phoneNoMsg'] = "Phone number is required.";
         $hasErrors = true;
@@ -46,14 +42,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $hasErrors = true;
     }
 
-    // If there are validation errors, redirect back
     if ($hasErrors) {
         header("Location: ../profile.php");
         exit();
     }
 
     try {
-        // Check if email is already taken by another user
         $checkStmt = $conn->prepare("SELECT user_id FROM users WHERE user_email = ? AND user_id != ?");
         $checkStmt->execute([$email, $user_id]);
 
@@ -63,7 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         }
 
-        // Update the user's profile
         $stmt = $conn->prepare("UPDATE users SET user_name = ?, user_email = ?, user_phone = ? WHERE user_id = ?");
         $result = $stmt->execute([$name, $email, $phone, $user_id]);
 
