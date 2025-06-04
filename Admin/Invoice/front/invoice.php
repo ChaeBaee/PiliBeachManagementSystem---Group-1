@@ -3,7 +3,7 @@ session_start();
 require_once '../../../PHP/db.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
-    header("Location: ../Login/front/login.php");
+    header("Location: /Proj/Admin/Dashboard/front/index.php");
     exit;
 }
 
