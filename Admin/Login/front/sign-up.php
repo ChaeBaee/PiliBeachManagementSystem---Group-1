@@ -2,7 +2,7 @@
 session_start();
 
 if (isset($_SESSION['user_id']) && isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
-    header("Location: index.php");
+    header("Location: /Proj/Admin/Dashboard/front/index.php");
     exit;
 }
 ?>
