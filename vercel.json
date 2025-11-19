@@ -2,14 +2,6 @@
   "version": 2,
   "buildCommand": "echo 'PHP application ready for deployment!'",
   "outputDirectory": ".",
-  "functions": {
-    "PHP/**/*.php": {
-      "runtime": "now-php@1.0.0"
-    },
-    "Admin/**/*.php": {
-      "runtime": "now-php@1.0.0"
-    }
-  },
   "routes": [
     {
       "src": "/PHP/(.*)",
