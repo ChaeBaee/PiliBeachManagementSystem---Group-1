@@ -4,10 +4,10 @@
   "outputDirectory": ".",
   "functions": {
     "PHP/**/*.php": {
-      "runtime": "php@8.2"
+      "runtime": "now-php@1.0.0"
     },
     "Admin/**/*.php": {
-      "runtime": "php@8.2"
+      "runtime": "now-php@1.0.0"
     }
   },
   "routes": [
