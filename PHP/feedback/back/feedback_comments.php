@@ -11,7 +11,7 @@ $allowedSorts = [
 $sort = $_GET['sort'] ?? 'date_desc';
 $orderBy = $allowedSorts[$sort] ?? $allowedSorts['date_desc'];
 try {
-    $stmt = $conn_slave->prepare("
+    $stmt = $conn->prepare("
     SELECT f.feedback_rating, f.feedback_comments, f.feedback_date_created, u.user_name,
            r.room_number, r.room_type
     FROM feedback f

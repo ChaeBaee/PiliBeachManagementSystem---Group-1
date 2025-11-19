@@ -86,6 +86,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .price-tag {
             background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         }
+        
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .availability-status {
+            transition: all 0.3s ease;
+        }
     </style>
 </head>
 
@@ -101,7 +110,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="container mx-auto px-4 py-12 -mt-24">
         <div class="search-container rounded-2xl shadow-xl p-6 w-full lg:w-auto">
-            <form action="" method="POST" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+            <form id="searchForm" action="" method="POST" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Room Type</label>
                     <select name="room_type"
@@ -118,7 +127,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Check In</label>
                     <input type="date" name="checkin" id="check_in" value="<?= htmlspecialchars($checkIn) ?>"
-                        class="w-full rounded-xl border = focus:border-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-50" />
+                        class="w-full rounded-xl border focus:border-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-50" />
                     <?php if ($checkInMsg): ?>
                         <span class="text-sm text-red-500"><?= $checkInMsg ?></span>
                     <?php endif; ?>
@@ -143,12 +152,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
 
                 <div class="flex items-end">
-                    <button type="submit"
+                    <button type="submit" id="searchButton"
                         class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl px-6 py-3.5 font-semibold shadow-lg hover:shadow-xl transition duration-200">
                         <i class="fas fa-search mr-2"></i> Search Rooms
                     </button>
                 </div>
             </form>
+        </div>
+
+        <!-- Availability Status -->
+        <div id="availabilityStatus" class="availability-status mt-6 hidden">
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div class="flex items-center">
+                    <i id="statusIcon" class="fas fa-info-circle text-blue-500 mr-2"></i>
+                    <span id="statusText" class="text-blue-700 font-medium"></span>
+                </div>
+            </div>
         </div>
 
         <div class="mt-12">
@@ -179,7 +198,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             class="text-2xl font-bold text-blue-600">₱<?= number_format($room['room_price']) ?></span>
                                         <span class="text-gray-500">per night</span>
                                     </div>
-                                    <a href="booking-confirmation.php?room_id=<?= $room['room_id'] ?>&check_in=<?= $checkIn ?>&check_out=<?= $checkOut ?>"
+                                    <a href="room-details.php?room_id=<?= $room['room_id'] ?>&check_in=<?= $checkIn ?>&check_out=<?= $checkOut ?>"
                                         class="block bg-blue-600 hover:bg-blue-700 text-white text-center py-3 rounded-xl shadow hover:shadow-lg transition">
                                         Book Now
                                     </a>
@@ -195,18 +214,95 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script>
         const checkInInput = document.getElementById('check_in');
         const checkOutInput = document.getElementById('check_out');
+        const searchForm = document.getElementById('searchForm');
+        const searchButton = document.getElementById('searchButton');
+        const availabilityStatus = document.getElementById('availabilityStatus');
+        const statusIcon = document.getElementById('statusIcon');
+        const statusText = document.getElementById('statusText');
+        
         const today = new Date().toISOString().split('T')[0];
         checkInInput.min = today;
 
-        checkInInput.addEventListener('change', function () {
-            const checkInDate = new Date(this.value);
-            const nextDay = new Date(checkInDate);
-            nextDay.setDate(nextDay.getDate() + 1);
-            checkOutInput.min = nextDay.toISOString().split('T')[0];
-
-            if (checkOutInput.value && new Date(checkOutInput.value) <= checkInDate) {
-                checkOutInput.value = nextDay.toISOString().split('T')[0];
+        // Function to check availability for all rooms
+        async function checkOverallAvailability(checkIn, checkOut) {
+            if (!checkIn || !checkOut) return;
+            
+            searchForm.classList.add('loading');
+            
+            try {
+                // Check if any rooms are available for the selected dates
+                const response = await fetch('../back/bookings_backend.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `action=get_available_rooms&check_in=${checkIn}&check_out=${checkOut}`
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.data.length > 0) {
+                    availabilityStatus.className = 'availability-status mt-6 bg-green-50 border border-green-200 rounded-lg p-4';
+                    statusIcon.className = 'fas fa-check-circle text-green-500 mr-2';
+                    statusText.textContent = `${data.data.length} room(s) available for selected dates`;
+                    statusText.className = 'text-green-700 font-medium';
+                } else {
+                    availabilityStatus.className = 'availability-status mt-6 bg-red-50 border border-red-200 rounded-lg p-4';
+                    statusIcon.className = 'fas fa-times-circle text-red-500 mr-2';
+                    statusText.textContent = 'No rooms available for selected dates';
+                    statusText.className = 'text-red-700 font-medium';
+                }
+                
+                availabilityStatus.classList.remove('hidden');
+                
+            } catch (error) {
+                console.error('Error checking availability:', error);
+                availabilityStatus.className = 'availability-status mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4';
+                statusIcon.className = 'fas fa-exclamation-triangle text-yellow-500 mr-2';
+                statusText.textContent = 'Unable to check availability. Please try searching.';
+                statusText.className = 'text-yellow-700 font-medium';
+                availabilityStatus.classList.remove('hidden');
+            } finally {
+                searchForm.classList.remove('loading');
             }
+        }
+
+        checkInInput.addEventListener('change', function () {
+            const checkOut = document.getElementById('check_out');
+            const nextDay = new Date(this.value);
+            nextDay.setDate(nextDay.getDate() + 1);
+            checkOut.min = nextDay.toISOString().split('T')[0];
+
+            if (checkOut.value <= this.value) {
+                checkOut.value = nextDay.toISOString().split('T')[0];
+            }
+
+            // Check availability when both dates are set
+            if (checkOut.value) {
+                checkOverallAvailability(this.value, checkOut.value);
+            }
+        });
+
+        checkOutInput.addEventListener('change', function () {
+            const checkIn = document.getElementById('check_in').value;
+
+            if (checkIn) {
+                checkOverallAvailability(checkIn, this.value);
+            }
+        });
+
+        // Form submission handler
+        searchForm.addEventListener('submit', function(e) {
+            const checkIn = checkInInput.value;
+            const checkOut = checkOutInput.value;
+            
+            if (!checkIn || !checkOut) {
+                e.preventDefault();
+                alert('Please select both check-in and check-out dates.');
+                return;
+            }
+            
+            // Show loading state
+            searchButton.disabled = true;
+            searchButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Searching...';
         });
     </script>
 </body>

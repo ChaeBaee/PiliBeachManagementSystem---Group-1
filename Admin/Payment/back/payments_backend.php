@@ -11,26 +11,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         switch ($_POST['action']) {
             case 'add':
                 try {
-
-                    $stmt = $conn->prepare("SELECT b.*, u.user_name, r.room_number FROM bookings b 
+                    // Get booking details including total amount
+                    $stmt = $conn->prepare("SELECT b.*, u.user_name, r.room_number, r.room_price,
+                                          (DATEDIFF(b.booking_check_out, b.booking_check_in) * r.room_price) as total_amount
+                                          FROM bookings b 
                                           JOIN users u ON b.user_id = u.user_id 
                                           JOIN rooms r ON b.room_id = r.room_id 
                                           WHERE b.booking_id = ?");
                     $stmt->execute([$_POST['booking_id']]);
                     $booking = $stmt->fetch(PDO::FETCH_ASSOC);
 
+                    if (!$booking) {
+                        throw new Exception("Booking not found");
+                    }
+
                     $conn->exec("SET @current_user_id = $currentUserId");
 
-                    $stmt = $conn->prepare("INSERT INTO payments (booking_id, payment_amount, payment_date, payment_status) VALUES (?, ?, ?, ?)");
+                    // Insert payment with current date and calculated total amount
+                    $stmt = $conn->prepare("INSERT INTO payments (booking_id, payment_amount, payment_date, payment_status) VALUES (?, ?, CURDATE(), ?)");
                     $stmt->execute([
                         $_POST['booking_id'],
-                        $_POST['payment_amount'],
-                        $_POST['payment_date'],
+                        $booking['total_amount'], // Use calculated total amount
                         $_POST['payment_status']
                     ]);
                     $_SESSION['success'] = "Payment added successfully!";
                 } catch (PDOException $e) {
                     $_SESSION['error'] = "Error adding payment: " . $e->getMessage();
+                } catch (Exception $e) {
+                    $_SESSION['error'] = "Error: " . $e->getMessage();
                 }
                 break;
 
@@ -88,7 +96,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $stmt = $conn->query("
-    SELECT p.*, b.booking_check_in, b.booking_check_out, u.user_name, r.room_number 
+    SELECT p.*, b.booking_check_in, b.booking_check_out, u.user_name, r.room_number, r.room_price,
+           DATEDIFF(b.booking_check_out, b.booking_check_in) as nights
     FROM payments p 
     JOIN bookings b ON p.booking_id = b.booking_id 
     JOIN users u ON b.user_id = u.user_id 
@@ -98,8 +107,9 @@ $stmt = $conn->query("
 $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $stmt = $conn->query("
-    SELECT b.booking_id, b.booking_check_in, b.booking_check_out, u.user_name, r.room_number,
-           (DATEDIFF(b.booking_check_out, b.booking_check_in) * r.room_price) as total_amount
+    SELECT b.booking_id, b.booking_check_in, b.booking_check_out, u.user_name, r.room_number, r.room_price,
+           (DATEDIFF(b.booking_check_out, b.booking_check_in) * r.room_price) as total_amount,
+           DATEDIFF(b.booking_check_out, b.booking_check_in) as nights
     FROM bookings b 
     JOIN users u ON b.user_id = u.user_id 
     JOIN rooms r ON b.room_id = r.room_id 

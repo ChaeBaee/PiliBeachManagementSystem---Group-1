@@ -1,0 +1,32 @@
+[2025-06-21 05:50:38] Contact Form Submission:
+Name: Luis Ronatay
+Email: l@gmail.com
+Phone: 09460824512
+Subject: Room Information
+Message: how much for the room
+----------------------------------------
+
+[2025-06-21 06:58:04] Contact Form Submission:
+Name: Luis Ronatay
+Email: l@gmail.com
+Phone: 09460824512
+Subject: Booking Question
+Message: test
+----------------------------------------
+
+[2025-06-22 03:39:35] Contact Form Submission:
+Name: justine mary millaro
+Email: l@gmail.com
+Phone: 09460824512
+Subject: Room Information
+Message: how much is the room
+----------------------------------------
+
+[2025-06-22 05:38:13] Contact Form Submission:
+Name: Luis Ronatay
+Email: l@gmail.com
+Phone: 09460824512
+Subject: Complaint
+Message: your service sucks!
+----------------------------------------
+

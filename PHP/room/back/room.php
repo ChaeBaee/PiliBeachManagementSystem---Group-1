@@ -4,10 +4,11 @@ session_start();
 
 try {
     $sql = "SELECT * FROM rooms";
-    $stmt = $conn_slave->prepare($sql);
+    $stmt = $conn->prepare($sql);
     $stmt->execute();
-    $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $rooms = $stmt->fetchAll();
 } catch (PDOException $e) {
+    error_log("Room query error: " . $e->getMessage());
     echo "Database error: " . $e->getMessage();
     exit();
 }

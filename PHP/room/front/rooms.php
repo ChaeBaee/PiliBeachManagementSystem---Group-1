@@ -221,8 +221,8 @@ if ($room_type || $price_range || $capacity) {
                                 <span class="text-sm text-gray-500 ml-1">/ night</span>
                             </div>
 
-                            <form action="/Proj/PHP/booking/front/bookings.php" method="GET">
-                                <input type="hidden" name="room_type" value="<?= htmlspecialchars($room['room_type']) ?>">
+                            <form action="/Proj/PHP/booking/front/room-details.php" method="GET">
+                                <input type="hidden" name="room_id" value="<?= htmlspecialchars($room['room_id']) ?>">
                                 <button type="submit"
                                     class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition duration-300">
                                     Book Now
@@ -238,25 +238,41 @@ if ($room_type || $price_range || $capacity) {
     <?php include('../../elements/footer.php'); ?>
 
     <script>
-        const filterToggle = document.getElementById('filterToggle');
-        const filterSection = document.getElementById('filterSection');
-
-        if (filterToggle) {
-            filterToggle.addEventListener('click', () => {
-                filterSection.classList.toggle('hidden');
-            });
-        }
-
-        function handleFilterVisibility() {
-            if (window.innerWidth >= 768) {
-                filterSection.classList.remove('hidden');
-            } else {
-                filterSection.classList.add('hidden');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hide the loading overlay once the main content is fully loaded
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.classList.remove('active');
             }
-        }
 
-        window.addEventListener('load', handleFilterVisibility);
-        window.addEventListener('resize', handleFilterVisibility);
+            const filterToggle = document.getElementById('filterToggle');
+            const filterSection = document.getElementById('filterSection');
+
+            if (filterToggle) {
+                filterToggle.addEventListener('click', () => {
+                    filterSection.classList.toggle('hidden');
+                });
+            }
+
+            function handleFilterVisibility() {
+                if (window.innerWidth >= 768) {
+                    filterSection.classList.remove('hidden');
+                } else {
+                    filterSection.classList.add('hidden');
+                }
+            }
+
+            window.addEventListener('resize', handleFilterVisibility);
+            handleFilterVisibility();
+        });
+
+        // Additional fallback to ensure the loading overlay is hidden
+        window.addEventListener('load', function() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.classList.remove('active');
+            }
+        });
     </script>
 </body>
 

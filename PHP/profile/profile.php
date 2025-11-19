@@ -107,220 +107,352 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>User Profile - Paradise Resort</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #f3f8ff 0%, #e6f0ff 100%);
+            min-height: 100vh;
         }
 
         .glass-card {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
         .input-focus {
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .input-focus:focus {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-confirmed { background: #d1fae5; color: #065f46; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-canceled { background: #fee2e2; color: #991b1b; }
+        .status-checked-in { background: #dbeafe; color: #1e40af; }
+        .status-checked-out { background: #f3e8ff; color: #7c3aed; }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .booking-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .booking-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .section-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 0 auto 1rem;
         }
     </style>
 </head>
 
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen">
     <?php include('../elements/navbar.php'); ?>
 
-    <div class="max-w-6xl mx-auto py-16 px-6 mt-8">
-        <div class="text-center mb-16">
-            <h1 class="text-5xl font-bold text-blue-900 mb-4">Your Profile</h1>
-            <p class="text-gray-600 text-lg">Manage your account settings and view your bookings</p>
+    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 mt-16">
+        <!-- Header Section -->
+        <div class="text-center mb-16 animate-fade-in">
+            <div class="profile-avatar">
+                <?= strtoupper(substr($user['user_name'], 0, 1)); ?>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold text-blue-900 mb-4 drop-shadow-lg">
+                Welcome back, <?= htmlspecialchars(explode(' ', $user['user_name'])[0]); ?>!
+            </h1>
+            <p class="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto">
+                Manage your account settings, update your profile, and view your booking history
+            </p>
         </div>
 
+        <!-- Success Message -->
         <?php if (isset($_SESSION['message'])): ?>
-            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded mb-8 shadow-lg animate-fade-in">
-                <?= $_SESSION['message'];
-                unset($_SESSION['message']); ?>
+            <div class="bg-green-50 border-l-4 border-green-400 text-green-700 p-6 rounded-lg mb-8 shadow-lg animate-fade-in">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle text-green-400 text-xl mr-3"></i>
+                    <div>
+                        <p class="font-semibold">Success!</p>
+                        <p><?= $_SESSION['message']; unset($_SESSION['message']); ?></p>
+                    </div>
+                </div>
             </div>
         <?php endif; ?>
 
-        <div class="grid md:grid-cols-2 gap-10">
-            <div class="glass-card rounded-2xl shadow-xl p-8 transform hover:scale-[1.02] transition-all duration-300">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-                    <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    Profile Information
-                </h2>
-                <form action="back/update-profile.php" method="POST" class="space-y-6">
-                    <input type="hidden" name="user_id" value="<?= $user_id ?>">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                        <input type="text" name="user_name" value="<?= htmlspecialchars($user['user_name']); ?>"
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-focus">
-                        <?php if ($fullNameMsg): ?><span
-                                class="text-red-500 text-sm mt-1 block"><?= $fullNameMsg; ?></span><?php endif; ?>
+        <!-- Main Content Grid -->
+        <div class="grid lg:grid-cols-2 gap-8 mb-12">
+            <!-- Profile Information Card -->
+            <div>
+                <div class="glass-card rounded-2xl p-8 h-fit">
+                    <div class="section-header mb-8">
+                        <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                            <i class="fas fa-user-edit text-blue-600 mr-3"></i>
+                            Profile Information
+                        </h2>
+                        <p class="text-gray-600 mt-2">Update your personal details and contact information</p>
                     </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                        <input type="email" name="user_email" value="<?= htmlspecialchars($user['user_email']); ?>"
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-focus">
-                        <?php if ($emailMsg): ?><span
-                                class="text-red-500 text-sm mt-1 block"><?= $emailMsg; ?></span><?php endif; ?>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                        <input type="text" name="user_phone" value="<?= htmlspecialchars($user['user_phone']); ?>"
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-focus">
-                        <?php if ($phoneNoMsg): ?><span
-                                class="text-red-500 text-sm mt-1 block"><?= $phoneNoMsg; ?></span><?php endif; ?>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
-                            <input type="text" value="<?= $user['user_role']; ?>" disabled
-                                class="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-600">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Joined</label>
-                            <input type="text" value="<?= $user['user_date_created']; ?>" disabled
-                                class="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-600">
-                        </div>
-                    </div>
-
-                    <button type="submit"
-                        class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg">
-                        Save Changes
-                    </button>
-                </form>
-            </div>
-
-            <div class="glass-card rounded-2xl shadow-xl p-8 transform hover:scale-[1.02] transition-all duration-300">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-                    <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                    </svg>
-                    Change Password
-                </h2>
-                <form action="back/change-password.php" method="POST" class="space-y-6">
-                    <input type="hidden" name="user_id" value="<?= $user_id ?>">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
-                        <input type="password" name="current_password"
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-focus">
-                        <?php if ($currentPasswordMsg): ?><span
-                                class="text-red-500 text-sm mt-1 block"><?= $currentPasswordMsg; ?></span><?php endif; ?>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
-                        <input type="password" name="new_password"
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-focus">
-                        <?php if ($newPasswordMsg): ?><span
-                                class="text-red-500 text-sm mt-1 block"><?= $newPasswordMsg; ?></span><?php endif; ?>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
-                        <input type="password" name="confirm_password"
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-focus">
-                        <?php if ($confirmPasswordMsg): ?><span
-                                class="text-red-500 text-sm mt-1 block"><?= $confirmPasswordMsg; ?></span><?php endif; ?>
-                    </div>
-
-                    <button type="submit"
-                        class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg">
-                        Update Password
-                    </button>
-                </form>
-            </div>
-
-            <div class="glass-card rounded-2xl shadow-xl p-8 mt-10 md:col-span-2">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-                    <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    Your Bookings
-                </h2>
-                <?php
-                $stmt = $conn->prepare("SELECT b.*, r.room_number, r.room_type FROM bookings b JOIN rooms r ON b.room_id = r.room_id WHERE b.user_id = ?");
-                $stmt->execute([$user_id]);
-                $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                ?>
-
-                <?php if ($bookings): ?>
-                    <div class="space-y-4 max-h-[600px] overflow-y-auto pr-2">
-                        <?php foreach ($bookings as $booking): ?>
-                            <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300">
-                                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                    <div class="space-y-2">
-                                        <h3 class="text-lg font-semibold text-gray-800">Room <?= $booking['room_number']; ?> -
-                                            <?= $booking['room_type']; ?>
-                                        </h3>
-                                        <div class="flex flex-wrap gap-4 text-sm text-gray-600">
-                                            <span class="flex items-center">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                </svg>
-                                                <?= $booking['booking_check_in']; ?> to <?= $booking['booking_check_out']; ?>
-                                            </span>
-                                            <span class="flex items-center">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                                Status: <?= $booking['booking_status']; ?>
-                                            </span>
-                                            <span class="flex items-center">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                                Total: ₱<?= $booking['booking_total_price']; ?>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <?php if (!in_array($booking['booking_status'], ['Canceled', 'Checked-in', 'Checked-out'])): ?>
-                                        <form action="./back/cancel-booking.php" method="POST" class="w-full md:w-auto">
-                                            <input type="hidden" name="booking_id" value="<?= $booking['booking_id']; ?>">
-                                            <button type="submit"
-                                                class="w-full md:w-auto bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg">
-                                                Cancel Booking
-                                            </button>
-                                        </form>
-                                    <?php else: ?>
-                                        <span
-                                            class="text-gray-500 italic"><?= $booking['booking_status'] === 'Canceled' ? 'Cancelled' : 'Cancellation unavailable'; ?></span>
-                                    <?php endif; ?>
-                                </div>
+                    
+                    <form action="profile.php" method="POST" class="space-y-6">
+                        <input type="hidden" name="user_id" value="<?= $user_id ?>">
+                        <input type="hidden" name="form_name" value="profile_update">
+                        
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                    <i class="fas fa-user text-blue-500 mr-2"></i>Full Name
+                                </label>
+                                <input type="text" name="user_name" value="<?= htmlspecialchars($user['user_name']); ?>"
+                                    class="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-focus bg-white/80">
+                                <?php if ($fullNameMsg): ?>
+                                    <span class="text-red-500 text-sm mt-2 block flex items-center">
+                                        <i class="fas fa-exclamation-circle mr-1"></i><?= $fullNameMsg; ?>
+                                    </span>
+                                <?php endif; ?>
                             </div>
-                        <?php endforeach; ?>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                    <i class="fas fa-envelope text-blue-500 mr-2"></i>Email Address
+                                </label>
+                                <input type="email" name="user_email" value="<?= htmlspecialchars($user['user_email']); ?>"
+                                    class="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-focus bg-white/80">
+                                <?php if ($emailMsg): ?>
+                                    <span class="text-red-500 text-sm mt-2 block flex items-center">
+                                        <i class="fas fa-exclamation-circle mr-1"></i><?= $emailMsg; ?>
+                                    </span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                    <i class="fas fa-phone text-blue-500 mr-2"></i>Phone Number
+                                </label>
+                                <input type="text" name="user_phone" value="<?= htmlspecialchars($user['user_phone']); ?>"
+                                    class="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-focus bg-white/80">
+                                <?php if ($phoneNoMsg): ?>
+                                    <span class="text-red-500 text-sm mt-2 block flex items-center">
+                                        <i class="fas fa-exclamation-circle mr-1"></i><?= $phoneNoMsg; ?>
+                                    </span>
+                                <?php endif; ?>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                    <i class="fas fa-shield-alt text-blue-500 mr-2"></i>Account Role
+                                </label>
+                                <input type="text" value="<?= ucfirst($user['user_role']); ?>" disabled
+                                    class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl text-gray-600">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                <i class="fas fa-calendar-plus text-blue-500 mr-2"></i>Member Since
+                            </label>
+                            <input type="text" value="<?= date('F j, Y', strtotime($user['user_date_created'])); ?>" disabled
+                                class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl text-gray-600">
+                        </div>
+
+                        <button type="submit" class="w-full btn-primary text-white font-semibold py-4 px-6 rounded-xl text-lg">
+                            <i class="fas fa-save mr-2"></i>Save Changes
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Password Change Card -->
+            <div>
+                <div class="glass-card rounded-2xl p-8 h-fit">
+                    <div class="section-header mb-8">
+                        <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                            <i class="fas fa-lock text-blue-600 mr-3"></i>
+                            Security
+                        </h2>
+                        <p class="text-gray-600 mt-2">Update your password to keep your account secure</p>
                     </div>
-                <?php else: ?>
-                    <div class="text-center py-8">
-                        <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <p class="text-gray-500 text-lg">You have no bookings yet.</p>
-                    </div>
-                <?php endif; ?>
+                    
+                    <form action="profile.php" method="POST" class="space-y-6">
+                        <input type="hidden" name="user_id" value="<?= $user_id ?>">
+                        <input type="hidden" name="form_name" value="password_change">
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                <i class="fas fa-key text-blue-500 mr-2"></i>Current Password
+                            </label>
+                            <div class="relative">
+                                <input type="password" name="current_password" id="current_password"
+                                    class="w-full p-4 pr-12 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-focus bg-white/80">
+                                <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('current_password', 'current_password_icon')">
+                                    <i id="current_password_icon" class="fas fa-eye text-gray-400 hover:text-gray-600 transition-colors"></i>
+                                </button>
+                            </div>
+                            <?php if ($currentPasswordMsg): ?>
+                                <span class="text-red-500 text-sm mt-2 block flex items-center">
+                                    <i class="fas fa-exclamation-circle mr-1"></i><?= $currentPasswordMsg; ?>
+                                </span>
+                            <?php endif; ?>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                <i class="fas fa-lock text-blue-500 mr-2"></i>New Password
+                            </label>
+                            <div class="relative">
+                                <input type="password" name="new_password" id="new_password"
+                                    class="w-full p-4 pr-12 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-focus bg-white/80">
+                                <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('new_password', 'new_password_icon')">
+                                    <i id="new_password_icon" class="fas fa-eye text-gray-400 hover:text-gray-600 transition-colors"></i>
+                                </button>
+                            </div>
+                            <?php if ($newPasswordMsg): ?>
+                                <span class="text-red-500 text-sm mt-2 block flex items-center">
+                                    <i class="fas fa-exclamation-circle mr-1"></i><?= $newPasswordMsg; ?>
+                                </span>
+                            <?php endif; ?>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">
+                                <i class="fas fa-check-circle text-blue-500 mr-2"></i>Confirm Password
+                            </label>
+                            <div class="relative">
+                                <input type="password" name="confirm_password" id="confirm_password"
+                                    class="w-full p-4 pr-12 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-focus bg-white/80">
+                                <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('confirm_password', 'confirm_password_icon')">
+                                    <i id="confirm_password_icon" class="fas fa-eye text-gray-400 hover:text-gray-600 transition-colors"></i>
+                                </button>
+                            </div>
+                            <?php if ($confirmPasswordMsg): ?>
+                                <span class="text-red-500 text-sm mt-2 block flex items-center">
+                                    <i class="fas fa-exclamation-circle mr-1"></i><?= $confirmPasswordMsg; ?>
+                                </span>
+                            <?php endif; ?>
+                        </div>
+
+                        <button type="submit" class="w-full btn-primary text-white font-semibold py-4 px-6 rounded-xl text-lg">
+                            <i class="fas fa-shield-alt mr-2"></i>Update Password
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
+
+        <!-- Bookings Section -->
+        <!-- Removed: Bookings section is now accessible via the main navigation bar only -->
     </div>
 
     <?php include('../elements/footer.php'); ?>
+
+    <script>
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+                icon.classList.remove('text-gray-400');
+                icon.classList.add('text-blue-500');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+                icon.classList.remove('text-blue-500');
+                icon.classList.add('text-gray-400');
+            }
+        }
+    </script>
+
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 3px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+        }
+    </style>
 </body>
 
 </html>

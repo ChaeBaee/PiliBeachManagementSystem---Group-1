@@ -1,0 +1,14 @@
+.git
+.idea
+node_modules
+.DS_Store
+*.sql
+*.md
+.env.local
+.env.*.local
+contact_backup_*.txt
+pili_db*.sql
+create_room_images_table.sql
+update_database_checkin_time.sql
+run_database_update.php
+test_*.php

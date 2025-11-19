@@ -3,7 +3,7 @@ require_once '../../db.php';
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login/front/login.php");
+    header("Location: ../../login/front/login.php");
     exit();
 }
 
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $payment_proof = '';
         if (isset($_FILES['payment_proof']) && $_FILES['payment_proof']['error'] === UPLOAD_ERR_OK) {
-            $upload_dir = '../uploads/payment_proofs/';
+            $upload_dir = '../../uploads/payment_proofs/';
             if (!file_exists($upload_dir)) {
                 mkdir($upload_dir, 0777, true);
             }
@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         unset($_SESSION['booking_flow']);
         unset($_SESSION['booking_token']);
 
-        header("Location: /Proj/PHP/invoice/Front/invoice.php?payment_id=" . $payment_id);
+        header("Location: /Proj/PHP/Invoice/Front/invoice.php?payment_id=" . $payment_id);
         exit();
     } catch (Exception $e) {
         $conn->rollBack();
@@ -111,7 +111,7 @@ if (isset($_GET['cancel'])) {
         unset($_SESSION['booking_flow']);
         unset($_SESSION['booking_token']);
 
-        header("Location: ../PHP/booking/front/bookings.php");
+        header("Location: /Proj/PHP/booking/front/bookings.php");
         exit();
     } catch (Exception $e) {
         $conn->rollBack();

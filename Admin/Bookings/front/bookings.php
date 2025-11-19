@@ -6,6 +6,56 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
     exit;
 }
 
+// Handle search functionality
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+
+// Get bookings with search filter
+require_once '../../../PHP/db.php';
+
+$query = "SELECT b.*, u.user_name, r.room_number, r.room_type 
+          FROM bookings b 
+          JOIN users u ON b.user_id = u.user_id 
+          JOIN rooms r ON b.room_id = r.room_id 
+          WHERE b.booking_status NOT IN ('Canceled', 'Checked-out')";
+
+$params = [];
+
+if (!empty($search)) {
+    $query .= " AND (u.user_name LIKE ? OR r.room_number LIKE ? OR b.booking_id LIKE ? OR r.room_type LIKE ?)";
+    $search_param = "%$search%";
+    $params = array_merge($params, [$search_param, $search_param, $search_param, $search_param]);
+}
+
+$query .= " ORDER BY b.booking_check_in DESC";
+
+$stmt = $conn->prepare($query);
+$stmt->execute($params);
+$bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Function to get status color
+function getStatusColor($status) {
+    switch (strtolower($status)) {
+        case 'confirmed': return 'green';
+        case 'pending': return 'yellow';
+        case 'canceled': return 'red';
+        case 'checked-in': return 'blue';
+        case 'checked-out': return 'gray';
+        default: return 'gray';
+    }
+}
+
+// Function to format time from 24-hour to 12-hour format
+function formatTime($time) {
+    if (empty($time)) return '2:00 PM';
+    
+    $timeObj = DateTime::createFromFormat('H:i', $time);
+    if ($timeObj) {
+        return $timeObj->format('g:i A');
+    }
+    
+    return '2:00 PM'; // Default fallback
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -31,6 +81,13 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
             }
         }
     </script>
+    <style>
+        .status-badge {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
 </head>
 
 <body class="bg-gray-100 text-gray-800">
@@ -42,504 +99,723 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-semibold">Bookings</h1>
             <button onclick="openAddModal()"
-                class="bg-primary text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition">
-                + New Booking
+                class="bg-primary text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition-colors duration-200">
+                <i class="fas fa-plus mr-2"></i>New Booking
             </button>
         </div>
 
-        <div class="bg-white rounded-xl shadow-md overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50 text-sm font-semibold text-gray-600">
-                    <tr>
-                        <th class="px-6 py-4 text-left">Booking ID</th>
-                        <th class="px-6 py-4 text-left">Guest Name</th>
-                        <th class="px-6 py-4 text-left">Room</th>
-                        <th class="px-6 py-4 text-left">Check-in</th>
-                        <th class="px-6 py-4 text-left">Check-out</th>
-                        <th class="px-6 py-4 text-left">Total Price</th>
-                        <th class="px-6 py-4 text-left">Status</th>
-                        <th class="px-6 py-4 text-left">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="bookingsTableBody" class="divide-y divide-gray-100 text-sm">
+        <!-- Search and Filter Section -->
+        <div class="bg-white shadow rounded-lg p-4 mb-6">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1">
+                    <input type="text" id="searchInput" placeholder="Search by guest name, email, phone, room number, or booking ID..." 
+                           class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="flex gap-2">
+                    <select id="statusFilter" class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Checked-in">Checked-in</option>
+                        <option value="Canceled">Canceled</option>
+                    </select>
+                    <select id="dateFilter" class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">All Dates</option>
+                        <option value="today">Today</option>
+                        <option value="tomorrow">Tomorrow</option>
+                        <option value="this_week">This Week</option>
+                        <option value="this_month">This Month</option>
+                        <option value="upcoming">Upcoming</option>
+                        <option value="past">Past</option>
+                    </select>
+                    <button onclick="clearFilters()" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors duration-200">
+                        Clear
+                </button>
+                </div>
+            </div>
+        </div>
 
-                </tbody>
-            </table>
+        <div class="bg-white shadow rounded-xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm text-left">
+                    <thead class="text-gray-600 border-b bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 font-semibold w-20">Booking ID</th>
+                            <th class="px-6 py-3 font-semibold w-32">Guest Name</th>
+                            <th class="px-6 py-3 font-semibold w-40">Contact Info</th>
+                            <th class="px-6 py-3 font-semibold w-28">Room</th>
+                            <th class="px-6 py-3 font-semibold w-36">Check-in</th>
+                            <th class="px-6 py-3 font-semibold w-36">Check-out</th>
+                            <th class="px-6 py-3 font-semibold w-24">Total Price</th>
+                            <th class="px-6 py-3 font-semibold w-32">Status</th>
+                            <th class="px-6 py-3 font-semibold w-20">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsTableBody">
+                        <!-- Bookings will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="noBookingsMessage" class="hidden text-center py-8 text-gray-500">
+                <i class="fas fa-calendar-times text-4xl mb-4"></i>
+                <p>No bookings found matching your criteria.</p>
+            </div>
         </div>
     </main>
 
-    <div id="addBookingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
-        <div class="bg-white rounded-lg p-6 w-full max-w-md">
-            <h2 class="text-2xl font-semibold mb-4">Add New Booking</h2>
+    <!-- Add Booking Modal -->
+    <div id="addBookingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md max-h-[85vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold">Add New Booking</h2>
+                <button onclick="closeAddModal()" class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
             <form id="addBookingForm" class="space-y-4">
+                <input type="hidden" name="csrf_token" id="csrfToken">
+                
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Guest Name</label>
-                    <select id="addUserId" name="userId"
-                        class="mt-1 block w-full h-12 pl-3 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                        <option value="">Select Guest</option>
-                    </select>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Guest Name *</label>
+                    <input type="text" id="addGuestName" name="guestName" placeholder="Enter guest name"
+                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 h-12 px-3">
                     <span id="addGuestNameMsg" class="text-red-600 text-sm"></span>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Room</label>
-                    <select id="addRoomId" name="roomId"
-                        class="mt-1 block w-full h-12 pl-3 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                        <option value="">Select Room</option>
-                    </select>
-                    <span id="addRoomMsg" class="text-red-600 text-sm"></span>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Guest Phone *</label>
+                    <input type="tel" id="addGuestPhone" name="guestPhone" placeholder="Enter guest phone"
+                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 h-12 px-3">
+                    <span id="addGuestPhoneMsg" class="text-red-600 text-sm"></span>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Check-in Date</label>
-                    <input type="date" id="addCheckIn" name="checkIn"
-                        class="mt-1 block w-full h-12 pl-3 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Room *</label>
+                    <select id="addRoomId" name="roomId" required
+                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 h-12 px-3">
+                        <option value="">Select room</option>
+                    </select>
+                    <span id="addRoomIdMsg" class="text-red-600 text-sm"></span>
+                    <p class="text-xs text-gray-500 mt-1">Select check-in and check-out dates to see available rooms only</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Check-in Date *</label>
+                        <input type="date" id="addCheckIn" name="checkIn" required
+                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 h-12 px-3" min="">
                     <span id="addCheckInMsg" class="text-red-600 text-sm"></span>
                 </div>
-
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Check-out Date</label>
-                    <input type="date" id="addCheckOut" name="checkOut"
-                        class="mt-1 block w-full h-12 pl-3 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                    <span id="addCheckOutMsg" class="text-red-600 text-sm"></span>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Check-out Date *</label>
+                        <input type="date" id="addCheckOut" name="checkOut" required
+                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 h-12 px-3" min="">
+                        <span id="addCheckOutMsg" class="text-red-600 text-sm"></span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Check-in Time</label>
+                        <input type="time" id="addCheckinTime" name="checkinTime" value="14:00"
+                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 h-12 px-3">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Check-out Time</label>
+                        <input type="time" id="addCheckoutTime" name="checkoutTime" value="12:00"
+                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 h-12 px-3">
+                    </div>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Total Price</label>
-                    <input type="number" id="addTotalPrice" name="totalPrice"
-                        class="mt-1 block w-full h-12 pl-3 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Total Price *</label>
+                    <input type="number" id="addTotalPrice" name="totalPrice" placeholder="Price will be calculated automatically" required readonly
+                        class="w-full rounded-lg border-gray-300 bg-gray-100 h-12 px-3">
                     <span id="addTotalPriceMsg" class="text-red-600 text-sm"></span>
+                    <p class="text-xs text-gray-500 mt-1">Price is automatically calculated based on room rate and number of nights</p>
+                    <p id="nightsInfo" class="text-xs text-blue-600 mt-1 hidden"></p>
                 </div>
 
-                <div class="flex justify-end space-x-3 mt-6">
+                <div class="flex justify-end gap-3 pt-4 border-t">
                     <button type="button" onclick="closeAddModal()"
-                        class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Cancel</button>
-                    <button type="submit"
-                        class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600">Save</button>
+                        class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 transition-colors duration-200">Cancel</button>
+                    <button type="submit" id="submitBtn"
+                        class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                        <span id="submitText">Add Booking</span>
+                        <i class="fas fa-spinner fa-spin hidden ml-2" id="submitSpinner"></i>
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="editBookingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center pt-20">
-        <div class="bg-white rounded-lg p-6 w-full max-w-md">
-            <h2 class="text-2xl font-semibold mb-4">Edit Booking</h2>
-            <form id="editBookingForm" class="space-y-4">
-                <input type="hidden" id="editBookingId" name="bookingId">
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Guest Name</label>
-                    <input type="text" id="editUserName" name="userName" readonly
-                        class="mt-1 block w-full h-12 pl-3 rounded-md border-gray-300 bg-gray-100 shadow-sm focus:border-primary focus:ring-primary">
-                    <input type="hidden" id="editUserId" name="userId">
-                    <span id="editGuestNameMsg" class="text-red-600 text-sm"></span>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Room</label>
-                    <select id="editRoomId" name="roomId"
-                        class="mt-1 block w-full h-12 pl-3 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                        <option value="">Select Room</option>
-                    </select>
-                    <span id="editRoomMsg" class="text-red-600 text-sm"></span>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Check-in Date</label>
-                    <input type="date" id="editCheckIn" name="checkIn"
-                        class="mt-1 block w-full h-12 pl-3 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                    <span id="editCheckInMsg" class="text-red-600 text-sm"></span>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Check-out Date</label>
-                    <input type="date" id="editCheckOut" name="checkOut"
-                        class="mt-1 block w-full h-12 pl-3 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                    <span id="editCheckOutMsg" class="text-red-600 text-sm"></span>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Total Price</label>
-                    <input type="number" id="editTotalPrice" name="totalPrice"
-                        class="mt-1 block w-full h-12 pl-3 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                    <span id="editTotalPriceMsg" class="text-red-600 text-sm"></span>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Status</label>
-                    <select id="editStatus" name="status"
-                        class="mt-1 block w-full h-12 pl-3 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                        <option value="">Select Status</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Confirmed">Confirmed</option>
-                        <option value="Checked-in">Checked-in</option>
-                        <option value="Checked-out">Checked-out</option>
-                        <option value="Canceled">Canceled</option>
-                    </select>
-                    <span id="editStatusMsg" class="text-red-600 text-sm"></span>
-                </div>
-
-                <div class="flex justify-end space-x-3 mt-6">
-                    <button type="button" onclick="closeEditModal()"
-                        class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Cancel</button>
-                    <button type="submit"
-                        class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600">Save</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
-        <div class="bg-white rounded-lg p-6 w-full max-w-md">
-            <h2 class="text-2xl font-semibold mb-4">Confirm Delete</h2>
-            <p class="text-gray-600 mb-6">Are you sure you want to delete this booking?</p>
-            <div class="flex justify-end space-x-3">
-                <button onclick="closeDeleteModal()"
-                    class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Cancel</button>
-                <button onclick="confirmDelete()"
-                    class="px-4 py-2 bg-danger text-white rounded-lg hover:bg-red-600">Delete</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="notificationModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
-        <div class="bg-white rounded-lg p-6 w-full max-w-md">
-            <div class="flex items-center justify-between mb-4">
-                <h2 id="notificationTitle" class="text-2xl font-semibold"></h2>
-                <button onclick="closeNotificationModal()" class="text-gray-500 hover:text-gray-700">
+    <!-- Edit Booking Modal -->
+    <div id="editBookingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md max-h-[85vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold">Edit Booking</h2>
+                <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
-            <p id="notificationMessage" class="text-gray-600 mb-6"></p>
+            <form id="editBookingForm" class="space-y-4">
+                <input type="hidden" name="csrf_token" id="editCSRFToken">
+                <input type="hidden" id="editBookingId" name="booking_id">
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Guest Name</label>
+                    <input type="text" id="editGuestName" disabled
+                        class="w-full rounded-lg border-gray-300 bg-gray-100 h-12 px-3">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Room *</label>
+                    <select id="editRoomId" name="room_id"
+                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 h-12 px-3">
+                        <option value="">Select room</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Check-in Date *</label>
+                        <input type="date" id="editCheckIn" name="check_in"
+                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 h-12 px-3">
+                </div>
+                <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Check-out Date *</label>
+                        <input type="date" id="editCheckOut" name="check_out"
+                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 h-12 px-3">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Check-in Time</label>
+                        <input type="time" id="editCheckinTime" name="checkin_time"
+                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 h-12 px-3">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Check-out Time</label>
+                        <input type="time" id="editCheckoutTime" name="checkout_time"
+                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 h-12 px-3">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Total Price *</label>
+                    <input type="number" id="editTotalPrice" name="total_price" readonly
+                        class="w-full rounded-lg border-gray-300 bg-gray-100 h-12 px-3">
+                    <p class="text-xs text-gray-500 mt-1">Price is automatically calculated based on room rate and number of nights</p>
+                    <p id="editNightsInfo" class="text-xs text-blue-600 mt-1 hidden"></p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Status *</label>
+                    <select id="editStatus" name="status"
+                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 h-12 px-3">
+                        <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Checked-in">Checked-in</option>
+                        <option value="Canceled">Canceled</option>
+                        <option value="Checked-out">Checked-out</option>
+                    </select>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t">
+                    <button type="button" onclick="closeEditModal()"
+                        class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 transition-colors duration-200">Cancel</button>
+                    <button type="submit" id="editSubmitBtn"
+                        class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                        <span id="editSubmitText">Update Booking</span>
+                        <i class="fas fa-spinner fa-spin hidden ml-2" id="editSubmitSpinner"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Modal -->
+    <div id="notificationModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md transform transition-all">
+            <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+                    <h3 id="notificationTitle" class="text-xl font-semibold text-gray-800"></h3>
+                    <button onclick="closeNotificationModal()" class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+                <p id="notificationMessage" class="text-gray-600 text-base leading-relaxed mb-6"></p>
             <div class="flex justify-end">
                 <button onclick="closeNotificationModal()"
-                    class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600">OK</button>
+                        class="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        OK
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        let currentBookingId = null;
+        let allBookings = [];
+        let csrfToken = '';
+        let searchTimeout = null;
 
-        function validateGuestName(userId) {
-            if (!userId) {
-                return "Guest name cannot be empty.";
-            }
-            return "";
-        }
-
-        function validateRoom(roomId) {
-            if (!roomId) {
-                return "Room cannot be empty.";
-            }
-            return "";
-        }
-
-        function validateDates(checkIn, checkOut) {
-            if (!checkIn) {
-                return "Check-in date cannot be empty.";
-            }
-            if (!checkOut) {
-                return "Check-out date cannot be empty.";
-            }
-            if (new Date(checkIn) >= new Date(checkOut)) {
-                return "Check-out date must be after check-in date.";
-            }
-            if (new Date(checkIn) < new Date().setHours(0, 0, 0, 0)) {
-                return "Check-in date cannot be in the past.";
-            }
-            return "";
-        }
-
-        function validateTotalPrice(totalPrice) {
-            if (!totalPrice) {
-                return "Total price cannot be empty.";
-            }
-            if (isNaN(totalPrice) || totalPrice <= 0) {
-                return "Total price must be a positive number.";
-            }
-            return "";
-        }
-
-        function validateStatus(status) {
-            if (!status) {
-                return "Status cannot be empty.";
-            }
-            return "";
-        }
-
-        function clearValidationMessages() {
-            document.querySelectorAll('[id$="Msg"]').forEach(el => el.textContent = '');
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            loadBookings();
-            loadGuestUsers();
-            setupDateInputs();
+        // Load CSRF token and bookings on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadCSRFToken();
+            await loadBookings();
+            setupEventListeners();
         });
 
-        function setupDateInputs() {
-            const today = new Date().toISOString().split('T')[0];
-            const addCheckIn = document.getElementById('addCheckIn');
-            const addCheckOut = document.getElementById('addCheckOut');
-            const editCheckIn = document.getElementById('editCheckIn');
-            const editCheckOut = document.getElementById('editCheckOut');
-
-            addCheckIn.min = today;
-            addCheckOut.min = today;
-            editCheckIn.min = today;
-            editCheckOut.min = today;
-
-            addCheckIn.value = today;
-            addCheckOut.value = today;
+        function setupEventListeners() {
+            // Set date restrictions
+            setDateRestrictions();
+            
+            // Real-time search functionality with debouncing
+            document.getElementById('searchInput').addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    performRealTimeSearch();
+                }, 300); // 300ms delay to prevent too many API calls
+            });
+            
+            document.getElementById('statusFilter').addEventListener('change', performRealTimeSearch);
+            document.getElementById('dateFilter').addEventListener('change', performRealTimeSearch);
+            
+            // Date change listeners for room availability
+            document.getElementById('addCheckIn').addEventListener('change', checkRoomAvailability);
+            document.getElementById('addCheckOut').addEventListener('change', checkRoomAvailability);
+            document.getElementById('editCheckIn').addEventListener('change', checkEditRoomAvailability);
+            document.getElementById('editCheckOut').addEventListener('change', checkEditRoomAvailability);
+            
+            // Room selection listener for price calculation
+            document.getElementById('addRoomId').addEventListener('change', calculateTotalPrice);
+            document.getElementById('editRoomId').addEventListener('change', calculateEditTotalPrice);
         }
 
-        function calculateTotalPrice(checkIn, checkOut, roomPrice) {
-            if (!checkIn || !checkOut || !roomPrice) return 0;
-
-            const start = new Date(checkIn);
-            const end = new Date(checkOut);
-
-            const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-
-            return nights * roomPrice;
+        async function loadCSRFToken() {
+            try {
+                const response = await fetch('/Proj/Admin/Bookings/back/bookings_backend.php?action=getCSRFToken');
+                const data = await response.json();
+                csrfToken = data.csrf_token;
+                document.getElementById('csrfToken').value = csrfToken;
+                document.getElementById('editCSRFToken').value = csrfToken;
+            } catch (error) {
+                console.error('Error loading CSRF token:', error);
+            }
         }
 
-        function updateTotalPrice(checkIn, checkOut, roomId, isEdit = false) {
-            const prefix = isEdit ? 'edit' : 'add';
-            const roomSelect = document.getElementById(`${prefix}RoomId`);
-            const totalPriceInput = document.getElementById(`${prefix}TotalPrice`);
+        async function loadBookings() {
+            await performRealTimeSearch();
+        }
 
-            if (!roomId) {
-                totalPriceInput.value = '';
+        async function performRealTimeSearch() {
+            const searchTerm = document.getElementById('searchInput').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+            
+            // Show loading state
+            const tbody = document.getElementById('bookingsTableBody');
+            const noBookingsMessage = document.getElementById('noBookingsMessage');
+            
+            if (searchTerm || statusFilter || dateFilter) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="px-6 py-8 text-center">
+                            <div class="flex items-center justify-center">
+                                <i class="fas fa-spinner fa-spin text-blue-600 text-xl mr-3"></i>
+                                <span class="text-gray-600">Searching...</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                noBookingsMessage.classList.add('hidden');
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('action', 'get_bookings_with_search');
+                formData.append('search', searchTerm);
+                formData.append('status_filter', statusFilter);
+                formData.append('date_filter', dateFilter);
+                formData.append('csrf_token', csrfToken);
+
+                const response = await fetch('/Proj/Admin/Bookings/back/bookings_backend.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    allBookings = data.data;
+                    displayBookings(allBookings);
+                } else {
+                    showNotification('Error', 'Failed to load bookings');
+                }
+            } catch (error) {
+                console.error('Error loading bookings:', error);
+                showNotification('Error', 'Failed to load bookings. Please try again.');
+            }
+        }
+
+        function displayBookings(bookings) {
+            const tbody = document.getElementById('bookingsTableBody');
+            const noBookingsMessage = document.getElementById('noBookingsMessage');
+            
+            if (bookings.length === 0) {
+                tbody.innerHTML = '';
+                noBookingsMessage.classList.remove('hidden');
                 return;
             }
 
-            const selectedOption = roomSelect.options[roomSelect.selectedIndex];
-            const roomPrice = parseFloat(selectedOption.getAttribute('data-price'));
+            noBookingsMessage.classList.add('hidden');
+            tbody.innerHTML = '';
 
-            if (roomPrice) {
-                const totalPrice = calculateTotalPrice(checkIn, checkOut, roomPrice);
-                totalPriceInput.value = totalPrice.toFixed(2);
-            }
+            bookings.forEach(booking => {
+                const row = document.createElement('tr');
+                row.className = 'border-b hover:bg-gray-50 transition-colors duration-200';
+                row.innerHTML = `
+                    <td class="px-6 py-4 font-medium">${booking.booking_id}</td>
+                    <td class="px-6 py-4">${escapeHtml(booking.user_name)}</td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm">
+                            <div>${escapeHtml(booking.user_email)}</div>
+                            <div class="text-gray-500">${escapeHtml(booking.user_phone)}</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm">
+                            <div>${escapeHtml(booking.room_number)}</div>
+                            <div class="text-gray-500">(${escapeHtml(booking.room_type)})</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm">
+                            <div>${formatDate(booking.booking_check_in)} at ${formatTime(booking.booking_checkin_time)}</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm">
+                            <div>${formatDate(booking.booking_check_out)} at ${formatTime(booking.booking_checkout_time)}</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 font-medium">₱${parseFloat(booking.booking_total_price).toLocaleString()}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 rounded-full text-xs font-medium status-badge ${booking.status_class}">
+                            ${booking.booking_status}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex space-x-2">
+                            <button class="text-blue-600 hover:text-blue-800 transition-colors duration-200"
+                                onclick="editBooking(${booking.booking_id})"
+                                title="Edit booking">
+                                <i class="fas fa-edit text-lg"></i>
+                            </button>
+                            <button class="text-red-600 hover:text-red-800 transition-colors duration-200" 
+                                onclick="confirmDelete(${booking.booking_id})"
+                                title="Delete booking">
+                                <i class="fas fa-trash text-lg"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
         }
 
-        async function loadAvailableRooms(checkIn, checkOut, currentBookingId = null) {
-            if (!checkIn || !checkOut) return;
-
-            try {
-                const response = await fetch('../back/bookings_backend.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `action=get_available_rooms&check_in=${checkIn}&check_out=${checkOut}${currentBookingId ? `&current_booking_id=${currentBookingId}` : ''}`
-                });
-                const data = await response.json();
-
-                if (data.success) {
-                    const addSelect = document.getElementById('addRoomId');
-                    const editSelect = document.getElementById('editRoomId');
-
-                    const roomOptions = '<option value="">Select Room</option>' +
-                        data.data.map(room =>
-                            `<option value="${room.room_id}" data-price="${room.room_price}">${room.room_number} - ${room.room_type} (₱${room.room_price}/night)</option>`
-                        ).join('');
-
-                    addSelect.innerHTML = roomOptions;
-                    editSelect.innerHTML = roomOptions;
-
-                    const addCheckIn = document.getElementById('addCheckIn').value;
-                    const addCheckOut = document.getElementById('addCheckOut').value;
-                    const addRoomId = addSelect.value;
-                    if (addCheckIn && addCheckOut && addRoomId) {
-                        updateTotalPrice(addCheckIn, addCheckOut, addRoomId);
-                    }
-
-                    const editCheckIn = document.getElementById('editCheckIn').value;
-                    const editCheckOut = document.getElementById('editCheckOut').value;
-                    const editRoomId = editSelect.value;
-                    if (editCheckIn && editCheckOut && editRoomId) {
-                        updateTotalPrice(editCheckIn, editCheckOut, editRoomId, true);
-                    }
-                }
-            } catch (error) {
-                console.error('Error loading rooms:', error);
-            }
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('dateFilter').value = '';
+            performRealTimeSearch();
         }
 
-        document.getElementById('addCheckIn').addEventListener('change', function () {
-            const checkOut = document.getElementById('addCheckOut');
-            const roomId = document.getElementById('addRoomId').value;
-
-            const nextDay = new Date(this.value);
-            nextDay.setDate(nextDay.getDate() + 1);
-            checkOut.min = nextDay.toISOString().split('T')[0];
-
-            if (checkOut.value <= this.value) {
-                checkOut.value = nextDay.toISOString().split('T')[0];
-            }
-
-            loadAvailableRooms(this.value, checkOut.value);
-            if (roomId) {
-                updateTotalPrice(this.value, checkOut.value, roomId);
-            }
-        });
-
-        document.getElementById('addCheckOut').addEventListener('change', function () {
-            const checkIn = document.getElementById('addCheckIn').value;
-            const roomId = document.getElementById('addRoomId').value;
-
-            if (checkIn) {
-                loadAvailableRooms(checkIn, this.value);
-                if (roomId) {
-                    updateTotalPrice(checkIn, this.value, roomId);
-                }
-            }
-        });
-
-        document.getElementById('addRoomId').addEventListener('change', function () {
-            const checkIn = document.getElementById('addCheckIn').value;
-            const checkOut = document.getElementById('addCheckOut').value;
-
-            if (checkIn && checkOut) {
-                updateTotalPrice(checkIn, checkOut, this.value);
-            }
-        });
-
-        document.getElementById('editCheckIn').addEventListener('change', function () {
-            const checkOut = document.getElementById('editCheckOut');
-            const roomId = document.getElementById('editRoomId').value;
-
-            const nextDay = new Date(this.value);
-            nextDay.setDate(nextDay.getDate() + 1);
-            checkOut.min = nextDay.toISOString().split('T')[0];
-
-            if (checkOut.value <= this.value) {
-                checkOut.value = nextDay.toISOString().split('T')[0];
-            }
-
-            loadAvailableRooms(this.value, checkOut.value, currentBookingId);
-            if (roomId) {
-                updateTotalPrice(this.value, checkOut.value, roomId, true);
-            }
-        });
-
-        document.getElementById('editCheckOut').addEventListener('change', function () {
-            const checkIn = document.getElementById('editCheckIn').value;
-            const roomId = document.getElementById('editRoomId').value;
-
-            if (checkIn) {
-                loadAvailableRooms(checkIn, this.value, currentBookingId);
-                if (roomId) {
-                    updateTotalPrice(checkIn, this.value, roomId, true);
-                }
-            }
-        });
-
-        document.getElementById('editRoomId').addEventListener('change', function () {
-            const checkIn = document.getElementById('editCheckIn').value;
-            const checkOut = document.getElementById('editCheckOut').value;
-
-            if (checkIn && checkOut) {
-                updateTotalPrice(checkIn, checkOut, this.value, true);
-            }
-        });
-
-        function openAddModal() {
-            document.getElementById('addBookingModal').classList.remove('hidden');
-            document.getElementById('addBookingModal').classList.add('flex');
-
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('addCheckIn').value = today;
-            document.getElementById('addCheckOut').value = today;
-
-            loadAvailableRooms(today, today);
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
-        function closeAddModal() {
-            document.getElementById('addBookingModal').classList.add('hidden');
-            document.getElementById('addBookingModal').classList.remove('flex');
-            document.getElementById('addBookingForm').reset();
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
         }
 
-        function openEditModal(bookingId) {
-            currentBookingId = bookingId;
-            document.getElementById('editBookingModal').classList.remove('hidden');
-            document.getElementById('editBookingModal').classList.add('flex');
-        }
-
-        function closeEditModal() {
-            document.getElementById('editBookingModal').classList.add('hidden');
-            document.getElementById('editBookingModal').classList.remove('flex');
-            currentBookingId = null;
-        }
-
-        async function loadGuestUsers() {
-            try {
-                const response = await fetch('../back/bookings_backend.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: 'action=get_guest_users'
-                });
-                const data = await response.json();
-
-                if (data.success) {
-                    const select = document.getElementById('addUserId');
-                    select.innerHTML = '<option value="">Select Guest</option>';
-                    data.data.forEach(user => {
-                        select.innerHTML += `<option value="${user.user_id}">${user.user_name}</option>`;
-                    });
-                }
-            } catch (error) {
-                console.error('Error loading guest users:', error);
-            }
+        function formatTime(time) {
+            if (!time) return '2:00 PM';
+            
+            const timeObj = new Date(`2000-01-01T${time}`);
+            return timeObj.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
         }
 
         function showNotification(title, message) {
             document.getElementById('notificationTitle').textContent = title;
             document.getElementById('notificationMessage').textContent = message;
             document.getElementById('notificationModal').classList.remove('hidden');
-            document.getElementById('notificationModal').classList.add('flex');
         }
 
         function closeNotificationModal() {
             document.getElementById('notificationModal').classList.add('hidden');
-            document.getElementById('notificationModal').classList.remove('flex');
         }
 
-        document.getElementById('addBookingForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            clearValidationMessages();
+        // Modal functions
+        function openAddModal() {
+            document.getElementById('addBookingModal').classList.remove('hidden');
+            document.getElementById('addBookingForm').reset();
+            loadAllRooms(); // Load all rooms when modal opens
+        }
 
-            const userId = document.getElementById('addUserId').value;
-            const roomId = document.getElementById('addRoomId').value;
+        function closeAddModal() {
+            document.getElementById('addBookingModal').classList.add('hidden');
+        }
+
+        function openEditModal() {
+            document.getElementById('editBookingModal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editBookingModal').classList.add('hidden');
+        }
+
+        // Load all rooms for initial display
+        async function loadAllRooms() {
+            try {
+                const formData = new FormData();
+                formData.append('action', 'get_all_rooms');
+                formData.append('csrf_token', csrfToken);
+
+                const response = await fetch('/Proj/Admin/Bookings/back/bookings_backend.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    const roomSelect = document.getElementById('addRoomId');
+                    roomSelect.innerHTML = '<option value="">Select room</option>';
+                    
+                    data.data.forEach(room => {
+                        const option = document.createElement('option');
+                        option.value = room.room_id;
+                        option.textContent = `${room.room_number} (${room.room_type}) - ₱${parseFloat(room.room_price).toLocaleString()}/night`;
+                        option.dataset.price = room.room_price;
+                        roomSelect.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading all rooms:', error);
+            }
+        }
+
+        // Set date restrictions to prevent past dates
+        function setDateRestrictions() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('addCheckIn').min = today;
+            document.getElementById('addCheckOut').min = today;
+            
+            // Set minimum check-out date based on check-in date
+            document.getElementById('addCheckIn').addEventListener('change', function() {
+                const checkInDate = this.value;
+                if (checkInDate) {
+                    document.getElementById('addCheckOut').min = checkInDate;
+                    // If check-out date is before check-in date, clear it
+                    if (document.getElementById('addCheckOut').value && document.getElementById('addCheckOut').value < checkInDate) {
+                        document.getElementById('addCheckOut').value = '';
+                    }
+                }
+                calculateTotalPrice();
+            });
+            
+            document.getElementById('addCheckOut').addEventListener('change', function() {
+                calculateTotalPrice();
+            });
+        }
+
+        // Calculate total price based on room selection and dates
+        function calculateTotalPrice() {
+            const roomSelect = document.getElementById('addRoomId');
             const checkIn = document.getElementById('addCheckIn').value;
             const checkOut = document.getElementById('addCheckOut').value;
-            const totalPrice = document.getElementById('addTotalPrice').value;
-
-            const guestNameMsg = validateGuestName(userId);
-            const roomMsg = validateRoom(roomId);
-            const datesMsg = validateDates(checkIn, checkOut);
-            const totalPriceMsg = validateTotalPrice(totalPrice);
-
-            if (guestNameMsg) document.getElementById('addGuestNameMsg').textContent = guestNameMsg;
-            if (roomMsg) document.getElementById('addRoomMsg').textContent = roomMsg;
-            if (datesMsg) document.getElementById('addCheckOutMsg').textContent = datesMsg;
-            if (totalPriceMsg) document.getElementById('addTotalPriceMsg').textContent = totalPriceMsg;
-
-            if (guestNameMsg || roomMsg || datesMsg || totalPriceMsg) {
-                return;
+            const totalPriceInput = document.getElementById('addTotalPrice');
+            
+            if (roomSelect.value && checkIn && checkOut) {
+                const selectedOption = roomSelect.options[roomSelect.selectedIndex];
+                const roomPrice = parseFloat(selectedOption.dataset.price);
+                
+                // Calculate number of nights
+                const checkInDate = new Date(checkIn);
+                const checkOutDate = new Date(checkOut);
+                const nights = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+                
+                if (nights > 0) {
+                    const totalPrice = roomPrice * nights;
+                    totalPriceInput.value = totalPrice.toFixed(2);
+                    document.getElementById('nightsInfo').textContent = `(${nights} nights)`;
+                    document.getElementById('nightsInfo').classList.remove('hidden');
+                } else {
+                    totalPriceInput.value = '';
+                    document.getElementById('nightsInfo').textContent = '';
+                    document.getElementById('nightsInfo').classList.add('hidden');
+                }
+            } else {
+                totalPriceInput.value = '';
+                document.getElementById('nightsInfo').textContent = '';
+                document.getElementById('nightsInfo').classList.add('hidden');
             }
+        }
 
-            const formData = new FormData();
-            formData.append('action', 'add_booking');
-            formData.append('user_id', userId);
-            formData.append('room_id', roomId);
-            formData.append('check_in', checkIn);
-            formData.append('check_out', checkOut);
-            formData.append('total_price', totalPrice);
+        // Room availability check
+        async function checkRoomAvailability() {
+            const checkIn = document.getElementById('addCheckIn').value;
+            const checkOut = document.getElementById('addCheckOut').value;
+            const roomSelect = document.getElementById('addRoomId');
+
+            if (checkIn && checkOut) {
+                // Show loading state
+                roomSelect.innerHTML = '<option value="">Loading available rooms...</option>';
+                
+                try {
+                    const formData = new FormData();
+                    formData.append('action', 'get_available_rooms');
+                    formData.append('check_in', checkIn);
+                    formData.append('check_out', checkOut);
+                    formData.append('csrf_token', csrfToken);
+
+                    const response = await fetch('/Proj/Admin/Bookings/back/bookings_backend.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        roomSelect.innerHTML = '<option value="">Select room</option>';
+                        
+                        if (data.data.length === 0) {
+                            roomSelect.innerHTML = '<option value="">No available rooms for selected dates</option>';
+                        } else {
+                            data.data.forEach(room => {
+                                const option = document.createElement('option');
+                                option.value = room.room_id;
+                                option.textContent = `${room.room_number} (${room.room_type}) - ₱${parseFloat(room.room_price).toLocaleString()}/night`;
+                                option.dataset.price = room.room_price;
+                                roomSelect.appendChild(option);
+                            });
+                        }
+                        // Calculate price after loading rooms
+                        calculateTotalPrice();
+                    } else {
+                        roomSelect.innerHTML = '<option value="">Error loading rooms</option>';
+                    }
+                } catch (error) {
+                    console.error('Error checking room availability:', error);
+                    roomSelect.innerHTML = '<option value="">Error loading rooms</option>';
+                }
+            } else {
+                // If dates are not selected, load all rooms
+                loadAllRooms();
+            }
+        }
+
+        // Calculate total price for edit modal
+        function calculateEditTotalPrice() {
+            const roomSelect = document.getElementById('editRoomId');
+            const checkIn = document.getElementById('editCheckIn').value;
+            const checkOut = document.getElementById('editCheckOut').value;
+            const totalPriceInput = document.getElementById('editTotalPrice');
+            
+            if (roomSelect.value && checkIn && checkOut) {
+                const selectedOption = roomSelect.options[roomSelect.selectedIndex];
+                const roomPrice = parseFloat(selectedOption.dataset.price);
+                
+                // Calculate number of nights
+                const checkInDate = new Date(checkIn);
+                const checkOutDate = new Date(checkOut);
+                const nights = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+                
+                if (nights > 0) {
+                    const totalPrice = roomPrice * nights;
+                    totalPriceInput.value = totalPrice.toFixed(2);
+                    document.getElementById('editNightsInfo').textContent = `(${nights} nights)`;
+                    document.getElementById('editNightsInfo').classList.remove('hidden');
+                } else {
+                    totalPriceInput.value = '';
+                    document.getElementById('editNightsInfo').textContent = '';
+                    document.getElementById('editNightsInfo').classList.add('hidden');
+                }
+            } else {
+                totalPriceInput.value = '';
+                document.getElementById('editNightsInfo').textContent = '';
+                document.getElementById('editNightsInfo').classList.add('hidden');
+            }
+        }
+
+        async function checkEditRoomAvailability() {
+            const checkIn = document.getElementById('editCheckIn').value;
+            const checkOut = document.getElementById('editCheckOut').value;
+            const bookingId = document.getElementById('editBookingId').value;
+
+            if (checkIn && checkOut) {
+                try {
+                    const formData = new FormData();
+                    formData.append('action', 'get_available_rooms');
+                    formData.append('check_in', checkIn);
+                    formData.append('check_out', checkOut);
+                    formData.append('current_booking_id', bookingId);
+                    formData.append('csrf_token', csrfToken);
+
+                    const response = await fetch('/Proj/Admin/Bookings/back/bookings_backend.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        const roomSelect = document.getElementById('editRoomId');
+                        roomSelect.innerHTML = '<option value="">Select room</option>';
+                        
+                        data.data.forEach(room => {
+                            const option = document.createElement('option');
+                            option.value = room.room_id;
+                            option.textContent = `${room.room_number} (${room.room_type}) - ₱${parseFloat(room.room_price).toLocaleString()}/night`;
+                            option.dataset.price = room.room_price;
+                            roomSelect.appendChild(option);
+                        });
+                        calculateEditTotalPrice();
+                    }
+                } catch (error) {
+                    console.error('Error checking room availability:', error);
+                }
+            }
+        }
+
+        // Form submissions
+        document.getElementById('addBookingForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const submitText = document.getElementById('submitText');
+            const submitSpinner = document.getElementById('submitSpinner');
+
+            submitBtn.disabled = true;
+            submitText.textContent = 'Adding...';
+            submitSpinner.classList.remove('hidden');
 
             try {
-                const response = await fetch('../back/bookings_backend.php', {
+                const formData = new FormData(this);
+            formData.append('action', 'add_booking');
+                formData.append('csrf_token', csrfToken);
+
+                const response = await fetch('/Proj/Admin/Bookings/back/bookings_backend.php', {
                     method: 'POST',
                     body: formData
                 });
@@ -548,59 +824,38 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
 
                 if (data.success) {
                     closeAddModal();
-                    loadBookings();
-                    showNotification('Success', 'Booking added successfully!');
+                    await loadBookings();
+                    showNotification('Success', 'Booking added successfully');
                 } else {
-                    showNotification('Error', data.message || 'Failed to add booking');
+                    showNotification('Error', data.message);
                 }
             } catch (error) {
-                console.error('Error adding booking:', error);
-                showNotification('Error', 'Error adding booking. Please try again.');
+                console.error('Error:', error);
+                showNotification('Error', 'An error occurred while adding the booking.');
+            } finally {
+                submitBtn.disabled = false;
+                submitText.textContent = 'Add Booking';
+                submitSpinner.classList.add('hidden');
             }
         });
 
-        document.getElementById('editBookingForm').addEventListener('submit', async (e) => {
+        document.getElementById('editBookingForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            clearValidationMessages();
+            
+            const submitBtn = document.getElementById('editSubmitBtn');
+            const submitText = document.getElementById('editSubmitText');
+            const submitSpinner = document.getElementById('editSubmitSpinner');
 
-            const userId = document.getElementById('editUserId').value;
-            const roomId = document.getElementById('editRoomId').value;
-            const checkIn = document.getElementById('editCheckIn').value;
-            const checkOut = document.getElementById('editCheckOut').value;
-            const totalPrice = document.getElementById('editTotalPrice').value;
-            const status = document.getElementById('editStatus').value;
-
-            // Validate all fields
-            const guestNameMsg = validateGuestName(userId);
-            const roomMsg = validateRoom(roomId);
-            const datesMsg = validateDates(checkIn, checkOut);
-            const totalPriceMsg = validateTotalPrice(totalPrice);
-            const statusMsg = validateStatus(status);
-
-            // Display validation messages
-            if (guestNameMsg) document.getElementById('editGuestNameMsg').textContent = guestNameMsg;
-            if (roomMsg) document.getElementById('editRoomMsg').textContent = roomMsg;
-            if (datesMsg) document.getElementById('editCheckOutMsg').textContent = datesMsg;
-            if (totalPriceMsg) document.getElementById('editTotalPriceMsg').textContent = totalPriceMsg;
-            if (statusMsg) document.getElementById('editStatusMsg').textContent = statusMsg;
-
-            // If any validation failed, stop form submission
-            if (guestNameMsg || roomMsg || datesMsg || totalPriceMsg || statusMsg) {
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('action', 'update_booking');
-            formData.append('booking_id', document.getElementById('editBookingId').value);
-            formData.append('user_id', userId);
-            formData.append('room_id', roomId);
-            formData.append('check_in', checkIn);
-            formData.append('check_out', checkOut);
-            formData.append('total_price', totalPrice);
-            formData.append('status', status);
+            submitBtn.disabled = true;
+            submitText.textContent = 'Updating...';
+            submitSpinner.classList.remove('hidden');
 
             try {
-                const response = await fetch('../back/bookings_backend.php', {
+                const formData = new FormData(this);
+            formData.append('action', 'update_booking');
+                formData.append('csrf_token', csrfToken);
+
+                const response = await fetch('/Proj/Admin/Bookings/back/bookings_backend.php', {
                     method: 'POST',
                     body: formData
                 });
@@ -609,144 +864,169 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'Admin') {
 
                 if (data.success) {
                     closeEditModal();
-                    loadBookings();
-                    showNotification('Success', 'Booking updated successfully!');
+                    await loadBookings();
+                    showNotification('Success', 'Booking updated successfully');
                 } else {
-                    showNotification('Error', data.message || 'Failed to update booking');
+                    showNotification('Error', data.message);
                 }
             } catch (error) {
-                console.error('Error updating booking:', error);
-                showNotification('Error', 'Error updating booking. Please try again.');
+                console.error('Error:', error);
+                showNotification('Error', 'An error occurred while updating the booking.');
+            } finally {
+                submitBtn.disabled = false;
+                submitText.textContent = 'Update Booking';
+                submitSpinner.classList.add('hidden');
             }
         });
 
+        // Edit booking function
         async function editBooking(bookingId) {
             try {
-                const response = await fetch('../back/bookings_backend.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `action=get_booking_details&booking_id=${bookingId}`
-                });
-                const data = await response.json();
+                const formData = new FormData();
+                formData.append('action', 'get_booking_details');
+                formData.append('booking_id', bookingId);
+                formData.append('csrf_token', csrfToken);
 
+                const response = await fetch('/Proj/Admin/Bookings/back/bookings_backend.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
                 if (data.success) {
                     const booking = data.data;
-                    currentBookingId = bookingId;
 
+                    // Pre-fill all form fields
                     document.getElementById('editBookingId').value = booking.booking_id;
-                    document.getElementById('editUserId').value = booking.user_id;
-                    document.getElementById('editUserName').value = booking.user_name;
+                    document.getElementById('editGuestName').value = booking.user_name;
                     document.getElementById('editCheckIn').value = booking.booking_check_in;
                     document.getElementById('editCheckOut').value = booking.booking_check_out;
+                    document.getElementById('editCheckinTime').value = booking.booking_checkin_time || '';
+                    document.getElementById('editCheckoutTime').value = booking.booking_checkout_time || '';
                     document.getElementById('editTotalPrice').value = booking.booking_total_price;
                     document.getElementById('editStatus').value = booking.booking_status;
 
-                    await loadAvailableRooms(booking.booking_check_in, booking.booking_check_out, booking.booking_id);
-                    document.getElementById('editRoomId').value = booking.room_id;
+                    // Populate room information automatically with current room pre-selected
+                    const roomSelect = document.getElementById('editRoomId');
+                    roomSelect.innerHTML = `<option value="${booking.room_id}" selected data-price="${booking.room_price}">${booking.room_number} (${booking.room_type}) - ₱${parseFloat(booking.room_price).toLocaleString()}/night</option>`;
 
-                    openEditModal(bookingId);
-                }
-            } catch (error) {
-                console.error('Error loading booking details:', error);
-            }
-        }
+                    // Also load other available rooms for the same dates
+                    await loadAvailableRoomsForEdit(booking.booking_check_in, booking.booking_check_out, booking.room_id);
 
-        async function loadBookings() {
-            try {
-                const response = await fetch('../back/bookings_backend.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: 'action=get_bookings'
-                });
-                const data = await response.json();
+                    // Calculate initial price
+                    calculateEditTotalPrice();
 
-                if (data.success) {
-                    const tbody = document.getElementById('bookingsTableBody');
-                    tbody.innerHTML = '';
-
-                    // Filter out checked-out bookings
-                    const activeBookings = data.data.filter(booking => booking.booking_status !== 'Checked-out');
-
-                    activeBookings.forEach(booking => {
-                        const row = `
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 font-medium">${booking.booking_id}</td>
-                                <td class="px-6 py-4">${booking.user_name}</td>
-                                <td class="px-6 py-4">${booking.room_number} (${booking.room_type})</td>
-                                <td class="px-6 py-4">${booking.booking_check_in}</td>
-                                <td class="px-6 py-4">${booking.booking_check_out}</td>
-                                <td class="px-6 py-4">₱${booking.booking_total_price}</td>
-                                <td class="px-6 py-4">
-                                    <span class="bg-${getStatusColor(booking.booking_status)}-100 
-                                        text-${getStatusColor(booking.booking_status)}-800 
-                                        px-3 py-1 rounded-full text-xs font-medium">
-                                        ${booking.booking_status}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 space-x-2">
-                                    <button onclick="editBooking(${booking.booking_id})" 
-                                        class="text-primary hover:text-blue-800">
-                                        <i class="fas fa-edit text-lg"></i>
-                                    </button>
-                                    <button onclick="deleteBooking(${booking.booking_id})" 
-                                        class="text-danger hover:text-red-800">
-                                        <i class="fas fa-trash text-lg"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        `;
-                        tbody.innerHTML += row;
-                    });
-                }
-            } catch (error) {
-                console.error('Error loading bookings:', error);
-            }
-        }
-
-        function deleteBooking(bookingId) {
-            currentBookingId = bookingId;
-            document.getElementById('deleteModal').classList.remove('hidden');
-            document.getElementById('deleteModal').classList.add('flex');
-        }
-
-        async function confirmDelete() {
-            if (!currentBookingId) return;
-
-            try {
-                const response = await fetch('../back/bookings_backend.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `action=delete_booking&booking_id=${currentBookingId}`
-                });
-                const data = await response.json();
-
-                if (data.success) {
-                    closeDeleteModal();
-                    loadBookings();
-                    showNotification('Success', 'Booking deleted successfully!');
+                    openEditModal();
                 } else {
-                    showNotification('Error', data.message || 'Failed to delete booking');
+                    showNotification('Error', 'Failed to load booking details');
                 }
             } catch (error) {
-                console.error('Error deleting booking:', error);
-                showNotification('Error', 'Error deleting booking');
+                console.error('Error:', error);
+                showNotification('Error', 'An error occurred while loading booking details.');
             }
         }
 
-        function closeDeleteModal() {
-            document.getElementById('deleteModal').classList.add('hidden');
-            document.getElementById('deleteModal').classList.remove('flex');
-            currentBookingId = null;
+        // Load available rooms for edit modal
+        async function loadAvailableRoomsForEdit(checkIn, checkOut, currentRoomId) {
+            try {
+                const formData = new FormData();
+                formData.append('action', 'get_available_rooms');
+                formData.append('check_in', checkIn);
+                formData.append('check_out', checkOut);
+                formData.append('current_booking_id', document.getElementById('editBookingId').value);
+                formData.append('csrf_token', csrfToken);
+
+                const response = await fetch('/Proj/Admin/Bookings/back/bookings_backend.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    const roomSelect = document.getElementById('editRoomId');
+                    // Keep the current room as the first option
+                    const currentOption = roomSelect.querySelector('option[selected]');
+                    roomSelect.innerHTML = '';
+                    
+                    if (currentOption) {
+                        roomSelect.appendChild(currentOption);
+                    }
+                    
+                    // Add other available rooms
+                    data.data.forEach(room => {
+                        if (room.room_id != currentRoomId) {
+                            const option = document.createElement('option');
+                            option.value = room.room_id;
+                            option.textContent = `${room.room_number} (${room.room_type}) - ₱${parseFloat(room.room_price).toLocaleString()}/night`;
+                            option.dataset.price = room.room_price;
+                            roomSelect.appendChild(option);
+                        }
+                    });
+                    calculateEditTotalPrice();
+                }
+            } catch (error) {
+                console.error('Error loading available rooms for edit:', error);
+            }
         }
 
-        function getStatusColor(status) {
-            switch (status.toLowerCase()) {
-                case 'confirmed': return 'green';
-                case 'pending': return 'yellow';
-                case 'canceled': return 'red';
-                case 'checked-in': return 'blue';
-                case 'checked-out': return 'gray';
-                default: return 'gray';
+        // Delete booking function
+        function confirmDelete(bookingId) {
+            const confirmModal = document.createElement('div');
+            confirmModal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+            confirmModal.innerHTML = `
+                <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-exclamation-triangle text-yellow-500 text-2xl"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-lg font-semibold text-gray-800">Confirm Delete</h3>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 mb-6">Are you sure you want to delete this booking? This action cannot be undone.</p>
+                        <div class="flex justify-end gap-3">
+                            <button onclick="this.closest('.fixed').remove()" 
+                                class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 transition-colors duration-200">
+                                Cancel
+                            </button>
+                            <button onclick="deleteBooking(${bookingId}, this)" 
+                                class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(confirmModal);
+        }
+
+        async function deleteBooking(bookingId, button) {
+            const modal = button.closest('.fixed');
+            const formData = new FormData();
+            formData.append('action', 'delete_booking');
+            formData.append('booking_id', bookingId);
+            formData.append('csrf_token', csrfToken);
+
+            try {
+                const response = await fetch('/Proj/Admin/Bookings/back/bookings_backend.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                modal.remove();
+
+                if (data.success) {
+                    await loadBookings();
+                    showNotification('Success', 'Booking deleted successfully');
+                } else {
+                    showNotification('Error', data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                modal.remove();
+                showNotification('Error', 'An error occurred while deleting the booking.');
             }
         }
     </script>

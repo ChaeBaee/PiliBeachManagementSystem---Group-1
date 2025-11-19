@@ -2,8 +2,15 @@
 session_start();
 require_once 'db.php';
 
+// Add cache control headers to prevent back button issues
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
+
+// Optimize database queries with better error handling
 try {
-    $stmt = $conn->query("
+    // Use prepared statements for better performance and security
+    $stmt = $conn->prepare("
         SELECT f.feedback_rating, f.feedback_comments, f.feedback_date_created, u.user_name,
                r.room_type
         FROM feedback f
@@ -13,28 +20,35 @@ try {
         ORDER BY f.feedback_date_created DESC
         LIMIT 4
     ");
-    $recentFeedback = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt->execute();
+    $recentFeedback = $stmt->fetchAll();
 } catch (PDOException $e) {
+    error_log("Feedback query error: " . $e->getMessage());
     $recentFeedback = [];
 }
 
 try {
-    $stmt = $conn->query("SELECT AVG(feedback_rating) as avg_rating FROM feedback");
-    $avgRating = number_format($stmt->fetch(PDO::FETCH_ASSOC)['avg_rating'], 1);
+    $stmt = $conn->prepare("SELECT AVG(feedback_rating) as avg_rating FROM feedback");
+    $stmt->execute();
+    $result = $stmt->fetch();
+    $avgRating = number_format($result['avg_rating'] ?? 0, 1);
 } catch (PDOException $e) {
+    error_log("Average rating query error: " . $e->getMessage());
     $avgRating = "0.0";
 }
 
 try {
-    $stmt = $conn->query("
+    $stmt = $conn->prepare("
         SELECT room_id, room_type, room_price, room_capacity, room_image, room_description 
         FROM rooms 
         WHERE room_status = 'available' 
         ORDER BY room_price ASC 
         LIMIT 3
     ");
-    $availableRooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt->execute();
+    $availableRooms = $stmt->fetchAll();
 } catch (PDOException $e) {
+    error_log("Available rooms query error: " . $e->getMessage());
     $availableRooms = [];
 }
 ?>
