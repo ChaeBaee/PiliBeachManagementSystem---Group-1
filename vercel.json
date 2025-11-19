@@ -2,13 +2,6 @@
   "version": 2,
   "buildCommand": "echo 'PHP application ready for deployment'",
   "outputDirectory": ".",
-  "env": {
-    "DB_HOST": "@db_host",
-    "DB_USER": "@db_user",
-    "DB_PASSWORD": "@db_password",
-    "DB_NAME": "@db_name",
-    "DB_PORT": "3306"
-  },
   "functions": {
     "PHP/**/*.php": {
       "runtime": "php-8.2"
