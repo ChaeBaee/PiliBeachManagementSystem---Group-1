@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "echo 'PHP application ready for deployment'",
+  "buildCommand": "echo 'PHP application ready for deployment!'",
   "outputDirectory": ".",
   "functions": {
     "PHP/**/*.php": {
